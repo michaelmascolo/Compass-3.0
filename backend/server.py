@@ -454,6 +454,33 @@ class RevisionRecord(BaseModel):
     created_at: str = Field(default_factory=now_iso)
 
 
+class ExperienceReflection(BaseModel):
+    """Experience Compass — the deliberate reflection shown at the end of a single
+    developmental cycle. Exactly four sections. Built WITHOUT any extra LLM call
+    from data already produced by the frozen engine this turn + the locked objective."""
+    objective: str = ""                     # 1. The one thing you worked on (locked instructional element)
+    how_your_writing_changed: str = ""      # 2. How your writing changed (from the revision record only; no exaggeration)
+    why_it_helps_your_reader: str = ""      # 3. Why it helps your reader (communicative function)
+    carry_it_forward: str = ""              # 4. Carry it forward (transfer statement)
+    completion_reason: str = ""             # "resolved" | "support_cap"
+    resolved: bool = False                  # true only when the engine determined the target was resolved
+
+
+class ExperienceControl(BaseModel):
+    """Experience Compass — caps a preview at exactly ONE developmental objective and
+    then stops at a reflection. Wraps the FROZEN engine; adds no evaluator. Present
+    ONLY on preview sessions (ordinary sessions leave this None and are unchanged)."""
+    phase: str = "active"                   # active | reflection
+    objective_locked: bool = False          # the single objective is locked on the first completed turn, forever
+    objective_element: str = ""             # locked canonical instructional element (e.g. "Central Claim")
+    objective_target: str = ""              # descriptive primary_target from the engine (context only)
+    support_count: int = 0                  # answer/explain exchanges since the last substantive revision
+    support_cap: int = 3                    # deliberate stop after 3 support exchanges without a substantive revision
+    revision_count: int = 0                 # substantive revisions attempted on the objective
+    resolved: bool = False                  # engine determined the objective was resolved
+    reflection: Optional[ExperienceReflection] = None
+
+
 class SessionCreate(BaseModel):
     assignment: str
     pedagogical_purpose: str
@@ -493,6 +520,7 @@ class Session(BaseModel):
     teacher_edits: List[dict] = Field(default_factory=list)
     is_preview: bool = False
     preview_analytics: dict = Field(default_factory=dict)
+    experience_control: Optional[ExperienceControl] = None  # Experience Compass — set ONLY on preview sessions
     reasoning_mode: str = "exhaustive"  # exhaustive | triage_experimental (per-session; exhaustive is default, unchanged frozen path)
     # Teacher-product linkage (teacher -> assignment(config) -> student session).
     teacher_id: Optional[str] = ""
@@ -1267,7 +1295,112 @@ def _finalize_turn(session: Session, ai_turn_id: str, req: InteractRequest, resu
     )
     if is_substantive_revision and revise_turn_id:
         _record_revision(session, req, result, prior_theory, prior_invitation, draft_before, revise_turn_id)
+    _update_experience_control(session, req, result, is_substantive_revision)
     session.updated_at = now_iso()
+
+
+# ---------------------------------------------------------------------------
+# Experience Compass — single-objective cycle control (Build Slice 1).
+# Wraps the FROZEN engine: locks ONE developmental objective, then stops at a
+# reflection. No new evaluator, no LLM call — reads only data the engine already
+# produced this turn + the canonical instructional-object communicative purpose.
+# ---------------------------------------------------------------------------
+_EXPERIENCE_READER_FALLBACK = (
+    "This helps your reader better understand what this part of the writing is trying to accomplish."
+)
+
+
+def _experience_objective_id(result: dict) -> tuple:
+    """The single objective to lock: the canonical instructional element the engine
+    is teaching (from instructional_reasoning), plus the descriptive primary_target."""
+    theory = result["theory"]
+    element = (getattr(theory.instructional_reasoning, "active_instructional_element", "") or "").strip()
+    target = (getattr(theory.scaffolding_control, "primary_target", "") or "").strip()
+    if not element:
+        element = target
+    return element, target
+
+
+def _experience_reader_effect(element: str) -> str:
+    """Communicative function of the locked element, from the canonical Instructional
+    Objects (_IO_BY_NAME) — never an LLM call, never a psychological prediction."""
+    obj = _IO_BY_NAME.get((element or "").strip().lower())
+    if obj and (obj.get("communicative_purpose") or "").strip():
+        return obj["communicative_purpose"].strip()
+    return _EXPERIENCE_READER_FALLBACK
+
+
+def _build_experience_reflection(session: Session, result: dict, reason: str) -> "ExperienceReflection":
+    """Build the four-section reflection. `reason` is 'resolved' or 'support_cap'.
+    Uses ONLY evidence already present; never claims mastery unless the engine
+    determined the target was resolved."""
+    ec = session.experience_control
+    element = (ec.objective_element if ec else "") or "your writing"
+    theory = result["theory"]
+    rev_dev = theory.revision_development
+    resolved = reason == "resolved"
+
+    # 2. How your writing changed — evidence-only, no exaggeration.
+    if resolved:
+        change = (rev_dev.primary_growth or rev_dev.communication_change or "").strip()
+        how = change or f"You revised your passage and strengthened how it works as {element.lower()}."
+    else:
+        how = ("You explored this writing idea through the coaching conversation. "
+               "You haven't revised your passage yet — that is the natural next step when you return to it.")
+
+    # 3. Why it helps your reader — communicative function.
+    why = _experience_reader_effect(element)
+
+    # 4. Carry it forward — transfer statement.
+    transfer = (rev_dev.transfer_message or "").strip() if resolved else ""
+    if not transfer:
+        transfer = ("When you write your next paragraph, look for another opportunity "
+                    "to strengthen this same writing move for your reader.")
+
+    return ExperienceReflection(
+        objective=element,
+        how_your_writing_changed=how,
+        why_it_helps_your_reader=why,
+        carry_it_forward=transfer,
+        completion_reason=reason,
+        resolved=resolved,
+    )
+
+
+def _update_experience_control(session: Session, req: InteractRequest, result: dict,
+                               is_substantive_revision: bool) -> None:
+    """Advance the Experience Compass single-objective cycle. No-op on ordinary
+    (non-preview) sessions, which leave experience_control None and unchanged."""
+    ec = session.experience_control
+    if ec is None or ec.phase != "active":
+        return
+
+    # Lock the ONE objective on the first completed turn — never change it after.
+    if not ec.objective_locked:
+        element, target = _experience_objective_id(result)
+        ec.objective_element = element
+        ec.objective_target = target
+        ec.objective_locked = True
+
+    kind = (req.kind or "").strip().lower()
+
+    if kind == "revise" and is_substantive_revision:
+        ec.revision_count += 1
+        ec.support_count = 0  # a genuine revision attempt resets the support cap
+        dd = (result["theory"].revision_development.development_detected or "").strip().lower()
+        cs = (result["theory"].scaffolding_control.cycle_status or "").strip().lower()
+        # Canonical completion rule.
+        if dd.startswith("yes") or cs in ("consolidate_and_return", "stop"):
+            ec.resolved = True
+            ec.phase = "reflection"
+            ec.reflection = _build_experience_reflection(session, result, reason="resolved")
+        # else: substantive but unresolved -> stay active, keep teaching.
+    elif kind in ("answer", "explain"):
+        ec.support_count += 1
+        if ec.support_count >= ec.support_cap:
+            ec.phase = "reflection"
+            ec.reflection = _build_experience_reflection(session, result, reason="support_cap")
+    # kind == "writing" / "continue": only the objective lock applies (done above).
 
 
 # ---------------------------------------------------------------------------
@@ -1455,6 +1588,7 @@ async def create_preview_session(payload: Optional[PreviewStart] = None):
         teacher_notes=notes,
         telos=telos,
         is_preview=True,
+        experience_control=ExperienceControl(),
     )
     await db.sessions.insert_one(session.model_dump())
     return session
@@ -2311,6 +2445,7 @@ async def _run_reasoning(session_id: str, ai_turn_id: str, req: InteractRequest)
                 "developmental_profile": [o.model_dump() for o in session2.developmental_profile],
                 "revision_history": [r.model_dump() for r in session2.revision_history],
                 "preview_analytics": session2.preview_analytics,
+                "experience_control": session2.experience_control.model_dump() if session2.experience_control else None,
                 "updated_at": session2.updated_at,
             }},
         )
@@ -2339,6 +2474,14 @@ async def interact(session_id: str, req: InteractRequest):
 
     if not req.content.strip():
         raise HTTPException(status_code=400, detail="Empty submission")
+
+    # Experience Compass: a completed single-objective cycle is a deliberate stop.
+    ec = session.experience_control
+    if ec and ec.phase in ("reflection", "complete"):
+        raise HTTPException(
+            status_code=409,
+            detail="This Experience Compass cycle is complete. Start a new passage to continue.",
+        )
 
     # prevent duplicate concurrent turns while one is still being prepared
     if any(t.status in ("processing", "streaming") for t in session.turns):

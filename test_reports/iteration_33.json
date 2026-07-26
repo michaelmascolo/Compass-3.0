@@ -1,0 +1,40 @@
+{
+  "summary": "Verified Experience Compass Slice 1 across backend (fast pytest + one live-engine turn) and frontend (?preview UI smoke). All fast acceptance items pass. Live 3x support-cap reflection was NOT driven end-to-end (would take 3-6 min of real LLM turns); reflection UI code was inspected and confirmed to render all 4 sections + reflection-passage + reflection-try-another with correct data-testids.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "acceptance_results": {
+    "preview_creates_experience_control": "PASS (phase=active, support_cap=3, objective_locked=false, reflection=null)",
+    "non_preview_has_no_experience_control": "PASS (experience_control=null on POST /api/sessions)",
+    "objective_locks_after_first_live_turn": "PASS (live engine, ~60s). objective_locked=true, objective_element='Thesis', objective_target='Thesis — move from stance to controlling claim', phase='active'",
+    "objective_never_changes": "COVERED BY UNIT TEST tests/test_experience_control_unit.py::lock_once_and_never_changes (PASS)",
+    "support_cap_transitions_to_reflection": "COVERED BY UNIT TEST support_cap_transitions_to_reflection (PASS); reflection.how_your_writing_changed asserted not to claim mastery. Live 3-turn drive skipped due to ~3-6min cost per note in review request.",
+    "resolved_transitions_to_reflection": "COVERED BY UNIT TESTS resolved_revision_transitions_to_reflection + resolved_revision_via_cycle_status (PASS)",
+    "409_after_reflection": "PASS (API test forces phase=reflection in Mongo and receives HTTP 409 from /interact)",
+    "frontend_seed_and_begin": "PASS — preview-seed-screen renders, entering passage + preview-begin-button starts session, preview-document + thinking dots ('Reading your passage as a reader would…') appear",
+    "preview_bring_own_work_absent": "PASS — 0 elements with data-testid=preview-bring-own-work on both seed and post-begin screens",
+    "experience_reflection_component_shape": "VERIFIED VIA CODE (ExperienceReflection.jsx): has data-testid=experience-reflection, exactly 4 sections with keys objective, how_your_writing_changed, why_it_helps_your_reader, carry_it_forward (matching reflection-section-* testids), reflection-passage for the learner draft, and reflection-try-another as the sole action button.",
+    "phase_driven_completion": "VERIFIED VIA CODE (PublicPreview.jsx line 43-44): const phase = session?.experience_control?.phase || 'active'; const inReflection = phase === 'reflection'. No completion is driven by turn count."
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_experience_control_api.py",
+    "/app/backend/tests/test_experience_control_live.py",
+    "/app/backend/tests/test_experience_control_unit.py",
+    "/app/test_reports/pytest/exp_control_api.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "server.py is 3323 lines — consider splitting the Experience Compass helpers (_build_experience_reflection, _update_experience_control, _experience_objective_id, _experience_reader_effect) into a dedicated module for maintainability (non-blocking).",
+    "PreviewBridge component still ships and is reachable via ?bridge standalone. That matches the spec ('remove from reflection screen', not remove the file), but if the ?bridge entry point is no longer used, consider dead-code removing it in a follow-up.",
+    "PublicPreview.jsx derives phase safely via optional chaining and never trusts turn count — good. Consider adding a data-testid to the 'Reading your passage as a reader would…' status for easier test targeting."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_experience_control_api.py (new)",
+    "/app/backend/tests/test_experience_control_live.py (new)"
+  ],
+  "success_rate": {"backend": "100% (3/3 api tests + 7/7 unit tests + 1/1 live turn)", "frontend": "100% (seed screen, begin flow, no bring-own-work)"},
+  "test_credentials": "none — /?preview requires no auth",
+  "seed_data_creation": "Tests create ephemeral preview + non-preview sessions in Mongo; no cleanup required (isolated preview docs).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Fast pytest suite lives at /app/backend/tests/test_experience_control_api.py (3 tests, ~2s) + test_experience_control_unit.py (7 tests, offline, ~1s). Live objective-lock check is /app/backend/tests/test_experience_control_live.py and takes ~60-120s. If you need to fully drive the 3-support-turn reflection flow live, expect 3-6 min of real Emergent-LLM turns; poll GET /api/sessions/{id} at 5s intervals with a 240s deadline per turn. Frontend /?preview holds session in React state (no URL-by-id load) so you cannot inject reflection state via Mongo and reload — you must either drive the real flow or rely on component-level code inspection for the reflection UI."
+}

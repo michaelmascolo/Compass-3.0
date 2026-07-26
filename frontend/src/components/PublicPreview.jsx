@@ -9,7 +9,7 @@ import {
   CornerDownRight,
 } from "lucide-react";
 import { startPreview, getSession, interact } from "@/lib/api";
-import PreviewBridge from "@/components/PreviewBridge";
+import ExperienceReflection from "@/components/ExperienceReflection";
 
 const PASSAGE_TYPES = ["Let Compass infer it", "Introduction", "Body paragraph", "Transition", "Conclusion", "Other"];
 
@@ -22,7 +22,6 @@ export default function PublicPreview() {
   const [draft, setDraft] = useState("");
   const [starting, setStarting] = useState(false);
   const [sending, setSending] = useState(false);
-  const [showBridge, setShowBridge] = useState(false);
   const [passageType, setPassageType] = useState("Let Compass infer it");
   const [essayAbout, setEssayAbout] = useState("");
   const [cardOpen, setCardOpen] = useState(false);
@@ -39,8 +38,10 @@ export default function PublicPreview() {
   const activeCoaching = completedAi.length ? completedAi[completedAi.length - 1] : null;
   const started = !!session;
   const reviseCount = studentTurns.filter((t) => t.kind === "revise").length;
-  // Offer a graceful close once the visitor has revised through a target or two.
-  const canBridge = completedAi.length >= 2;
+  // Completion is driven ONLY by the single-objective experience_control phase,
+  // never by an AI turn count.
+  const phase = session?.experience_control?.phase || "active";
+  const inReflection = phase === "reflection";
 
   // Poll while the engine is reasoning in the background.
   useEffect(() => {
@@ -83,6 +84,20 @@ export default function PublicPreview() {
       setStarting(false);
     }
   }, [seed, starting, essayAbout, passageType]);
+
+  // "Try another paragraph" — begin a COMPLETELY fresh preview session. Never
+  // reuse or continue the completed one.
+  const restart = useCallback(() => {
+    setSession(null);
+    setSeed("");
+    setDraft("");
+    setPassageType("Let Compass infer it");
+    setEssayAbout("");
+    setCardOpen(false);
+    setOpenCoachingId(null);
+    setReplyOpen(false);
+    setReply("");
+  }, []);
 
   const dirty = draft.trim() !== (studentTurns[studentTurns.length - 1]?.content || "").trim();
 
@@ -134,10 +149,6 @@ export default function PublicPreview() {
 
   const wordCount = draft.trim() ? draft.trim().split(/\s+/).length : 0;
 
-  if (showBridge) {
-    return <PreviewBridge sessionId={session?.id} onBack={() => setShowBridge(false)} />;
-  }
-
   return (
     <div className="min-h-screen paper-grain flex flex-col items-center">
       <header className="w-full max-w-2xl flex items-center justify-between px-6 py-5">
@@ -145,15 +156,6 @@ export default function PublicPreview() {
           <Compass className="h-5 w-5 text-[#8C3A2A]" />
           Compass
         </div>
-        {canBridge && (
-          <button
-            onClick={() => setShowBridge(true)}
-            data-testid="preview-bring-own-work"
-            className="text-xs font-mono-panel uppercase tracking-[0.16em] text-stone-500 hover:text-[#8C3A2A] transition-colors"
-          >
-            Bring your own writing →
-          </button>
-        )}
       </header>
 
       <main className="w-full max-w-2xl flex-1 flex flex-col px-6 pb-12">
@@ -167,6 +169,12 @@ export default function PublicPreview() {
             setPassageType={setPassageType}
             essayAbout={essayAbout}
             setEssayAbout={setEssayAbout}
+          />
+        ) : inReflection ? (
+          <ExperienceReflection
+            reflection={session?.experience_control?.reflection}
+            draft={draft}
+            onRestart={restart}
           />
         ) : (
           <div className="flex-1 flex flex-col py-4">
