@@ -135,3 +135,45 @@ The smallest trustworthy packet for the first developmental move = **`student_fa
 - **Unchanged:** `instructional_objects.json`, `canonical_writing_model.json`, and all reasoning-logic content in `SYSTEM_MESSAGE` (only caching/serialization-order/what-is-returned would change, never the instructional reasoning).
 
 *No implementation performed. Awaiting approval before any change.*
+
+---
+# ADDENDUM — Read-only Investigations (Library capability + Stage-B output timing)
+2026-07-26 · No code changed.
+
+## Investigation 1 — emergentintegrations.LlmChat capabilities
+**Anthropic prompt caching: NOT SUPPORTED via the current client + Emergent-key path.**
+- System + messages are stored as plain-string content (`{"role":"system","content":<str>}`, chat.py:138) — not Anthropic content blocks; there is NO `cache_control`/`ephemeral`/`prompt_caching`/`anthropic-beta` surface anywhere in the LLM client.
+- `with_params(**p)` only merges TOP-LEVEL litellm kwargs (chat.py:155-157, 429); it cannot attach per-content-block `cache_control` breakpoints (which is what Anthropic caching requires).
+- With an Emergent key the request is normalized to `custom_llm_provider="openai"` through the emergent proxy (chat.py:416-422), so Anthropic-specific caching cannot be expressed. → Would require proxy-side support (outside our code) or a direct Anthropic key + a block-aware client.
+- **Consequence:** Option A's single largest input-side lever is unavailable.
+
+**Token streaming on the Stage-B path: SUPPORTED and already proven end-to-end.**
+- `LlmChat.stream_message()` yields `TextDelta` per token → `StreamDone` (chat.py:286-397).
+- Already exercised with the SAME `claude-sonnet-4-6` model through the Emergent key/proxy in `triage_experiment.py:584` (`async for ev in chat.stream_message(...)`), so SSE passes through the proxy in practice.
+- The exhaustive Stage-B path simply uses non-streaming `send_message` instead. Switching to `stream_message` is a TRANSPORT change, not a reasoning change.
+
+## Investigation 2 — Stage-B output timing
+Output schema key order (SYSTEM_MESSAGE "OUTPUT FORMAT", server.py:870-914):
+1. **`student_facing_invitation` is the FIRST key** — before `telos`, the large `theory` object, `candidate_invitations`, `selected_invitation`, `intervention`.
+2. `reader_understanding` is nested inside `theory.reader_construction` — mid/late in the stream (after telos + several framework sub-objects).
+
+- **When is `student_facing_invitation` available?** EARLY. It is field #1, and the model runs WITHOUT extended/hidden thinking (no `thinking` param), so its computation IS its token output — it commits to and emits the teaching sentence FIRST, then elaborates the theory.
+- **When is `reader_understanding` available?** LATE — only its schema POSITION (mid-theory) makes it late; no computational dependency forces it there.
+- **Generated early & serialized late, or computed at the end?** The invitation is genuinely produced first (early). The ~41–70s is spent generating the large `theory` that FOLLOWS the already-emitted invitation. The learner today waits for the whole object even though the teaching sentence is generated in the first ~1–3s of output.
+- **If Stage-B streamed today:** `student_facing_invitation` → EARLY (first field); `reader_understanding` → LATE. Nothing forces the invitation to the end except our use of non-streaming `send_message`.
+
+## Cross-finding (latency ⟷ Chapter 6 tension)
+The current order emits the TEACHING move first and UNDERSTANDING later — ideal for latency, but the OPPOSITE of Chapter 6 (voice understanding/strengths first; withhold corrective teaching until the Developmental Response). Naively streaming field #1 surfaces exactly what Ch6 says to withhold. Reconcile as a product decision before wiring streaming into the Ch6 experience.
+
+## Revised conclusion
+Latency is NOT fundamentally architectural: the teaching sentence exists within seconds of generation start; the ~45–55s wall is a SERIALIZATION + TRANSPORT artifact (non-streaming wait for the whole theory). Highest-leverage, lowest-risk fix = **stream Stage-B and surface the already-first invitation as it arrives** (no reasoning/prompt/model/schema change). Prompt caching is unavailable; Stage-A model swap and schema reordering are Level-3 and low-benefit/high-risk respectively.
+
+## Risk classification of candidate changes (per approved rubric)
+- Stream Stage-B (`send_message`→`stream_message`) + surface the already-computed field-#1 invitation, behind a flag: **LEVEL 2** (presentation/sequencing; streams already-computed learner-facing output; verify streamed final JSON parses identically via a targeted subset).
+- Shorten polling (1.5s→~0.8s), feature-flag scaffolding, transport: **LEVEL 1** (smoke test only).
+- Swap Stage-A selector to a smaller model (e.g., Haiku): **LEVEL 3** (changes instructional-object SELECTION) — full 66-case harness; modest ~3–5s benefit → not recommended now.
+- Reorder schema to surface `reader_understanding` early (for Ch6): **LEVEL 3** (changes DevelopmentalTheory generation ordering) — full harness.
+- Prompt caching: N/A (unsupported).
+
+## Estimated first-visible-teaching after streaming
+TTFT (proxy) + generation of the one invitation sentence (~few hundred tokens) ≈ **~3–12s** to first streamed teaching — meets the 8–15s target — while the full theory finishes/persists in the background (~40–55s, hidden). Caveats: benefit depends on the proxy not buffering SSE (validate with a live streamed run); the session isn't fully "complete" for ~45s (later turns depend on the full theory); must confirm the streamed final JSON is parse-identical to non-streamed.
