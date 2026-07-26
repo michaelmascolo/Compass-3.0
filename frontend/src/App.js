@@ -6,6 +6,7 @@ import StudentWorkspace from "@/components/StudentWorkspace";
 import DevelopmentPanel from "@/components/DevelopmentPanel";
 import TestHarness from "@/components/TestHarness";
 import PublicPreview from "@/components/PublicPreview";
+import TeacherReview from "@/components/TeacherReview";
 import Landing from "@/components/Landing";
 import PreviewBridge from "@/components/PreviewBridge";
 import TeacherConfig from "@/components/TeacherConfig";
@@ -37,6 +38,10 @@ function App() {
   // Public Preview (?preview) — the 3-5 min in-character entry experience.
   if (params.has("preview")) {
     return <PublicPreview />;
+  }
+  // Teacher Review (?review) — inspect the frozen engine on precomputed cases.
+  if (params.has("review")) {
+    return <TeacherReview />;
   }
   // Compass 2.0 · Sprint 1 — Assignment Representation (?represent).
   if (params.has("represent")) {

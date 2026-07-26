@@ -1,0 +1,2413 @@
+{
+  "cases": [
+    {
+      "id": "student-a",
+      "label": "Student A",
+      "assignment": "Some schools have banned personal cell phones during class. Write one paragraph arguing whether your school should allow or ban personal cell phones during class. Take a clear position and support it with reasons and examples.",
+      "response": "I think phones should be allowed because they help people. Sometimes students need them if something happens at home, and they can also help us look things up. It isn't fair that everyone loses their phones because a few students don't pay attention.",
+      "session": {
+        "id": "ca6e3b6b-dadb-43cb-aee0-3867178338b0",
+        "assignment": "Some schools have banned personal cell phones during class. Write one paragraph arguing whether your school should allow or ban personal cell phones during class. Take a clear position and support it with reasons and examples.",
+        "pedagogical_purpose": "Help the student clarify and develop their position so a reader understands and is persuaded, and understand what each part of the writing is doing for the reader.",
+        "current_writing_task": "Write one paragraph arguing your position, with reasons and examples.",
+        "teacher_notes": "The writer is a high school student. Respond developmentally to their actual paragraph.",
+        "assignment_prompt": "",
+        "turns": [
+          {
+            "id": "9f4a8f2e-b698-4ce2-8139-71b3dc9845eb",
+            "role": "student",
+            "kind": "writing",
+            "content": "I think phones should be allowed because they help people. Sometimes students need them if something happens at home, and they can also help us look things up. It isn't fair that everyone loses their phones because a few students don't pay attention.",
+            "status": "complete",
+            "reasoning_path": "",
+            "created_at": "2026-07-26T18:05:08.787860+00:00"
+          },
+          {
+            "id": "edd639f7-971a-40e2-acb4-bc01c8b3a819",
+            "role": "ai",
+            "kind": "invitation",
+            "content": "You've taken a clear position \u2014 phones should be allowed \u2014 and you've given three different reasons. Right now, though, a reader might ask: what's the ONE main thing you most want them to accept? A claim does real work when it says something a thoughtful person could push back on and gives a reason why your side is right. Try writing one sentence that states your position AND gives your strongest reason for it \u2014 what would you most want a skeptical reader to walk away believing?",
+            "status": "complete",
+            "reasoning_path": "exhaustive_full",
+            "created_at": "2026-07-26T18:05:08.787868+00:00"
+          }
+        ],
+        "telos": {
+          "governing_pedagogical_purpose": "Help the student clarify and develop their position so a reader understands and is persuaded, and understand what each part of the writing is doing for the reader.",
+          "immediate_task_purpose": "Write one paragraph arguing your position, with reasons and examples.",
+          "teacher_intentions": "The writer is a high school student. Respond developmentally to their actual paragraph.",
+          "assignment_context": "Some schools have banned personal cell phones during class. Write one paragraph arguing whether your school should allow or ban personal cell phones during class. Take a clear position and support it with reasons and examples.",
+          "audience_or_communicative_purpose": "Persuade a reader to accept the student's position on the cell phone policy.",
+          "unresolved_ambiguity": "",
+          "telos_changed": "no change"
+        },
+        "theory": {
+          "current_telos": "Student writes one persuasive paragraph with a clear position, reasons, and examples.",
+          "communicative_purpose": {
+            "primary": "persuade",
+            "secondary": [
+              "explain"
+            ],
+            "inferred_from": "assignment instructions + student's opening position statement",
+            "uncertainty": ""
+          },
+          "paragraph_function": {
+            "applies": true,
+            "purpose": "Argue that phones should be allowed in class by offering reasons",
+            "contribution_to_whole": "This is the whole paragraph \u2014 it must carry the full persuasive job alone",
+            "coherence": "Three reasons present but loosely joined; no controlling claim governs them; fairness reason feels like a separate argument",
+            "development": "Assertion only \u2014 reasons are named but not illustrated or explained; no examples yet",
+            "placement": "Single-paragraph task; opening position statement functions as a proto-claim"
+          },
+          "evidence_function": {
+            "applies": false,
+            "forms": [],
+            "function": "",
+            "interpretation_gap": "",
+            "quality": ""
+          },
+          "coherence_function": {
+            "applies": false,
+            "intended_relationship": "",
+            "level": "",
+            "resources_in_use": [],
+            "reader_can_follow": ""
+          },
+          "conclusion_function": {
+            "applies": false,
+            "functions_in_play": [],
+            "completes_purpose": "",
+            "relationship_to_opening": "",
+            "final_understanding": ""
+          },
+          "scaffolding_control": {
+            "current_unit": "paragraph",
+            "diagnosed_opportunities": [
+              "Claim is dispersed/unfocused \u2014 position stated but no single governing assertion",
+              "No examples \u2014 assignment requires them",
+              "Evidence-interpretation gap \u2014 reasons named but not developed",
+              "Three competing reasons with no hierarchy"
+            ],
+            "primary_target": "Central Claim \u2014 consolidate scattered reasons into one governing contestable claim",
+            "prioritization_rationale": "Claim is prerequisite: without a governing assertion, evidence and explanation have no anchor; this is the highest-leverage first move for a persuasive paragraph",
+            "instructional_mode": "developmental_question",
+            "postponed": [
+              "evidence/examples",
+              "explanation/analysis of reasons",
+              "paragraph coherence"
+            ],
+            "cycle_status": "continue",
+            "stopping_reason": "",
+            "future_opportunity": "Once claim is focused, invite the student to select and develop one reason with a concrete example"
+          },
+          "reader_construction": {
+            "applies": true,
+            "reader_understanding": "Reader knows the student favors allowing phones and has three loose reasons; doesn't yet know which reason the student considers most important or why it is decisive",
+            "likely_reader_questions": [
+              "Which of these reasons is your main argument?",
+              "What do you mean by 'help people' \u2014 can you be more specific?"
+            ],
+            "assumed_knowledge": "Reader understands the debate context \u2014 reasonable inference",
+            "clarification_needed": "'Help people' is vague; reader cannot tell what kind of help is central",
+            "elaboration_needed": "All three reasons are asserted without development; the fairness claim especially needs grounding",
+            "precision_risk": "'A few students don't pay attention' could apply to any policy debate \u2014 reader may not find it persuasive as written",
+            "next_reader_need": "A focused claim that tells the reader what the paragraph is most trying to establish"
+          },
+          "revision_development": {
+            "applies": false,
+            "development_detected": "",
+            "primary_growth": "",
+            "communication_change": "",
+            "reader_change": "",
+            "remaining_opportunity": "",
+            "transfer_message": ""
+          },
+          "integration_calibration": {
+            "applies": true,
+            "primary_framework": "Central Claim (M6 communicative purpose + instructional_reasoning)",
+            "supporting_frameworks": [
+              "paragraph_function (paragraph lacks governing claim)",
+              "reader_construction (reader cannot identify primary argument)"
+            ],
+            "calibration_check": "Proportional \u2014 student has a position but no focused claim; one targeted invitation is the right move, not a full critique",
+            "consistency_check": "Any persuasive paragraph with dispersed reasons and no governing claim would receive this same priority",
+            "integration_notes": "Paragraph function and reader construction both point to the same gap \u2014 a governing claim \u2014 so they unify cleanly into one instructional target"
+          },
+          "instructional_reasoning": {
+            "applies": true,
+            "current_unit_of_writing": "paragraph",
+            "active_instructional_element": "Central Claim",
+            "element_communicative_purpose": "Assert a clear, supportable position the reader is asked to accept",
+            "student_current_organization": "Has a position ('phones should be allowed') but the controlling idea is vague ('help people'); three reasons compete without hierarchy; no single governing assertion",
+            "canonical_performance_structure": "State a clear position; define its scope; qualify when necessary; make it supportable through reasons and evidence",
+            "primary_developmental_tension": "Position is present but claim is not yet a genuine assertion \u2014 'help people' is too vague to be contestable or to organize the reasons",
+            "next_student_act": "Write one sentence stating position + strongest reason \u2014 a claim a skeptical reader could push back on",
+            "selected_developmental_resources": [
+              "brief direct explanation",
+              "focused question",
+              "naive-reader perspective"
+            ],
+            "resource_selection_rationale": "Brief explanation names what a claim does (vs. a topic or vague opinion); focused question invites the student to perform the act; naive-reader perspective surfaces why specificity matters",
+            "evidence_of_developmental_movement": "initial",
+            "degree_of_student_control": "scaffolded",
+            "continue_consolidate_release_or_shift": "continue"
+          },
+          "current_organization": "Position stated (allow phones); three loosely coordinated reasons (emergencies, research, fairness); no governing claim unifies them; no examples yet.",
+          "observed_differentiations": [
+            "position vs. no-position present",
+            "three distinct reasons identified"
+          ],
+          "observed_integrations": [],
+          "observed_coordinations": [],
+          "emerging_intentional_control": "Student can state a position and generate multiple reasons; coordination of reasons under one claim is the emerging next capacity",
+          "unresolved_tensions": [
+            "Which reason should govern the claim?",
+            "Is the fairness argument a separate claim or supporting the primary one?"
+          ],
+          "cultural_resources_in_use": [
+            "position statement (implicit)"
+          ],
+          "potential_cultural_resources": [
+            "Central Claim / Thesis",
+            "Supporting Claim",
+            "Example"
+          ],
+          "possible_reorganizations": [
+            "Student selects one reason as the governing claim and subordinates the others as support",
+            "Student integrates emergency + research into one 'academic and safety value' claim"
+          ],
+          "current_uncertainty": [
+            "Student's intended primary reason is unclear from the draft"
+          ],
+          "supporting_evidence": [
+            "Student states a clear position in sentence 1",
+            "Three reasons are present and all relevant to the debate"
+          ],
+          "complicating_evidence": [
+            "'Help people' is vague \u2014 not yet a contestable claim",
+            "Fairness argument is structurally different from the other two reasons and may reflect a competing organizational logic"
+          ],
+          "alternative_interpretations": [
+            "The fairness sentence may be the student's real primary claim, not a third reason",
+            "The student may understand a claim as simply stating an opinion, not as requiring supportability"
+          ],
+          "currently_relevant_domains": [
+            "Central Claim / Thesis",
+            "Paragraph Purpose"
+          ],
+          "changes_since_previous": "initial"
+        },
+        "theory_history": [
+          {
+            "version": 1,
+            "telos": {
+              "governing_pedagogical_purpose": "Help the student clarify and develop their position so a reader understands and is persuaded, and understand what each part of the writing is doing for the reader.",
+              "immediate_task_purpose": "Write one paragraph arguing your position, with reasons and examples.",
+              "teacher_intentions": "The writer is a high school student. Respond developmentally to their actual paragraph.",
+              "assignment_context": "Some schools have banned personal cell phones during class. Write one paragraph arguing whether your school should allow or ban personal cell phones during class. Take a clear position and support it with reasons and examples.",
+              "audience_or_communicative_purpose": "",
+              "unresolved_ambiguity": "",
+              "telos_changed": ""
+            },
+            "theory": {
+              "current_telos": "",
+              "communicative_purpose": {
+                "primary": "",
+                "secondary": [],
+                "inferred_from": "",
+                "uncertainty": ""
+              },
+              "paragraph_function": {
+                "applies": false,
+                "purpose": "",
+                "contribution_to_whole": "",
+                "coherence": "",
+                "development": "",
+                "placement": ""
+              },
+              "evidence_function": {
+                "applies": false,
+                "forms": [],
+                "function": "",
+                "interpretation_gap": "",
+                "quality": ""
+              },
+              "coherence_function": {
+                "applies": false,
+                "intended_relationship": "",
+                "level": "",
+                "resources_in_use": [],
+                "reader_can_follow": ""
+              },
+              "conclusion_function": {
+                "applies": false,
+                "functions_in_play": [],
+                "completes_purpose": "",
+                "relationship_to_opening": "",
+                "final_understanding": ""
+              },
+              "scaffolding_control": {
+                "current_unit": "",
+                "diagnosed_opportunities": [],
+                "primary_target": "",
+                "prioritization_rationale": "",
+                "instructional_mode": "",
+                "postponed": [],
+                "cycle_status": "",
+                "stopping_reason": "",
+                "future_opportunity": ""
+              },
+              "reader_construction": {
+                "applies": false,
+                "reader_understanding": "",
+                "likely_reader_questions": [],
+                "assumed_knowledge": "",
+                "clarification_needed": "",
+                "elaboration_needed": "",
+                "precision_risk": "",
+                "next_reader_need": ""
+              },
+              "revision_development": {
+                "applies": false,
+                "development_detected": "",
+                "primary_growth": "",
+                "communication_change": "",
+                "reader_change": "",
+                "remaining_opportunity": "",
+                "transfer_message": ""
+              },
+              "integration_calibration": {
+                "applies": false,
+                "primary_framework": "",
+                "supporting_frameworks": [],
+                "calibration_check": "",
+                "consistency_check": "",
+                "integration_notes": ""
+              },
+              "instructional_reasoning": {
+                "applies": true,
+                "current_unit_of_writing": "",
+                "active_instructional_element": "",
+                "element_communicative_purpose": "",
+                "student_current_organization": "",
+                "canonical_performance_structure": "",
+                "primary_developmental_tension": "",
+                "next_student_act": "",
+                "selected_developmental_resources": [],
+                "resource_selection_rationale": "",
+                "evidence_of_developmental_movement": "",
+                "degree_of_student_control": "",
+                "continue_consolidate_release_or_shift": ""
+              },
+              "current_organization": "",
+              "observed_differentiations": [],
+              "observed_integrations": [],
+              "observed_coordinations": [],
+              "emerging_intentional_control": "",
+              "unresolved_tensions": [],
+              "cultural_resources_in_use": [],
+              "potential_cultural_resources": [],
+              "possible_reorganizations": [],
+              "current_uncertainty": [],
+              "supporting_evidence": [],
+              "complicating_evidence": [],
+              "alternative_interpretations": [],
+              "currently_relevant_domains": [],
+              "changes_since_previous": ""
+            },
+            "created_at": "2026-07-26T18:06:20.206439+00:00"
+          }
+        ],
+        "interactions": [
+          {
+            "id": "6b4bb114-810f-4f97-89b0-388c64264cde",
+            "student_kind": "writing",
+            "student_content": "I think phones should be allowed because they help people. Sometimes students need them if something happens at home, and they can also help us look things up. It isn't fair that everyone loses their phones because a few students don't pay attention.",
+            "candidate_invitations": [
+              {
+                "invitation": "You have a position and three reasons \u2014 now try to put them together: write one sentence that states your position AND gives your single strongest reason, in a way a skeptical reader could actually push back on.",
+                "developmental_possibility": "Student consolidates scattered reasons into a governing claim with a reason embedded",
+                "coherence_with_telos": "Directly targets the prerequisite for developing evidence and explanation",
+                "intended_participation": "Student selects one reason and drafts a focused claim sentence",
+                "what_ai_could_learn": "Which reason the student considers primary; whether the student understands contestability",
+                "uncertainty_or_risk": "Student may simply restate 'phones help people' without sharpening"
+              },
+              {
+                "invitation": "A claim gives a reader something to weigh \u2014 it has to be something a thoughtful person could disagree with. Looking at your three reasons, which one do you think is hardest for someone to argue against, and why?",
+                "developmental_possibility": "Student begins evaluating reasons by contestability and persuasive force",
+                "coherence_with_telos": "Builds toward a focused, arguable claim; surfaces the student's own reasoning about priority",
+                "intended_participation": "Student identifies and explains their strongest reason",
+                "what_ai_could_learn": "Student's implicit logic for ranking reasons; whether contestability is understood",
+                "uncertainty_or_risk": "May stay at the level of preference ('I like this one') without reasoning about persuasion"
+              }
+            ],
+            "selected_invitation": {
+              "invitation": "You've taken a clear position \u2014 phones should be allowed \u2014 and you've given three different reasons. Right now, though, a reader might ask: what's the ONE main thing you most want them to accept? A claim does real work when it says something a thoughtful person could push back on and gives a reason why your side is right. Try writing one sentence that states your position AND gives your strongest reason for it \u2014 what would you most want a skeptical reader to walk away believing?",
+              "selection_basis": "Combines the direct explanation of what a claim does with a focused performance request; more coherent with the student's actual draft than the second candidate, which risks staying abstract"
+            },
+            "intervention": {
+              "type": "instruct_then_invite",
+              "interpretation": "Student has a position and reasons but no single governing assertion \u2014 'help people' is too vague to organize the paragraph or give the reader something to accept",
+              "instruction": "A claim (the controlling idea of an argument) does real work when it says something a thoughtful person could actually dispute \u2014 not just a topic or a vague preference. It states your position AND gives the reader a reason to weigh.",
+              "consolidation": "",
+              "cultural_resource": "Central Claim",
+              "timing_rationale": "Student lacks the concept of a governing, contestable claim \u2014 instruction is warranted before further development of reasons or examples",
+              "focus": "writing",
+              "writing_not_content_check": "Teaches the function of a claim (contestable assertion that organizes support) \u2014 supplies no argument, reason, or content of the student's own"
+            },
+            "observed_reorganization": "initial",
+            "created_at": "2026-07-26T18:06:20.206491+00:00"
+          }
+        ],
+        "developmental_profile": [
+          {
+            "element": "Central Claim",
+            "control_statement": "Can state a position; generates multiple reasons; has not yet consolidated them into a single governing contestable claim",
+            "trend": "emerging",
+            "evidence": "First draft has clear position but vague controlling idea ('help people'); three reasons present but unranked and unanchored to one claim",
+            "episodes": 1,
+            "updated_at": "2026-07-26T18:06:20.206461+00:00"
+          },
+          {
+            "element": "Evidence",
+            "control_statement": "Reasons named but no concrete examples or developed support yet",
+            "trend": "confused",
+            "evidence": "Assignment requires examples; none appear in the draft; reasons are asserted only",
+            "episodes": 1,
+            "updated_at": "2026-07-26T18:06:20.206466+00:00"
+          }
+        ],
+        "revision_history": [],
+        "teacher_edits": [],
+        "is_preview": false,
+        "preview_analytics": {},
+        "experience_control": null,
+        "reasoning_mode": "exhaustive",
+        "teacher_id": "",
+        "config_id": "",
+        "assignment_code": "",
+        "student_name": "",
+        "origin_representation": {},
+        "created_at": "2026-07-26T18:05:08.780171+00:00",
+        "updated_at": "2026-07-26T18:06:20.206496+00:00"
+      }
+    },
+    {
+      "id": "student-b",
+      "label": "Student B",
+      "assignment": "Some schools have banned personal cell phones during class. Write one paragraph arguing whether your school should allow or ban personal cell phones during class. Take a clear position and support it with reasons and examples.",
+      "response": "I believe our school should allow personal cell phones during class. Phones can actually help students learn because we can look up information quickly and use apps for studying. Some teachers even use phones for classroom activities like polls. As long as students use them responsibly, phones can be a useful tool instead of a distraction.",
+      "session": {
+        "id": "408fb994-f1e2-46d1-b214-291033dc3dda",
+        "assignment": "Some schools have banned personal cell phones during class. Write one paragraph arguing whether your school should allow or ban personal cell phones during class. Take a clear position and support it with reasons and examples.",
+        "pedagogical_purpose": "Help the student clarify and develop their position so a reader understands and is persuaded, and understand what each part of the writing is doing for the reader.",
+        "current_writing_task": "Write one paragraph arguing your position, with reasons and examples.",
+        "teacher_notes": "The writer is a high school student. Respond developmentally to their actual paragraph.",
+        "assignment_prompt": "",
+        "turns": [
+          {
+            "id": "2dd5f706-1547-45a0-a027-1c25784a5aba",
+            "role": "student",
+            "kind": "writing",
+            "content": "I believe our school should allow personal cell phones during class. Phones can actually help students learn because we can look up information quickly and use apps for studying. Some teachers even use phones for classroom activities like polls. As long as students use them responsibly, phones can be a useful tool instead of a distraction.",
+            "status": "complete",
+            "reasoning_path": "",
+            "created_at": "2026-07-26T18:05:08.787720+00:00"
+          },
+          {
+            "id": "ef983274-4aa4-47f3-a384-f96590cc90db",
+            "role": "ai",
+            "kind": "invitation",
+            "content": "Your paragraph takes a clear position and gives a few reasons \u2014 that's a real start. Right now, your claim tells the reader what you believe, but a persuasive claim also gives the reader a reason to accept it, not just a statement of your view. Try this: reread your opening sentence and ask yourself, \"What would make a skeptical reader question this?\" Then revise that sentence so it not only states your position but also signals *why* phones belong in class \u2014 so the reader knows from the start what your argument is asking them to accept.",
+            "status": "complete",
+            "reasoning_path": "exhaustive_full",
+            "created_at": "2026-07-26T18:05:08.787734+00:00"
+          }
+        ],
+        "telos": {
+          "governing_pedagogical_purpose": "Help the student clarify and develop their position so a reader understands and is persuaded, and understand what each part of the writing is doing for the reader.",
+          "immediate_task_purpose": "Write one paragraph arguing your position, with reasons and examples.",
+          "teacher_intentions": "The writer is a high school student. Respond developmentally to their actual paragraph.",
+          "assignment_context": "Some schools have banned personal cell phones during class. Write one paragraph arguing whether your school should allow or ban personal cell phones during class. Take a clear position and support it with reasons and examples.",
+          "audience_or_communicative_purpose": "Persuade a reader (likely teacher/peers) that cell phones should be allowed in class.",
+          "unresolved_ambiguity": "",
+          "telos_changed": "no change"
+        },
+        "theory": {
+          "current_telos": "Student writes one persuasive paragraph with a clear, supported position on cell phones in class.",
+          "communicative_purpose": {
+            "primary": "persuade",
+            "secondary": [
+              "explain"
+            ],
+            "inferred_from": "assignment instructions and student's draft opening ('I believe...should allow')",
+            "uncertainty": ""
+          },
+          "paragraph_function": {
+            "applies": true,
+            "purpose": "Argue that phones should be allowed in class by stating a position and offering reasons and an example.",
+            "contribution_to_whole": "This is the whole piece; it must carry the entire persuasive burden.",
+            "coherence": "Sentences broadly cohere around the position, but the governing idea is a simple opinion rather than a developed claim; the conditional closing slightly reframes the argument without tying back to the opening.",
+            "development": "Two reasons (information access, study apps) plus one teacher-use example; reasons are asserted but not interpreted for the reader.",
+            "placement": "Single-paragraph task; opening, body, and closing all present."
+          },
+          "evidence_function": {
+            "applies": true,
+            "forms": [
+              "example (teacher polls)",
+              "general assertion (look up information, study apps)"
+            ],
+            "function": "Illustrate that phones have educational uses, meant to support the allow-phones position.",
+            "interpretation_gap": "Reasons and example are stated but not explained \u2014 the reader is told phones help but not shown *why* or *how* that earns the position; evidence-claim link is assumed.",
+            "quality": "Relevant to the topic; insufficient for a skeptical reader \u2014 examples are brief and undeveloped; no interpretation connects them to the central claim."
+          },
+          "coherence_function": {
+            "applies": true,
+            "intended_relationship": "elaboration \u2014 each sentence adds a reason or condition supporting the opening position",
+            "level": "paragraph-level",
+            "resources_in_use": [
+              "shared vocabulary (phones, students)",
+              "logical progression (position \u2192 reasons \u2192 example \u2192 qualifier)"
+            ],
+            "reader_can_follow": "Mostly yes at the surface; but the closing conditional ('as long as') introduces a new framing (responsibility) not set up by the opening claim, creating a mild logical gap."
+          },
+          "conclusion_function": {
+            "applies": true,
+            "functions_in_play": [
+              "reinforce position",
+              "qualify scope"
+            ],
+            "completes_purpose": "Partially \u2014 it restates the position with a qualifier but doesn't synthesize the reasons or explain their significance for the reader.",
+            "relationship_to_opening": "Returns to the allow/ban choice from the opening but reframes around responsibility rather than the reasons given.",
+            "final_understanding": "Reader understands the writer wants phones allowed; less clear why the specific reasons given make the case."
+          },
+          "scaffolding_control": {
+            "current_unit": "whole paragraph",
+            "diagnosed_opportunities": [
+              "Central claim is an opinion statement rather than a contestable, reasoned position",
+              "Reasons are asserted without explanation linking them to the claim",
+              "Evidence (poll example) is undeveloped and not interpreted",
+              "Closing conditional introduces 'responsibility' not anchored to the opening claim"
+            ],
+            "primary_target": "Central Claim \u2014 sharpen from opinion statement to a reasoned, contestable position",
+            "prioritization_rationale": "Claim is the prerequisite; evidence and explanation cannot do persuasive work until the claim gives the reader something to weigh. This is the highest-leverage first move.",
+            "instructional_mode": "developmental_question",
+            "postponed": [
+              "evidence interpretation",
+              "explanation of reasons",
+              "coherence of closing qualifier"
+            ],
+            "cycle_status": "continue",
+            "stopping_reason": "",
+            "future_opportunity": "Once claim is sharpened, target explanation \u2014 student needs to show *why* the reasons establish the claim, not just state them."
+          },
+          "reader_construction": {
+            "applies": true,
+            "reader_understanding": "The reader knows the writer wants phones allowed and has three reasons: quick lookup, study apps, teacher polls.",
+            "likely_reader_questions": [
+              "Why do those specific uses mean phones should be *allowed* rather than just supervised?",
+              "What makes this position worth accepting over the ban side?"
+            ],
+            "assumed_knowledge": "Reader is assumed to find the connection between 'useful tool' and 'should be allowed' self-evident \u2014 reasonable inference but the claim doesn't earn it.",
+            "clarification_needed": "The opening sentence states a belief but doesn't tell the reader what the argument hinges on.",
+            "elaboration_needed": "Why the stated reasons establish the 'allow' position rather than, say, a regulated-use policy.",
+            "precision_risk": "\"As long as students use them responsibly\" could be read as conceding the opposition's main concern without answering it.",
+            "next_reader_need": "A claim that signals not just the position but the reasoning the argument will develop."
+          },
+          "revision_development": {
+            "applies": false,
+            "development_detected": "",
+            "primary_growth": "",
+            "communication_change": "",
+            "reader_change": "",
+            "remaining_opportunity": "",
+            "transfer_message": ""
+          },
+          "integration_calibration": {
+            "applies": true,
+            "primary_framework": "Central Claim (M6 communicative purpose + instructional reasoning)",
+            "supporting_frameworks": [
+              "reader_construction (reader needs a reason to accept, not just know, the position)",
+              "paragraph_function (governing idea is too thin to organize the persuasive work)"
+            ],
+            "calibration_check": "Proportional \u2014 paragraph has real content; the single most important gap is the claim's lack of a contestable, reasoned structure. Not over-teaching: one clear invitation.",
+            "consistency_check": "Yes \u2014 any first persuasive draft with an opinion-only opening sentence would receive this same priority.",
+            "integration_notes": "Reader construction and paragraph function both converge on the same gap: the claim doesn't yet give the reader or the paragraph a reason-anchored governing idea. Unified into one claim-focused invitation."
+          },
+          "instructional_reasoning": {
+            "applies": true,
+            "current_unit_of_writing": "whole paragraph (single-paragraph task)",
+            "active_instructional_element": "Central Claim",
+            "element_communicative_purpose": "Assert a clear, supportable position the reader is asked to accept.",
+            "student_current_organization": "Student states a genuine position ('I believe...should allow') and lists reasons, but the claim is an opinion declaration rather than a reasoned, contestable assertion; the reader is told what to believe but not given grounds within the claim itself.",
+            "canonical_performance_structure": "State a clear position; define its scope; qualify when necessary; make it supportable through reasons and evidence.",
+            "primary_developmental_tension": "Opinion is present but the claim lacks the reasoning structure that makes it contestable and that organizes the support to follow.",
+            "next_student_act": "Revise the opening claim to embed the reasoning \u2014 state the position AND signal why it holds, so a skeptical reader has something to weigh.",
+            "selected_developmental_resources": [
+              "focused question",
+              "naive-reader perspective",
+              "request for revision"
+            ],
+            "resource_selection_rationale": "Focused question surfaces what the student already knows ('what would a skeptic question?'); naive-reader perspective makes the gap concrete without lecturing; request for revision ensures the student performs the act.",
+            "evidence_of_developmental_movement": "initial",
+            "degree_of_student_control": "emerging",
+            "continue_consolidate_release_or_shift": "continue"
+          },
+          "current_organization": "Opens with a position statement, offers two reasons (quick info lookup, study apps) plus one example (polls), closes with a conditional qualifier.",
+          "observed_differentiations": [
+            "position vs. topic (student has a position, not just a topic)",
+            "useful tool vs. distraction (student names the opposition implicitly)"
+          ],
+          "observed_integrations": [
+            "reasons grouped under the allow-phones position"
+          ],
+          "observed_coordinations": [
+            "closing qualifier attempts to scope the claim but is not yet coordinated with the opening"
+          ],
+          "emerging_intentional_control": "Student shapes a position with supporting reasons \u2014 shows awareness that argument requires support.",
+          "unresolved_tensions": [
+            "closing 'responsible use' qualifier may undercut or redirect the claim rather than support it"
+          ],
+          "cultural_resources_in_use": [
+            "position statement",
+            "reasons",
+            "example"
+          ],
+          "potential_cultural_resources": [
+            "claim plus reasoning (because-structure)",
+            "interpretation/warrant linking evidence to claim"
+          ],
+          "possible_reorganizations": [
+            "opening claim revised to include a because-structure that anchors the reasons",
+            "closing qualifier integrated back into the claim's scope"
+          ],
+          "current_uncertainty": [
+            "whether student understands the difference between stating an opinion and making a contestable claim",
+            "whether closing qualifier reflects a genuine concession or is a formulaic hedge"
+          ],
+          "supporting_evidence": [
+            "paragraph does address the assignment directly",
+            "three distinct supports are present"
+          ],
+          "complicating_evidence": [
+            "reasons are asserted without explanation, so the persuasive work is thin even if the claim improves"
+          ],
+          "alternative_interpretations": [
+            "student may already grasp claim-with-reasoning and just needs to make it explicit",
+            "closing qualifier could be a deliberate concession move, not a gap"
+          ],
+          "currently_relevant_domains": [
+            "Central Claim / Thesis",
+            "Paragraph Purpose",
+            "Evidence",
+            "Explanation / Analysis"
+          ],
+          "changes_since_previous": "initial"
+        },
+        "theory_history": [
+          {
+            "version": 1,
+            "telos": {
+              "governing_pedagogical_purpose": "Help the student clarify and develop their position so a reader understands and is persuaded, and understand what each part of the writing is doing for the reader.",
+              "immediate_task_purpose": "Write one paragraph arguing your position, with reasons and examples.",
+              "teacher_intentions": "The writer is a high school student. Respond developmentally to their actual paragraph.",
+              "assignment_context": "Some schools have banned personal cell phones during class. Write one paragraph arguing whether your school should allow or ban personal cell phones during class. Take a clear position and support it with reasons and examples.",
+              "audience_or_communicative_purpose": "",
+              "unresolved_ambiguity": "",
+              "telos_changed": ""
+            },
+            "theory": {
+              "current_telos": "",
+              "communicative_purpose": {
+                "primary": "",
+                "secondary": [],
+                "inferred_from": "",
+                "uncertainty": ""
+              },
+              "paragraph_function": {
+                "applies": false,
+                "purpose": "",
+                "contribution_to_whole": "",
+                "coherence": "",
+                "development": "",
+                "placement": ""
+              },
+              "evidence_function": {
+                "applies": false,
+                "forms": [],
+                "function": "",
+                "interpretation_gap": "",
+                "quality": ""
+              },
+              "coherence_function": {
+                "applies": false,
+                "intended_relationship": "",
+                "level": "",
+                "resources_in_use": [],
+                "reader_can_follow": ""
+              },
+              "conclusion_function": {
+                "applies": false,
+                "functions_in_play": [],
+                "completes_purpose": "",
+                "relationship_to_opening": "",
+                "final_understanding": ""
+              },
+              "scaffolding_control": {
+                "current_unit": "",
+                "diagnosed_opportunities": [],
+                "primary_target": "",
+                "prioritization_rationale": "",
+                "instructional_mode": "",
+                "postponed": [],
+                "cycle_status": "",
+                "stopping_reason": "",
+                "future_opportunity": ""
+              },
+              "reader_construction": {
+                "applies": false,
+                "reader_understanding": "",
+                "likely_reader_questions": [],
+                "assumed_knowledge": "",
+                "clarification_needed": "",
+                "elaboration_needed": "",
+                "precision_risk": "",
+                "next_reader_need": ""
+              },
+              "revision_development": {
+                "applies": false,
+                "development_detected": "",
+                "primary_growth": "",
+                "communication_change": "",
+                "reader_change": "",
+                "remaining_opportunity": "",
+                "transfer_message": ""
+              },
+              "integration_calibration": {
+                "applies": false,
+                "primary_framework": "",
+                "supporting_frameworks": [],
+                "calibration_check": "",
+                "consistency_check": "",
+                "integration_notes": ""
+              },
+              "instructional_reasoning": {
+                "applies": true,
+                "current_unit_of_writing": "",
+                "active_instructional_element": "",
+                "element_communicative_purpose": "",
+                "student_current_organization": "",
+                "canonical_performance_structure": "",
+                "primary_developmental_tension": "",
+                "next_student_act": "",
+                "selected_developmental_resources": [],
+                "resource_selection_rationale": "",
+                "evidence_of_developmental_movement": "",
+                "degree_of_student_control": "",
+                "continue_consolidate_release_or_shift": ""
+              },
+              "current_organization": "",
+              "observed_differentiations": [],
+              "observed_integrations": [],
+              "observed_coordinations": [],
+              "emerging_intentional_control": "",
+              "unresolved_tensions": [],
+              "cultural_resources_in_use": [],
+              "potential_cultural_resources": [],
+              "possible_reorganizations": [],
+              "current_uncertainty": [],
+              "supporting_evidence": [],
+              "complicating_evidence": [],
+              "alternative_interpretations": [],
+              "currently_relevant_domains": [],
+              "changes_since_previous": ""
+            },
+            "created_at": "2026-07-26T18:06:35.577400+00:00"
+          }
+        ],
+        "interactions": [
+          {
+            "id": "9ed2eea0-6bce-4788-a1f3-16b62a06e870",
+            "student_kind": "writing",
+            "student_content": "I believe our school should allow personal cell phones during class. Phones can actually help students learn because we can look up information quickly and use apps for studying. Some teachers even use phones for classroom activities like polls. As long as students use them responsibly, phones can be a useful tool instead of a distraction.",
+            "candidate_invitations": [
+              {
+                "invitation": "Your opening states what you believe, but a persuasive claim also signals *why* \u2014 so a reader knows what your argument is asking them to accept. Reread your first sentence and ask: what would a skeptical reader question about it? Then revise it to include the reasoning, not just the position.",
+                "developmental_possibility": "Student moves from opinion declaration to reasoned, contestable claim.",
+                "coherence_with_telos": "Directly targets the prerequisite for persuasion: a claim the reader can weigh.",
+                "intended_participation": "Student interrogates their own claim and revises it to include a because-structure.",
+                "what_ai_could_learn": "Whether student can identify contestability and embed reasoning, or needs the because-structure modeled abstractly.",
+                "uncertainty_or_risk": "Student may narrow the claim awkwardly; the reasons already in the paragraph may not fit a revised opening."
+              },
+              {
+                "invitation": "A persuasive claim does two things: states a position AND gives the reader a reason to take it seriously. Right now your opening does the first but not the second. Try adding a 'because' to your opening sentence \u2014 what is the core reason your position rests on? \u2014 and see how that changes what the rest of the paragraph needs to do.",
+                "developmental_possibility": "Student learns the because-structure as a tool and tests it against their own draft.",
+                "coherence_with_telos": "Introduces a canonical resource (claim plus reasoning) directly tied to the persuasive purpose.",
+                "intended_participation": "Student attempts a because-revision of the claim and observes how it reorients the support.",
+                "what_ai_could_learn": "Whether the because-structure is productive or whether the student's reasons are too diffuse to consolidate into one.",
+                "uncertainty_or_risk": "May feel formulaic; student might produce a mechanical 'because A, B, C' list rather than a genuinely reasoned claim."
+              }
+            ],
+            "selected_invitation": {
+              "invitation": "Your paragraph takes a clear position and gives a few reasons \u2014 that's a real start. Right now, your claim tells the reader what you believe, but a persuasive claim also gives the reader a reason to accept it, not just a statement of your view. Try this: reread your opening sentence and ask yourself, \"What would make a skeptical reader question this?\" Then revise that sentence so it not only states your position but also signals *why* phones belong in class \u2014 so the reader knows from the start what your argument is asking them to accept.",
+              "selection_basis": "Combines the skeptic-question approach (developmentally appropriate for emerging claim control) with a concrete revision act, without supplying the because-content for the student. Coherent with the persuasive telos and the initial developmental state."
+            },
+            "intervention": {
+              "type": "instruct_then_invite",
+              "interpretation": "Student has a genuine position and supporting reasons but the claim functions as an opinion declaration rather than a contestable, reasoned assertion.",
+              "instruction": "A persuasive claim (Central Claim) does more than state what you believe \u2014 it gives the reader a reason to weigh your position. The difference: 'I believe X' tells the reader your view; 'X because Y' gives them the reasoning to evaluate. Writers use this because a skeptical reader needs to know not just what you claim but why it holds.",
+              "consolidation": "",
+              "cultural_resource": "Central Claim / claim plus reasoning (because-structure)",
+              "timing_rationale": "First draft, no prior developmental profile; claim is the prerequisite for all other persuasive work; student is ready to engage the concept since a position and reasons already exist.",
+              "focus": "writing",
+              "writing_not_content_check": "Teaches the function of a contestable, reasoned claim; invitation asks student to interrogate and revise their own sentence \u2014 supplies no substantive ideas."
+            },
+            "observed_reorganization": "initial",
+            "created_at": "2026-07-26T18:06:35.577452+00:00"
+          }
+        ],
+        "developmental_profile": [
+          {
+            "element": "Central Claim",
+            "control_statement": "States a clear position on the topic but frames it as an opinion declaration; reasons are present but not yet embedded in the claim structure.",
+            "trend": "emerging",
+            "evidence": "Opening sentence 'I believe our school should allow...' names a position without contestable reasoning; three supports follow but are disconnected from the claim's logic.",
+            "episodes": 1,
+            "updated_at": "2026-07-26T18:06:35.577422+00:00"
+          },
+          {
+            "element": "Evidence",
+            "control_statement": "Offers topically relevant support (lookup, apps, polls) but does not interpret how any piece earns the claim.",
+            "trend": "emerging",
+            "evidence": "Three supports present; none connected to the claim via explicit reasoning; poll example is the most concrete but undeveloped.",
+            "episodes": 1,
+            "updated_at": "2026-07-26T18:06:35.577428+00:00"
+          }
+        ],
+        "revision_history": [],
+        "teacher_edits": [],
+        "is_preview": false,
+        "preview_analytics": {},
+        "experience_control": null,
+        "reasoning_mode": "exhaustive",
+        "teacher_id": "",
+        "config_id": "",
+        "assignment_code": "",
+        "student_name": "",
+        "origin_representation": {},
+        "created_at": "2026-07-26T18:05:08.777709+00:00",
+        "updated_at": "2026-07-26T18:06:35.577456+00:00"
+      }
+    },
+    {
+      "id": "student-c",
+      "label": "Student C",
+      "assignment": "Some schools have banned personal cell phones during class. Write one paragraph arguing whether your school should allow or ban personal cell phones during class. Take a clear position and support it with reasons and examples.",
+      "response": "While many worry that cell phones distract students, our school should allow them during class under clear guidelines. Phones are powerful learning tools: students can access research, translate unfamiliar terms, and organize assignments in seconds. A complete ban assumes students cannot learn self-control, yet responsible use is itself a skill worth teaching. Rather than removing phones entirely, teachers could set 'phone-on' and 'phone-off' times, helping students practice the judgment they will need long after high school.",
+      "session": {
+        "id": "580d72f2-f433-4ea4-b5a6-d397432b73ce",
+        "assignment": "Some schools have banned personal cell phones during class. Write one paragraph arguing whether your school should allow or ban personal cell phones during class. Take a clear position and support it with reasons and examples.",
+        "pedagogical_purpose": "Help the student clarify and develop their position so a reader understands and is persuaded, and understand what each part of the writing is doing for the reader.",
+        "current_writing_task": "Write one paragraph arguing your position, with reasons and examples.",
+        "teacher_notes": "The writer is a high school student. Respond developmentally to their actual paragraph.",
+        "assignment_prompt": "",
+        "turns": [
+          {
+            "id": "cf83f6dd-19da-460c-a1d0-e1d95daade0c",
+            "role": "student",
+            "kind": "writing",
+            "content": "While many worry that cell phones distract students, our school should allow them during class under clear guidelines. Phones are powerful learning tools: students can access research, translate unfamiliar terms, and organize assignments in seconds. A complete ban assumes students cannot learn self-control, yet responsible use is itself a skill worth teaching. Rather than removing phones entirely, teachers could set 'phone-on' and 'phone-off' times, helping students practice the judgment they will need long after high school.",
+            "status": "complete",
+            "reasoning_path": "",
+            "created_at": "2026-07-26T18:05:08.788845+00:00"
+          },
+          {
+            "id": "ad286be0-db8c-4d1b-a0cd-70e52f69d1a7",
+            "role": "ai",
+            "kind": "invitation",
+            "content": "You've written a paragraph that takes a clear position and gives the reader three distinct reasons \u2014 that's real argumentative work. Here's a question worth sitting with: your third reason (that responsible use is a skill worth teaching) is doing something different from the first two \u2014 it's making a claim about *what schools should develop in students*, not just what phones can do. Can you say, in your own words, what that reason is actually asking your reader to believe, and why someone might push back on it?",
+            "status": "complete",
+            "reasoning_path": "exhaustive_full",
+            "created_at": "2026-07-26T18:05:08.788856+00:00"
+          }
+        ],
+        "telos": {
+          "governing_pedagogical_purpose": "Help the student clarify and develop their position so a reader understands and is persuaded, and understand what each part of the writing is doing for the reader.",
+          "immediate_task_purpose": "Write one paragraph arguing your position, with reasons and examples.",
+          "teacher_intentions": "High school student; respond developmentally to their actual paragraph.",
+          "assignment_context": "Argue whether school should allow or ban cell phones during class; take a clear position, support with reasons and examples.",
+          "audience_or_communicative_purpose": "Persuade a reader (likely school community / skeptical adult) to accept the position.",
+          "unresolved_ambiguity": "No examples in the canonical sense (specific cases, anecdotes, data) \u2014 the paragraph uses reasons/rationale but not illustrative examples; worth monitoring.",
+          "telos_changed": "no change"
+        },
+        "theory": {
+          "current_telos": "Student writes one persuasive paragraph: clear position + reasons + examples; reader understands and is persuaded.",
+          "communicative_purpose": {
+            "primary": "persuade",
+            "secondary": [
+              "explain"
+            ],
+            "inferred_from": "assignment prompt + student's draft structure (position + reasons + recommendation)",
+            "uncertainty": ""
+          },
+          "paragraph_function": {
+            "applies": true,
+            "purpose": "State and support a position that phones should be allowed with guidelines, advancing it through three coordinated reasons.",
+            "contribution_to_whole": "This is the sole paragraph; it must carry the entire argument \u2014 claim, support, and some resolution.",
+            "coherence": "Sentences build logically: concession \u2192 claim \u2192 reason 1 \u2192 reason 2 \u2192 reason 3/recommendation. Controlling idea (allow with guidelines) governs throughout. No disruptive shifts.",
+            "development": "Reasons/rationale; brief illustration (translate, organize); implicit consequence (structured phone times). No concrete examples from real cases.",
+            "placement": "Single-paragraph argument \u2014 opener, body, and close all within one unit."
+          },
+          "evidence_function": {
+            "applies": true,
+            "forms": [
+              "rationale/reasons",
+              "brief functional illustrations (research, translate, organize)"
+            ],
+            "function": "The brief illustrations ground reason 1 (phones as learning tools) for the reader. Reasons 2 and 3 are asserted without grounding.",
+            "interpretation_gap": "Reason 2 (self-control as a skill) and reason 3 (structured use) are stated but not interpreted \u2014 the reader is not told WHY these count as sufficient grounds for the claim.",
+            "quality": "Reason 1 is moderately grounded; reasons 2 and 3 are asserted. No external evidence, statistics, or specific examples for any reason. Sufficient for a single-paragraph task but the second and third reasons need more interpretive work."
+          },
+          "coherence_function": {
+            "applies": true,
+            "intended_relationship": "elaboration/logical build across reasons; concession-then-claim at the opening",
+            "level": "paragraph-level",
+            "resources_in_use": [
+              "concession opener ('While many worry')",
+              "colon introducing elaboration",
+              "logical connective ('yet')",
+              "transition phrase ('Rather than')",
+              "implied cause-effect in reason 3"
+            ],
+            "reader_can_follow": "Yes \u2014 the logical sequence is clear. The concession-claim move at the start is controlled."
+          },
+          "conclusion_function": {
+            "applies": false,
+            "functions_in_play": [],
+            "completes_purpose": "",
+            "relationship_to_opening": "",
+            "final_understanding": ""
+          },
+          "scaffolding_control": {
+            "current_unit": "whole paragraph",
+            "diagnosed_opportunities": [
+              "Reason 2 (self-control as skill) is asserted without interpretation \u2014 reader not told why this earns the claim",
+              "No concrete examples anywhere in the paragraph (assignment calls for examples)",
+              "Reason 3 (structured use / teacher-led times) is both a reason and a recommendation \u2014 its connection to the central claim is implicit",
+              "Central claim is clear and arguable \u2014 no work needed there"
+            ],
+            "primary_target": "Interpretation of reason 2 \u2014 student can deepen their understanding of what it means for a reason to earn a claim (evidence-interpretation relationship), which is the highest-leverage gap and a prerequisite to working on examples",
+            "prioritization_rationale": "Reason 2 makes a substantive claim about school purpose (self-control as a teachable skill) that a reader could contest; the student has not yet helped the reader see WHY that claim is persuasive. This is the most intellectually rich gap and teaches a transferable principle. Concrete examples are also missing (assignment requirement) but the interpretation gap is the prerequisite \u2014 once the student understands how reasons earn claims, adding examples follows naturally.",
+            "instructional_mode": "developmental_question",
+            "postponed": [
+              "concrete examples for reasons 1\u20133",
+              "connection between reason 3 and the central claim"
+            ],
+            "cycle_status": "continue",
+            "stopping_reason": "",
+            "future_opportunity": "Adding a concrete example (specific case, school/study reference) to ground one of the reasons"
+          },
+          "reader_construction": {
+            "applies": true,
+            "reader_understanding": "Reader understands: writer wants phones allowed with guidelines; three reasons given. Reader accepts reason 1 (phones are useful tools \u2014 brief illustrations help). Reader holds reasons 2 and 3 at arm's length \u2014 they are asserted, not earned.",
+            "likely_reader_questions": [
+              "Why should I believe that self-control is something schools should be responsible for teaching through phones specifically?",
+              "What evidence suggests structured phone time actually works?"
+            ],
+            "assumed_knowledge": "Reader assumed to know phones can be distracting \u2014 concession handles this well. Reader assumed to accept without argument that self-control is a school responsibility \u2014 reasonable inference but not yet supported.",
+            "clarification_needed": "What exactly does 'responsible use is itself a skill worth teaching' mean for this argument \u2014 is it a reason phones should be allowed, or a reason banning them is wrong?",
+            "elaboration_needed": "Reason 2 needs a sentence explaining WHY schools should cultivate self-control through phone use rather than simply removing phones.",
+            "precision_risk": "Reason 2 could be read as either 'phones help teach self-control' or 'schools should teach self-control generally' \u2014 these are different claims.",
+            "next_reader_need": "A reason to believe that allowing phones (with structure) actually develops self-control, rather than simply asserting it does."
+          },
+          "revision_development": {
+            "applies": false,
+            "development_detected": "",
+            "primary_growth": "",
+            "communication_change": "",
+            "reader_change": "",
+            "remaining_opportunity": "",
+            "transfer_message": ""
+          },
+          "integration_calibration": {
+            "applies": true,
+            "primary_framework": "evidence_function (interpretation gap on reason 2)",
+            "supporting_frameworks": [
+              "reader_construction (reader holds reason 2 at arm's length)",
+              "paragraph_function (reason 2 development is the thin spot in the paragraph's coherent build)"
+            ],
+            "calibration_check": "Intervention is proportional \u2014 the paragraph is genuinely strong overall; targeting the single weakest interpretive link avoids over-teaching.",
+            "consistency_check": "Yes \u2014 an equivalent paragraph with an unearned central reason would receive the same priority.",
+            "integration_notes": "All three frameworks converge on the same gap: reason 2 is asserted but not interpreted. One developmental question surfaces this without prescribing content."
+          },
+          "instructional_reasoning": {
+            "applies": true,
+            "current_unit_of_writing": "whole paragraph",
+            "active_instructional_element": "Evidence / Supporting Claim",
+            "element_communicative_purpose": "Give the reader grounds to accept the claim; each reason must earn the position, not merely name it.",
+            "student_current_organization": "Student has three reasons; understands that reasons support a claim; has not yet internalized that a reason must be interpreted (shown to earn the claim) for the reader \u2014 treats assertion as sufficient.",
+            "canonical_performance_structure": "State reason \u2192 explain what it establishes \u2192 connect to claim \u2192 (support with evidence or example).",
+            "primary_developmental_tension": "Reason 2 is a genuine, contestable assertion but its interpretation is missing \u2014 the student has not yet helped the reader see WHY this reason counts as a ground for the claim.",
+            "next_student_act": "Articulate, in their own words, what reason 2 is actually asking the reader to believe and name one objection a skeptic might raise \u2014 this surfaces the interpretation gap without prescribing content.",
+            "selected_developmental_resources": [
+              "focused question",
+              "naive-reader perspective",
+              "request for explanation"
+            ],
+            "resource_selection_rationale": "A focused question directing attention to the reason's claim + a naive-reader frame (who might push back?) gives the student the intellectual move without supplying the content.",
+            "evidence_of_developmental_movement": "initial",
+            "degree_of_student_control": "emerging",
+            "continue_consolidate_release_or_shift": "continue"
+          },
+          "current_organization": "Concession opener \u2192 central claim \u2192 reason 1 (learning tools) \u2192 reason 2 (self-control/skill) \u2192 reason 3 (structured use) \u2192 implicit closing gesture. Three reasons present; no concrete examples; interpretation of reasons left partially implicit.",
+          "observed_differentiations": [
+            "three distinct reasons identified and sequenced",
+            "concession distinguished from main claim"
+          ],
+          "observed_integrations": [
+            "concession-claim structure coordinates opening with position",
+            "reasons 1\u20133 build toward the structured-use recommendation"
+          ],
+          "observed_coordinations": [
+            "logical connectives ('yet', 'rather than') coordinate concession and elaboration moves"
+          ],
+          "emerging_intentional_control": "Concession-then-claim opening shows deliberate reader awareness; colon-elaboration on reason 1 shows emerging understanding that reasons need grounding.",
+          "unresolved_tensions": [
+            "reasons 2 and 3 asserted without interpretation",
+            "no concrete examples despite assignment requirement"
+          ],
+          "cultural_resources_in_use": [
+            "concession/counterargument",
+            "claim plus reasoning",
+            "colon-elaboration"
+          ],
+          "potential_cultural_resources": [
+            "interpretation/warrant (explain why reason earns claim)",
+            "example (specific case to ground a reason)"
+          ],
+          "possible_reorganizations": [
+            "student elaborates reason 2 with a warrant sentence",
+            "student adds a concrete example for one reason"
+          ],
+          "current_uncertainty": [
+            "unclear whether student understands the difference between stating a reason and earning it for the reader"
+          ],
+          "supporting_evidence": [
+            "clear position stated",
+            "three logically distinct reasons",
+            "concession opener controlled"
+          ],
+          "complicating_evidence": [
+            "no examples present (assignment calls for them)",
+            "reasons 2\u20133 left uninterpreted"
+          ],
+          "alternative_interpretations": [
+            "student may understand interpretation but chose brevity for the paragraph format",
+            "reason 3 may function as both reason and conclusion \u2014 ambiguity is productive, not a flaw"
+          ],
+          "currently_relevant_domains": [
+            "Central Claim / Thesis",
+            "Paragraph Purpose",
+            "Evidence"
+          ],
+          "changes_since_previous": "initial"
+        },
+        "theory_history": [
+          {
+            "version": 1,
+            "telos": {
+              "governing_pedagogical_purpose": "Help the student clarify and develop their position so a reader understands and is persuaded, and understand what each part of the writing is doing for the reader.",
+              "immediate_task_purpose": "Write one paragraph arguing your position, with reasons and examples.",
+              "teacher_intentions": "The writer is a high school student. Respond developmentally to their actual paragraph.",
+              "assignment_context": "Some schools have banned personal cell phones during class. Write one paragraph arguing whether your school should allow or ban personal cell phones during class. Take a clear position and support it with reasons and examples.",
+              "audience_or_communicative_purpose": "",
+              "unresolved_ambiguity": "",
+              "telos_changed": ""
+            },
+            "theory": {
+              "current_telos": "",
+              "communicative_purpose": {
+                "primary": "",
+                "secondary": [],
+                "inferred_from": "",
+                "uncertainty": ""
+              },
+              "paragraph_function": {
+                "applies": false,
+                "purpose": "",
+                "contribution_to_whole": "",
+                "coherence": "",
+                "development": "",
+                "placement": ""
+              },
+              "evidence_function": {
+                "applies": false,
+                "forms": [],
+                "function": "",
+                "interpretation_gap": "",
+                "quality": ""
+              },
+              "coherence_function": {
+                "applies": false,
+                "intended_relationship": "",
+                "level": "",
+                "resources_in_use": [],
+                "reader_can_follow": ""
+              },
+              "conclusion_function": {
+                "applies": false,
+                "functions_in_play": [],
+                "completes_purpose": "",
+                "relationship_to_opening": "",
+                "final_understanding": ""
+              },
+              "scaffolding_control": {
+                "current_unit": "",
+                "diagnosed_opportunities": [],
+                "primary_target": "",
+                "prioritization_rationale": "",
+                "instructional_mode": "",
+                "postponed": [],
+                "cycle_status": "",
+                "stopping_reason": "",
+                "future_opportunity": ""
+              },
+              "reader_construction": {
+                "applies": false,
+                "reader_understanding": "",
+                "likely_reader_questions": [],
+                "assumed_knowledge": "",
+                "clarification_needed": "",
+                "elaboration_needed": "",
+                "precision_risk": "",
+                "next_reader_need": ""
+              },
+              "revision_development": {
+                "applies": false,
+                "development_detected": "",
+                "primary_growth": "",
+                "communication_change": "",
+                "reader_change": "",
+                "remaining_opportunity": "",
+                "transfer_message": ""
+              },
+              "integration_calibration": {
+                "applies": false,
+                "primary_framework": "",
+                "supporting_frameworks": [],
+                "calibration_check": "",
+                "consistency_check": "",
+                "integration_notes": ""
+              },
+              "instructional_reasoning": {
+                "applies": true,
+                "current_unit_of_writing": "",
+                "active_instructional_element": "",
+                "element_communicative_purpose": "",
+                "student_current_organization": "",
+                "canonical_performance_structure": "",
+                "primary_developmental_tension": "",
+                "next_student_act": "",
+                "selected_developmental_resources": [],
+                "resource_selection_rationale": "",
+                "evidence_of_developmental_movement": "",
+                "degree_of_student_control": "",
+                "continue_consolidate_release_or_shift": ""
+              },
+              "current_organization": "",
+              "observed_differentiations": [],
+              "observed_integrations": [],
+              "observed_coordinations": [],
+              "emerging_intentional_control": "",
+              "unresolved_tensions": [],
+              "cultural_resources_in_use": [],
+              "potential_cultural_resources": [],
+              "possible_reorganizations": [],
+              "current_uncertainty": [],
+              "supporting_evidence": [],
+              "complicating_evidence": [],
+              "alternative_interpretations": [],
+              "currently_relevant_domains": [],
+              "changes_since_previous": ""
+            },
+            "created_at": "2026-07-26T18:06:37.575900+00:00"
+          }
+        ],
+        "interactions": [
+          {
+            "id": "5e709c83-1c5a-4898-860d-032316d066ac",
+            "student_kind": "writing",
+            "student_content": "While many worry that cell phones distract students, our school should allow them during class under clear guidelines. Phones are powerful learning tools: students can access research, translate unfamiliar terms, and organize assignments in seconds. A complete ban assumes students cannot learn self-control, yet responsible use is itself a skill worth teaching. Rather than removing phones entirely, teachers could set 'phone-on' and 'phone-off' times, helping students practice the judgment they will need long after high school.",
+            "candidate_invitations": [
+              {
+                "invitation": "Your third reason \u2014 that responsible use is a skill worth teaching \u2014 is doing interesting argumentative work. In your own words, what is it asking your reader to believe, and why might a skeptic push back on it?",
+                "developmental_possibility": "Student surfaces the interpretive gap in reason 2/3 and begins to understand that a reason must earn a claim, not just name it.",
+                "coherence_with_telos": "Directly serves the persuasive purpose: a reader who pushes back on reason 2 is not yet persuaded.",
+                "intended_participation": "Student explains the reason's logic and anticipates an objection \u2014 interpretation act.",
+                "what_ai_could_learn": "Whether the student understands that asserting a reason differs from earning it; whether self-control-as-skill is a deliberate or intuitive move.",
+                "uncertainty_or_risk": "Student may restate the reason rather than interpret it \u2014 would need a follow-up scaffold."
+              },
+              {
+                "invitation": "You give three reasons, but reason 1 gets brief illustrations (research, translate, organize) while reasons 2 and 3 don't \u2014 can you say what a reader would need to believe reason 2 ('responsible use is a skill worth teaching') without just taking your word for it?",
+                "developmental_possibility": "Student notices the asymmetry between grounded and ungrounded reasons and begins to think about reader grounds.",
+                "coherence_with_telos": "Connects local interpretation gap to the paragraph's persuasive purpose.",
+                "intended_participation": "Student identifies what grounds reason 2 needs \u2014 a step toward adding an example or warrant.",
+                "what_ai_could_learn": "Whether the student can see the difference between illustrated and unillustrated reasons.",
+                "uncertainty_or_risk": "Slightly more directive \u2014 points at the asymmetry explicitly, which may over-scaffold."
+              }
+            ],
+            "selected_invitation": {
+              "invitation": "You've written a paragraph that takes a clear position and gives the reader three distinct reasons \u2014 that's real argumentative work. Here's a question worth sitting with: your third reason (that responsible use is a skill worth teaching) is doing something different from the first two \u2014 it's making a claim about what schools should develop in students, not just what phones can do. Can you say, in your own words, what that reason is actually asking your reader to believe, and why someone might push back on it?",
+              "selection_basis": "Focuses on the single highest-leverage interpretive gap; surfaces the distinction between asserting and earning a reason; does not prescribe content; coherent with the persuasive telos and the reader's actual need."
+            },
+            "intervention": {
+              "type": "invite_only",
+              "interpretation": "Student has a clear, arguable central claim and three logically sequenced reasons, with a concession-claim opening that shows reader awareness. The paragraph's thin spot is reason 2/3 \u2014 asserted but not interpreted for the reader.",
+              "instruction": "",
+              "consolidation": "",
+              "cultural_resource": "interpretation/warrant",
+              "timing_rationale": "Student already demonstrates the concept of reasons-supporting-claims; the next move is interpretation, which the student is ready to attempt with a focused question rather than explicit instruction.",
+              "focus": "writing",
+              "writing_not_content_check": "Teaches the writing principle that a reason must be interpreted (earned) for the reader, not just stated \u2014 no substantive ideas supplied."
+            },
+            "observed_reorganization": "initial",
+            "created_at": "2026-07-26T18:06:37.575965+00:00"
+          }
+        ],
+        "developmental_profile": [
+          {
+            "element": "Central Claim",
+            "control_statement": "Produces a clear, arguable, appropriately scoped position with a concession-claim structure.",
+            "trend": "consolidating",
+            "evidence": "Opening sentence takes a clear position; concession is genuine and controlled.",
+            "episodes": 1,
+            "updated_at": "2026-07-26T18:06:37.575922+00:00"
+          },
+          {
+            "element": "Supporting Claim",
+            "control_statement": "Generates three distinct, logically sequenced reasons; reason 1 is partially grounded; reasons 2\u20133 are asserted without interpretation.",
+            "trend": "developing",
+            "evidence": "Three reasons present and differentiated; interpretive connection to claim missing for reasons 2\u20133.",
+            "episodes": 1,
+            "updated_at": "2026-07-26T18:06:37.575934+00:00"
+          },
+          {
+            "element": "Evidence",
+            "control_statement": "Uses brief functional illustrations for reason 1; no concrete examples or grounding for reasons 2\u20133; no external evidence.",
+            "trend": "emerging",
+            "evidence": "Colon-elaboration on reason 1 shows some grounding instinct; reasons 2\u20133 left bare.",
+            "episodes": 1,
+            "updated_at": "2026-07-26T18:06:37.575938+00:00"
+          }
+        ],
+        "revision_history": [],
+        "teacher_edits": [],
+        "is_preview": false,
+        "preview_analytics": {},
+        "experience_control": null,
+        "reasoning_mode": "exhaustive",
+        "teacher_id": "",
+        "config_id": "",
+        "assignment_code": "",
+        "student_name": "",
+        "origin_representation": {},
+        "created_at": "2026-07-26T18:05:08.778018+00:00",
+        "updated_at": "2026-07-26T18:06:37.575970+00:00"
+      }
+    },
+    {
+      "id": "student-d",
+      "label": "Student D",
+      "assignment": "Some schools have banned personal cell phones during class. Write one paragraph arguing whether your school should allow or ban personal cell phones during class. Take a clear position and support it with reasons and examples.",
+      "response": "My favorite thing about school is lunchtime because I get to see my friends and we talk about weekend plans. The cafeteria food isn't always great, but sometimes they have pizza which everyone likes. I also enjoy gym class because we get to play basketball. School would be better if we had longer breaks between classes.",
+      "session": {
+        "id": "438dca12-7cc3-4363-8d51-a5dc573462f1",
+        "assignment": "Some schools have banned personal cell phones during class. Write one paragraph arguing whether your school should allow or ban personal cell phones during class. Take a clear position and support it with reasons and examples.",
+        "pedagogical_purpose": "Help the student clarify and develop their position so a reader understands and is persuaded, and understand what each part of the writing is doing for the reader.",
+        "current_writing_task": "Write one paragraph arguing your position, with reasons and examples.",
+        "teacher_notes": "The writer is a high school student. Respond developmentally to their actual paragraph.",
+        "assignment_prompt": "",
+        "turns": [
+          {
+            "id": "8bd50c15-6504-43b1-8fc2-e731afdc60aa",
+            "role": "student",
+            "kind": "writing",
+            "content": "My favorite thing about school is lunchtime because I get to see my friends and we talk about weekend plans. The cafeteria food isn't always great, but sometimes they have pizza which everyone likes. I also enjoy gym class because we get to play basketball. School would be better if we had longer breaks between classes.",
+            "status": "complete",
+            "reasoning_path": "",
+            "created_at": "2026-07-26T18:05:09.328854+00:00"
+          },
+          {
+            "id": "90b52f58-b847-4353-b428-96b7b170d4c3",
+            "role": "ai",
+            "kind": "invitation",
+            "content": "The assignment asks you to argue whether your school should allow or ban cell phones in class \u2014 but your paragraph is about lunch, gym, and breaks. That's a different topic entirely, so let's get you writing the right piece. Pick a side: should your school allow cell phones in class, or ban them? Once you decide, write one sentence that tells your reader exactly what you want them to believe \u2014 your position on cell phones.",
+            "status": "complete",
+            "reasoning_path": "exhaustive_full",
+            "created_at": "2026-07-26T18:05:09.328873+00:00"
+          }
+        ],
+        "telos": {
+          "governing_pedagogical_purpose": "Help the student clarify and develop their position so a reader understands and is persuaded, and understand what each part of the writing is doing for the reader.",
+          "immediate_task_purpose": "Write one paragraph arguing your position, with reasons and examples.",
+          "teacher_intentions": "The writer is a high school student. Respond developmentally to their actual paragraph.",
+          "assignment_context": "Some schools have banned personal cell phones during class. Write one paragraph arguing whether your school should allow or ban personal cell phones during class. Take a clear position and support it with reasons and examples.",
+          "audience_or_communicative_purpose": "Persuade a reader to accept the student's position on school cell phone policy.",
+          "unresolved_ambiguity": "",
+          "telos_changed": "Audience/communicative purpose now inferred from assignment; otherwise no change."
+        },
+        "theory": {
+          "current_telos": "Produce a persuasive paragraph with a clear position, reasons, and examples on school cell phone policy.",
+          "communicative_purpose": {
+            "primary": "persuade",
+            "secondary": [
+              "inform"
+            ],
+            "inferred_from": "assignment instructions",
+            "uncertainty": "Student's draft gives no evidence of intended purpose; purpose inferred entirely from assignment."
+          },
+          "paragraph_function": {
+            "applies": true,
+            "purpose": "None discernible relative to the assignment \u2014 paragraph describes school preferences unrelated to cell phones.",
+            "contribution_to_whole": "Does not contribute to the assigned argument.",
+            "coherence": "Sentences share a loose school-life theme but serve no argumentative function.",
+            "development": "Observational/descriptive; no claim, no reasons, no examples relevant to cell phones.",
+            "placement": "Single paragraph; placement is not yet the issue \u2014 topic alignment is."
+          },
+          "evidence_function": {
+            "applies": false,
+            "forms": [],
+            "function": "",
+            "interpretation_gap": "",
+            "quality": ""
+          },
+          "coherence_function": {
+            "applies": false,
+            "intended_relationship": "",
+            "level": "",
+            "resources_in_use": [],
+            "reader_can_follow": ""
+          },
+          "conclusion_function": {
+            "applies": false,
+            "functions_in_play": [],
+            "completes_purpose": "",
+            "relationship_to_opening": "",
+            "final_understanding": ""
+          },
+          "scaffolding_control": {
+            "current_unit": "paragraph",
+            "diagnosed_opportunities": [
+              "Draft does not address the assignment \u2014 must reorient to cell phone topic before anything else",
+              "No central claim or position present",
+              "No evidence or reasons present"
+            ],
+            "primary_target": "Answer the assignment / establish a central claim",
+            "prioritization_rationale": "All other writing goals are prerequisites to developing a claim; reorienting to the correct topic is the foundational act.",
+            "instructional_mode": "explicit_instruction",
+            "postponed": [
+              "topic sentence function",
+              "evidence selection and interpretation",
+              "coherence"
+            ],
+            "cycle_status": "continue",
+            "stopping_reason": "",
+            "future_opportunity": "Once a position sentence exists, develop supporting reasons and examples."
+          },
+          "reader_construction": {
+            "applies": true,
+            "reader_understanding": "Reader learns the student likes lunch, gym, and wants longer breaks \u2014 nothing about cell phones.",
+            "likely_reader_questions": [
+              "What is your position on cell phones?",
+              "Why does any of this address the prompt?"
+            ],
+            "assumed_knowledge": "No assumption problem \u2014 the draft simply addresses a different topic.",
+            "clarification_needed": "The entire piece needs to pivot to the assigned topic.",
+            "elaboration_needed": "No elaboration possible until on-topic claim exists.",
+            "precision_risk": "None within current off-topic content.",
+            "next_reader_need": "A clear statement of the student's position on cell phones in class."
+          },
+          "revision_development": {
+            "applies": false,
+            "development_detected": "",
+            "primary_growth": "",
+            "communication_change": "",
+            "reader_change": "",
+            "remaining_opportunity": "",
+            "transfer_message": ""
+          },
+          "integration_calibration": {
+            "applies": true,
+            "primary_framework": "Central Claim / assignment alignment",
+            "supporting_frameworks": [
+              "Communicative Purpose (M6)",
+              "Reader Construction (M12)"
+            ],
+            "calibration_check": "Intervention is proportional \u2014 draft is entirely off-topic; reorientation is the only productive move before any writing instruction.",
+            "consistency_check": "Any equivalent off-topic draft would receive the same reorientation priority.",
+            "integration_notes": "All frameworks converge: no persuasive purpose, no claim, no reader orientation \u2014 all trace to the single root issue of not addressing the assignment."
+          },
+          "instructional_reasoning": {
+            "applies": true,
+            "current_unit_of_writing": "paragraph",
+            "active_instructional_element": "Central Claim",
+            "element_communicative_purpose": "Assert a clear, supportable position the reader is asked to accept.",
+            "student_current_organization": "Student produced a description of school preferences. No position on cell phones; no contestable assertion; draft does not engage the assignment.",
+            "canonical_performance_structure": "State a clear position; define its scope; make it supportable through reasons and evidence.",
+            "primary_developmental_tension": "No genuine assertion exists; draft is not connected to the task at all.",
+            "next_student_act": "Choose a position (allow or ban) and write one sentence asserting it.",
+            "selected_developmental_resources": [
+              "reminder of the assignment",
+              "brief direct explanation",
+              "decomposition into a smaller act"
+            ],
+            "resource_selection_rationale": "Student needs to see the mismatch plainly (reminder), understand what a position sentence does (brief explanation), and be given a manageable first step (decompose to: pick a side, then write one sentence).",
+            "evidence_of_developmental_movement": "initial",
+            "degree_of_student_control": "scaffolded",
+            "continue_consolidate_release_or_shift": "continue"
+          },
+          "current_organization": "Draft does not address the assignment. Student writes about lunch, gym, and break preferences \u2014 no position, no claim, no cell phone content.",
+          "observed_differentiations": [
+            "Student can produce connected sentences on a topic"
+          ],
+          "observed_integrations": [],
+          "observed_coordinations": [],
+          "emerging_intentional_control": "None visible yet relative to the assignment.",
+          "unresolved_tensions": [
+            "Unclear whether student misread the prompt or chose to write freely"
+          ],
+          "cultural_resources_in_use": [],
+          "potential_cultural_resources": [
+            "Central Claim / position sentence",
+            "Topic Sentence"
+          ],
+          "possible_reorganizations": [
+            "Student picks a side and produces a position sentence \u2192 opens path to claim development"
+          ],
+          "current_uncertainty": [
+            "Whether student has a genuine opinion on cell phones",
+            "Whether misread was accidental or avoidant"
+          ],
+          "supporting_evidence": [
+            "Sentences are grammatically competent and loosely connected \u2014 some organizational capacity present"
+          ],
+          "complicating_evidence": [
+            "Draft shows no awareness of argumentative purpose or assigned topic"
+          ],
+          "alternative_interpretations": [
+            "Student may have a position on cell phones but didn't know how to start arguing it",
+            "Student may have misread 'school' as a general topic prompt"
+          ],
+          "currently_relevant_domains": [
+            "Central Claim / Thesis",
+            "Paragraph Purpose"
+          ],
+          "changes_since_previous": "initial"
+        },
+        "theory_history": [
+          {
+            "version": 1,
+            "telos": {
+              "governing_pedagogical_purpose": "Help the student clarify and develop their position so a reader understands and is persuaded, and understand what each part of the writing is doing for the reader.",
+              "immediate_task_purpose": "Write one paragraph arguing your position, with reasons and examples.",
+              "teacher_intentions": "The writer is a high school student. Respond developmentally to their actual paragraph.",
+              "assignment_context": "Some schools have banned personal cell phones during class. Write one paragraph arguing whether your school should allow or ban personal cell phones during class. Take a clear position and support it with reasons and examples.",
+              "audience_or_communicative_purpose": "",
+              "unresolved_ambiguity": "",
+              "telos_changed": ""
+            },
+            "theory": {
+              "current_telos": "",
+              "communicative_purpose": {
+                "primary": "",
+                "secondary": [],
+                "inferred_from": "",
+                "uncertainty": ""
+              },
+              "paragraph_function": {
+                "applies": false,
+                "purpose": "",
+                "contribution_to_whole": "",
+                "coherence": "",
+                "development": "",
+                "placement": ""
+              },
+              "evidence_function": {
+                "applies": false,
+                "forms": [],
+                "function": "",
+                "interpretation_gap": "",
+                "quality": ""
+              },
+              "coherence_function": {
+                "applies": false,
+                "intended_relationship": "",
+                "level": "",
+                "resources_in_use": [],
+                "reader_can_follow": ""
+              },
+              "conclusion_function": {
+                "applies": false,
+                "functions_in_play": [],
+                "completes_purpose": "",
+                "relationship_to_opening": "",
+                "final_understanding": ""
+              },
+              "scaffolding_control": {
+                "current_unit": "",
+                "diagnosed_opportunities": [],
+                "primary_target": "",
+                "prioritization_rationale": "",
+                "instructional_mode": "",
+                "postponed": [],
+                "cycle_status": "",
+                "stopping_reason": "",
+                "future_opportunity": ""
+              },
+              "reader_construction": {
+                "applies": false,
+                "reader_understanding": "",
+                "likely_reader_questions": [],
+                "assumed_knowledge": "",
+                "clarification_needed": "",
+                "elaboration_needed": "",
+                "precision_risk": "",
+                "next_reader_need": ""
+              },
+              "revision_development": {
+                "applies": false,
+                "development_detected": "",
+                "primary_growth": "",
+                "communication_change": "",
+                "reader_change": "",
+                "remaining_opportunity": "",
+                "transfer_message": ""
+              },
+              "integration_calibration": {
+                "applies": false,
+                "primary_framework": "",
+                "supporting_frameworks": [],
+                "calibration_check": "",
+                "consistency_check": "",
+                "integration_notes": ""
+              },
+              "instructional_reasoning": {
+                "applies": true,
+                "current_unit_of_writing": "",
+                "active_instructional_element": "",
+                "element_communicative_purpose": "",
+                "student_current_organization": "",
+                "canonical_performance_structure": "",
+                "primary_developmental_tension": "",
+                "next_student_act": "",
+                "selected_developmental_resources": [],
+                "resource_selection_rationale": "",
+                "evidence_of_developmental_movement": "",
+                "degree_of_student_control": "",
+                "continue_consolidate_release_or_shift": ""
+              },
+              "current_organization": "",
+              "observed_differentiations": [],
+              "observed_integrations": [],
+              "observed_coordinations": [],
+              "emerging_intentional_control": "",
+              "unresolved_tensions": [],
+              "cultural_resources_in_use": [],
+              "potential_cultural_resources": [],
+              "possible_reorganizations": [],
+              "current_uncertainty": [],
+              "supporting_evidence": [],
+              "complicating_evidence": [],
+              "alternative_interpretations": [],
+              "currently_relevant_domains": [],
+              "changes_since_previous": ""
+            },
+            "created_at": "2026-07-26T18:06:13.115226+00:00"
+          }
+        ],
+        "interactions": [
+          {
+            "id": "19a6a911-bc26-40e3-9946-eefaad4692d1",
+            "student_kind": "writing",
+            "student_content": "My favorite thing about school is lunchtime because I get to see my friends and we talk about weekend plans. The cafeteria food isn't always great, but sometimes they have pizza which everyone likes. I also enjoy gym class because we get to play basketball. School would be better if we had longer breaks between classes.",
+            "candidate_invitations": [
+              {
+                "invitation": "Your paragraph is about lunch and gym \u2014 but the assignment asks you to argue about cell phones in class. Pick a side (allow or ban), then write one sentence that tells your reader exactly what you believe should happen.",
+                "developmental_possibility": "Student produces first genuine position sentence on the assigned topic.",
+                "coherence_with_telos": "Directly addresses the foundational prerequisite: answer the assignment with an assertable claim.",
+                "intended_participation": "Student names a stance and attempts a position sentence.",
+                "what_ai_could_learn": "Whether student has a position ready or needs further support to form one.",
+                "uncertainty_or_risk": "Student may still struggle to turn a preference into an arguable claim."
+              },
+              {
+                "invitation": "Before anything else can be built, the paragraph needs to respond to the right prompt \u2014 cell phones in class. Decide: should your school allow them or ban them? Write one sentence stating your position so a reader knows exactly what you want them to believe.",
+                "developmental_possibility": "Same as above; slightly more explicit about the writing function of a position sentence.",
+                "coherence_with_telos": "Consistent with reorientation + first claim act.",
+                "intended_participation": "Student writes a position sentence.",
+                "what_ai_could_learn": "Level of claim formation \u2014 topic vs. genuine assertion.",
+                "uncertainty_or_risk": "Student may produce a topic announcement rather than an arguable claim."
+              }
+            ],
+            "selected_invitation": {
+              "invitation": "The assignment asks you to argue whether your school should allow or ban cell phones in class \u2014 but your paragraph is about lunch, gym, and breaks. That's a different topic entirely, so let's get you writing the right piece. Pick a side: should your school allow cell phones in class, or ban them? Once you decide, write one sentence that tells your reader exactly what you want them to believe \u2014 your position on cell phones.",
+              "selection_basis": "Both candidates are coherent; this one names the mismatch plainly, explains the assignment's actual demand, and gives a concrete decomposed first act (pick a side \u2192 write one sentence)."
+            },
+            "intervention": {
+              "type": "instruct_then_invite",
+              "interpretation": "Student produced a coherent school-life description but did not engage the assigned topic or argumentative purpose.",
+              "instruction": "A position sentence (central claim) is the one thing your paragraph must do first: it tells your reader what you want them to believe and why the argument is worth making. Without it, nothing else in the paragraph has a job. For a 'should' prompt like this one, your position sentence names your side and commits you to defending it.",
+              "consolidation": "",
+              "cultural_resource": "Central Claim",
+              "timing_rationale": "Student lacks not just a claim but the basic reorientation to the assignment; explicit instruction on what a position sentence does \u2014 plus a reminder of the assignment \u2014 is needed before any other writing move.",
+              "focus": "writing",
+              "writing_not_content_check": "Teaches the communicative function of a central claim (what it does for the reader and the paragraph) without supplying the student's position, reasons, or any substantive content."
+            },
+            "observed_reorganization": "initial",
+            "created_at": "2026-07-26T18:06:13.115302+00:00"
+          }
+        ],
+        "developmental_profile": [
+          {
+            "element": "Central Claim",
+            "control_statement": "No claim present; draft does not address the assignment topic; student has not yet produced an arguable position.",
+            "trend": "confused",
+            "evidence": "Entire draft addresses unrelated school-life preferences with no position on cell phones.",
+            "episodes": 1,
+            "updated_at": "2026-07-26T18:06:13.115274+00:00"
+          }
+        ],
+        "revision_history": [],
+        "teacher_edits": [],
+        "is_preview": false,
+        "preview_analytics": {},
+        "experience_control": null,
+        "reasoning_mode": "exhaustive",
+        "teacher_id": "",
+        "config_id": "",
+        "assignment_code": "",
+        "student_name": "",
+        "origin_representation": {},
+        "created_at": "2026-07-26T18:05:08.779017+00:00",
+        "updated_at": "2026-07-26T18:06:13.115308+00:00"
+      }
+    },
+    {
+      "id": "student-e",
+      "label": "Student E",
+      "assignment": "Some schools have banned personal cell phones during class. Write one paragraph arguing whether your school should allow or ban personal cell phones during class. Take a clear position and support it with reasons and examples.",
+      "response": "Personal cell phones should be allowed during class when they are used for educational purposes and within clearly defined expectations. They provide students with immediate access to information, digital learning resources, and organizational tools that can enhance classroom learning. In addition, learning to use technology responsibly is an important skill that students will need beyond school. Although phones can become distracting if misused, thoughtful classroom guidelines can minimize these concerns while preserving the educational benefits. Overall, allowing responsible phone use creates opportunities for both academic growth and personal responsibility.",
+      "session": {
+        "id": "c60111b8-8025-4a49-b470-67de8fe5036d",
+        "assignment": "Some schools have banned personal cell phones during class. Write one paragraph arguing whether your school should allow or ban personal cell phones during class. Take a clear position and support it with reasons and examples.",
+        "pedagogical_purpose": "Help the student clarify and develop their position so a reader understands and is persuaded, and understand what each part of the writing is doing for the reader.",
+        "current_writing_task": "Write one paragraph arguing your position, with reasons and examples.",
+        "teacher_notes": "The writer is a high school student. Respond developmentally to their actual paragraph.",
+        "assignment_prompt": "",
+        "turns": [
+          {
+            "id": "2dce4d1d-3249-484d-91c1-3278a17209dc",
+            "role": "student",
+            "kind": "writing",
+            "content": "Personal cell phones should be allowed during class when they are used for educational purposes and within clearly defined expectations. They provide students with immediate access to information, digital learning resources, and organizational tools that can enhance classroom learning. In addition, learning to use technology responsibly is an important skill that students will need beyond school. Although phones can become distracting if misused, thoughtful classroom guidelines can minimize these concerns while preserving the educational benefits. Overall, allowing responsible phone use creates opportunities for both academic growth and personal responsibility.",
+            "status": "complete",
+            "reasoning_path": "",
+            "created_at": "2026-07-26T18:05:08.788740+00:00"
+          },
+          {
+            "id": "56e8d3f5-307a-4019-9d0f-074fbdabda7c",
+            "role": "ai",
+            "kind": "invitation",
+            "content": "You've written a paragraph that takes a clear position and covers several angles \u2014 that's real work. Right now, your opening sentence does important job: it's meant to tell your reader the one main thing you're arguing. Looking at your first sentence, it states a position but adds a condition ('when they are used for educational purposes and within clearly defined expectations'). That condition shapes what the whole paragraph must prove. Here's the question to hold: does the rest of your paragraph actually make the case for *that specific claim* \u2014 that phones are beneficial when used educationally and within guidelines \u2014 or does it argue something somewhat different? Read your paragraph again and tell me: what is the single thing you most want your reader to accept, and does your first sentence capture it precisely?",
+            "status": "complete",
+            "reasoning_path": "exhaustive_full",
+            "created_at": "2026-07-26T18:05:08.788751+00:00"
+          }
+        ],
+        "telos": {
+          "governing_pedagogical_purpose": "Help the student clarify and develop their position so a reader understands and is persuaded, and understand what each part of the writing is doing for the reader.",
+          "immediate_task_purpose": "Write one paragraph arguing your position, with reasons and examples.",
+          "teacher_intentions": "High school student; respond developmentally to their actual paragraph.",
+          "assignment_context": "Argue whether school should allow or ban cell phones during class; take a clear position with reasons and examples.",
+          "audience_or_communicative_purpose": "Persuade a general reader (school audience) to accept a position on classroom cell phone policy.",
+          "unresolved_ambiguity": "Whether the conditional claim ('when used for educational purposes') is the student's deliberate scope or an inadvertent hedge.",
+          "telos_changed": "no change"
+        },
+        "theory": {
+          "current_telos": "Student argues a conditional position on classroom phone use, supports it with several reasons, and anticipates a counterargument.",
+          "communicative_purpose": {
+            "primary": "persuade",
+            "secondary": [
+              "explain"
+            ],
+            "inferred_from": "assignment instructions and student's explicit position-taking with reasons",
+            "uncertainty": "Whether the conditional scope is intentional or incidental hedging"
+          },
+          "paragraph_function": {
+            "applies": true,
+            "purpose": "State and support a position that phones should be allowed under conditions; the paragraph is itself the complete argument unit.",
+            "contribution_to_whole": "This IS the whole piece \u2014 it must carry the full persuasive load alone.",
+            "coherence": "Sentences mostly advance the position; final sentence restates broadly. Some looseness: 'personal responsibility' in the closing slightly broadens scope beyond the conditional claim.",
+            "development": "Claim + reasons (access to information, digital tools, responsibility skill) + concession/rebuttal + summary close. Reasons are asserted but not illustrated with examples as assignment requires.",
+            "placement": "Single paragraph; no neighbors. Internally, moves from claim to reasons to concession to close."
+          },
+          "evidence_function": {
+            "applies": true,
+            "forms": [
+              "general assertions",
+              "implicit examples (no concrete specifics)"
+            ],
+            "function": "Reasons are offered to support the claim, but none are grounded in a concrete example or specific case.",
+            "interpretation_gap": "The assignment asks for examples; the paragraph provides reasons as abstract assertions with no illustrative grounding \u2014 the reader has no concrete instance to evaluate.",
+            "quality": "Reasons are relevant and logical but insufficiently specific; no example anchors any reason to observable reality."
+          },
+          "coherence_function": {
+            "applies": true,
+            "intended_relationship": "elaboration \u2014 each sentence adds a supporting reason or addresses a complication",
+            "level": "paragraph-level",
+            "resources_in_use": [
+              "transition phrase ('In addition')",
+              "concessive connector ('Although')",
+              "summary adverb ('Overall')"
+            ],
+            "reader_can_follow": "Yes, the logical sequence is followable; but the closing 'personal responsibility' slightly drifts from the conditional educational-use claim."
+          },
+          "conclusion_function": {
+            "applies": true,
+            "functions_in_play": [
+              "reinforce position",
+              "synthesize reasons"
+            ],
+            "completes_purpose": "Partially \u2014 it restates the position but broadens to 'personal responsibility,' which was not the paragraph's primary thread.",
+            "relationship_to_opening": "Returns to the opening claim but softens the conditional framing.",
+            "final_understanding": "Reader should leave understanding that conditional phone use benefits both academics and responsibility."
+          },
+          "scaffolding_control": {
+            "current_unit": "paragraph (whole)",
+            "diagnosed_opportunities": [
+              "Central claim precision: conditional scope may be inadvertent hedge or deliberate \u2014 student hasn't confirmed",
+              "Evidence gap: no concrete examples despite assignment requiring them",
+              "Closing sentence slightly drifts from the conditional claim",
+              "Reasons are asserted but not connected to the claim with explanation"
+            ],
+            "primary_target": "Central claim precision \u2014 confirm whether the conditional is deliberate and whether the paragraph actually proves it",
+            "prioritization_rationale": "The claim governs everything else; until the student confirms its scope, evidence work is premature. This is the highest-leverage prerequisite.",
+            "instructional_mode": "developmental_question",
+            "postponed": [
+              "evidence/examples gap",
+              "closing sentence drift",
+              "explanation of reasons"
+            ],
+            "cycle_status": "continue",
+            "stopping_reason": "",
+            "future_opportunity": "Once claim is confirmed, invite the student to add one concrete example for the strongest reason."
+          },
+          "reader_construction": {
+            "applies": true,
+            "reader_understanding": "Reader understands the position (allow phones with conditions) and three supporting reasons; reader knows there's a counterargument that guidelines address.",
+            "likely_reader_questions": [
+              "What does 'educational purposes' actually look like in practice?",
+              "What specific guidelines would work?"
+            ],
+            "assumed_knowledge": "Reader assumed to understand what 'digital learning resources' means \u2014 reasonable inference.",
+            "clarification_needed": "The conditional claim sets up a narrow argument but the body reasons are broad; a reader may wonder whether the paragraph proves the specific conditional or just phones-in-general.",
+            "elaboration_needed": "Any one reason needs a concrete example to give the reader something concrete to evaluate.",
+            "precision_risk": "The closing 'personal responsibility' could suggest a different claim than the opening conditional.",
+            "next_reader_need": "Confirmation that the specific conditional claim is intentional and that one reason is grounded with a concrete example."
+          },
+          "revision_development": {
+            "applies": false,
+            "development_detected": "",
+            "primary_growth": "",
+            "communication_change": "",
+            "reader_change": "",
+            "remaining_opportunity": "",
+            "transfer_message": ""
+          },
+          "integration_calibration": {
+            "applies": true,
+            "primary_framework": "Central Claim precision (M6 communicative purpose + instructional_reasoning)",
+            "supporting_frameworks": [
+              "M7 paragraph function (claim governs the paragraph's coherence)",
+              "M12 reader construction (reader needs to know what claim is actually being proved)"
+            ],
+            "calibration_check": "Proportional \u2014 the claim is the dependency for all other work; targeting it first is warranted and not over-teaching.",
+            "consistency_check": "A comparable paragraph with a similar conditional claim would receive the same priority.",
+            "integration_notes": "M8 evidence gap is real and important but correctly postponed \u2014 fix the claim's scope first so the student selects examples for the right claim."
+          },
+          "instructional_reasoning": {
+            "applies": true,
+            "current_unit_of_writing": "paragraph (complete argument)",
+            "active_instructional_element": "Central Claim",
+            "element_communicative_purpose": "Assert a clear, supportable position the reader is asked to accept.",
+            "student_current_organization": "Student has a genuine position with a conditional qualifier; reasons follow but are broad assertions; student anticipates counterargument; no concrete examples present.",
+            "canonical_performance_structure": "State a clear position; define its scope; qualify when necessary; make it supportable through reasons and evidence.",
+            "primary_developmental_tension": "The conditional scope ('when used educationally / within guidelines') is present but unconfirmed as deliberate; the paragraph's reasons don't fully earn that specific conditional \u2014 they argue for phones generally.",
+            "next_student_act": "The student identifies what the single thing they want the reader to accept is, and reflects on whether the first sentence captures that precisely.",
+            "selected_developmental_resources": [
+              "focused question",
+              "connection between local writing and whole-essay purpose",
+              "naive-reader perspective"
+            ],
+            "resource_selection_rationale": "A focused question surfaces the student's own intent without imposing a revision; the naive-reader perspective shows why precision matters; connecting to assignment reinforces the persuasive purpose.",
+            "evidence_of_developmental_movement": "initial",
+            "degree_of_student_control": "emerging",
+            "continue_consolidate_release_or_shift": "continue"
+          },
+          "current_organization": "Topic sentence states conditional claim \u2192 reasons (information access, digital tools, responsible tech use) \u2192 concession/rebuttal \u2192 brief conclusion. Single-paragraph argument structure.",
+          "observed_differentiations": [
+            "Position from counterargument (concession/rebuttal present)",
+            "Reasons from conclusion (structurally distinguished)"
+          ],
+          "observed_integrations": [
+            "Reasons organized under a single conditional claim"
+          ],
+          "observed_coordinations": [
+            "Concession/rebuttal coordinates with the main position"
+          ],
+          "emerging_intentional_control": "Student shows intentional argument structure: claim + reasons + counterargument + close.",
+          "unresolved_tensions": [
+            "Whether the conditional scope is deliberate or hedging",
+            "No concrete examples despite assignment requiring them"
+          ],
+          "cultural_resources_in_use": [
+            "claim with qualification",
+            "concession/rebuttal",
+            "transitional markers"
+          ],
+          "potential_cultural_resources": [
+            "concrete example as evidence",
+            "explanation connecting reason to claim"
+          ],
+          "possible_reorganizations": [
+            "Student confirms conditional as intentional scope \u2192 then needs one example grounding the strongest reason",
+            "Student decides conditional is a hedge \u2192 opens up a bolder, simpler claim"
+          ],
+          "current_uncertainty": [
+            "Whether the conditional is the student's real position or a softening move",
+            "Whether the student understands the assignment's call for examples"
+          ],
+          "supporting_evidence": [
+            "Paragraph has genuine argument structure",
+            "Concession present shows awareness of opposition"
+          ],
+          "complicating_evidence": [
+            "No concrete examples present despite assignment asking for them",
+            "Closing sentence's 'personal responsibility' slightly shifts the claim's scope"
+          ],
+          "alternative_interpretations": [
+            "The conditional is a sophisticated deliberate scope \u2014 the student is already thinking about policy precision",
+            "The conditional is an inadvertent hedge that weakens the claim's contestability"
+          ],
+          "currently_relevant_domains": [
+            "Central Claim / Thesis",
+            "Paragraph Purpose"
+          ],
+          "changes_since_previous": "initial"
+        },
+        "theory_history": [
+          {
+            "version": 1,
+            "telos": {
+              "governing_pedagogical_purpose": "Help the student clarify and develop their position so a reader understands and is persuaded, and understand what each part of the writing is doing for the reader.",
+              "immediate_task_purpose": "Write one paragraph arguing your position, with reasons and examples.",
+              "teacher_intentions": "The writer is a high school student. Respond developmentally to their actual paragraph.",
+              "assignment_context": "Some schools have banned personal cell phones during class. Write one paragraph arguing whether your school should allow or ban personal cell phones during class. Take a clear position and support it with reasons and examples.",
+              "audience_or_communicative_purpose": "",
+              "unresolved_ambiguity": "",
+              "telos_changed": ""
+            },
+            "theory": {
+              "current_telos": "",
+              "communicative_purpose": {
+                "primary": "",
+                "secondary": [],
+                "inferred_from": "",
+                "uncertainty": ""
+              },
+              "paragraph_function": {
+                "applies": false,
+                "purpose": "",
+                "contribution_to_whole": "",
+                "coherence": "",
+                "development": "",
+                "placement": ""
+              },
+              "evidence_function": {
+                "applies": false,
+                "forms": [],
+                "function": "",
+                "interpretation_gap": "",
+                "quality": ""
+              },
+              "coherence_function": {
+                "applies": false,
+                "intended_relationship": "",
+                "level": "",
+                "resources_in_use": [],
+                "reader_can_follow": ""
+              },
+              "conclusion_function": {
+                "applies": false,
+                "functions_in_play": [],
+                "completes_purpose": "",
+                "relationship_to_opening": "",
+                "final_understanding": ""
+              },
+              "scaffolding_control": {
+                "current_unit": "",
+                "diagnosed_opportunities": [],
+                "primary_target": "",
+                "prioritization_rationale": "",
+                "instructional_mode": "",
+                "postponed": [],
+                "cycle_status": "",
+                "stopping_reason": "",
+                "future_opportunity": ""
+              },
+              "reader_construction": {
+                "applies": false,
+                "reader_understanding": "",
+                "likely_reader_questions": [],
+                "assumed_knowledge": "",
+                "clarification_needed": "",
+                "elaboration_needed": "",
+                "precision_risk": "",
+                "next_reader_need": ""
+              },
+              "revision_development": {
+                "applies": false,
+                "development_detected": "",
+                "primary_growth": "",
+                "communication_change": "",
+                "reader_change": "",
+                "remaining_opportunity": "",
+                "transfer_message": ""
+              },
+              "integration_calibration": {
+                "applies": false,
+                "primary_framework": "",
+                "supporting_frameworks": [],
+                "calibration_check": "",
+                "consistency_check": "",
+                "integration_notes": ""
+              },
+              "instructional_reasoning": {
+                "applies": true,
+                "current_unit_of_writing": "",
+                "active_instructional_element": "",
+                "element_communicative_purpose": "",
+                "student_current_organization": "",
+                "canonical_performance_structure": "",
+                "primary_developmental_tension": "",
+                "next_student_act": "",
+                "selected_developmental_resources": [],
+                "resource_selection_rationale": "",
+                "evidence_of_developmental_movement": "",
+                "degree_of_student_control": "",
+                "continue_consolidate_release_or_shift": ""
+              },
+              "current_organization": "",
+              "observed_differentiations": [],
+              "observed_integrations": [],
+              "observed_coordinations": [],
+              "emerging_intentional_control": "",
+              "unresolved_tensions": [],
+              "cultural_resources_in_use": [],
+              "potential_cultural_resources": [],
+              "possible_reorganizations": [],
+              "current_uncertainty": [],
+              "supporting_evidence": [],
+              "complicating_evidence": [],
+              "alternative_interpretations": [],
+              "currently_relevant_domains": [],
+              "changes_since_previous": ""
+            },
+            "created_at": "2026-07-26T18:06:35.961673+00:00"
+          }
+        ],
+        "interactions": [
+          {
+            "id": "13d7c069-18ca-4189-92ea-7fea2f65f699",
+            "student_kind": "writing",
+            "student_content": "Personal cell phones should be allowed during class when they are used for educational purposes and within clearly defined expectations. They provide students with immediate access to information, digital learning resources, and organizational tools that can enhance classroom learning. In addition, learning to use technology responsibly is an important skill that students will need beyond school. Although phones can become distracting if misused, thoughtful classroom guidelines can minimize these concerns while preserving the educational benefits. Overall, allowing responsible phone use creates opportunities for both academic growth and personal responsibility.",
+            "candidate_invitations": [
+              {
+                "invitation": "Your opening sentence makes a conditional claim \u2014 phones should be allowed *when used educationally and within guidelines*. That's a specific scope. Does the rest of your paragraph actually prove that conditional, or does it argue something broader? Tell me: what is the single thing you most want your reader to walk away believing?",
+                "developmental_possibility": "Student reflects on whether their claim matches their actual argument, potentially sharpening or confirming the conditional scope.",
+                "coherence_with_telos": "Directly serves the persuasive purpose; claim precision is the prerequisite for all other development.",
+                "intended_participation": "Student articulates their intended position in their own words.",
+                "what_ai_could_learn": "Whether the conditional is deliberate or a hedge; what the student's actual core claim is.",
+                "uncertainty_or_risk": "Student may not yet distinguish 'what I wrote' from 'what I meant' \u2014 may need a simpler scaffold."
+              },
+              {
+                "invitation": "A reader finishing your paragraph might think: 'So are you saying phones are fine as long as there are rules, or that phones themselves make learning better?' Which of those is closer to what you're arguing \u2014 and does your first sentence say that clearly?",
+                "developmental_possibility": "Either/or question lowers the demand; student identifies their actual position relative to two plausible readings.",
+                "coherence_with_telos": "Serves the persuasive goal by anchoring claim precision in reader perception.",
+                "intended_participation": "Student chooses between two positions, then checks whether their first sentence captures their choice.",
+                "what_ai_could_learn": "Student's actual core commitment; whether the conditional is deliberate.",
+                "uncertainty_or_risk": "The either/or framing may feel reductive to a student who intends both; but the tension is productive."
+              }
+            ],
+            "selected_invitation": {
+              "invitation": "You've written a paragraph that takes a clear position and covers several angles \u2014 that's real work. Right now, your opening sentence does important job: it's meant to tell your reader the one main thing you're arguing. Looking at your first sentence, it states a position but adds a condition ('when they are used for educational purposes and within clearly defined expectations'). That condition shapes what the whole paragraph must prove. Here's the question to hold: does the rest of your paragraph actually make the case for *that specific claim* \u2014 that phones are beneficial when used educationally and within guidelines \u2014 or does it argue something somewhat different? Read your paragraph again and tell me: what is the single thing you most want your reader to accept, and does your first sentence capture it precisely?",
+              "selection_basis": "Candidate 1 is more direct and developmental \u2014 it asks the student to identify their own core claim without imposing an either/or frame that might oversimplify their thinking. It is coherent with the claim-precision target and leaves authorship fully with the student."
+            },
+            "intervention": {
+              "type": "instruct_then_invite",
+              "interpretation": "Student has produced a genuine argument with claim, reasons, concession, and close \u2014 showing real argument structure. The claim includes a conditional that may be deliberate scope or inadvertent hedging.",
+              "instruction": "A central claim's job is to tell the reader exactly what they're being asked to accept \u2014 not just the topic, but a specific, arguable position. When a claim includes a condition (like 'when used educationally'), it narrows what the paragraph must prove. That's useful precision \u2014 but only if the paragraph actually proves that specific conditional. If the reasons argue something broader, there's a mismatch between the claim and the case.",
+              "consolidation": "",
+              "cultural_resource": "Central Claim \u2014 conditional scope and supportability",
+              "timing_rationale": "This is the first turn; the student has a draft with a genuine but potentially misaligned claim. Brief instruction on what a claim must do + a focused question to surface the student's actual intent is the appropriate opening move.",
+              "focus": "writing",
+              "writing_not_content_check": "Teaches the communicative function of a claim's conditional scope and asks the student to evaluate whether their own first sentence captures their intended position \u2014 no substantive ideas supplied."
+            },
+            "observed_reorganization": "initial",
+            "created_at": "2026-07-26T18:06:35.961731+00:00"
+          }
+        ],
+        "developmental_profile": [
+          {
+            "element": "Central Claim",
+            "control_statement": "Produces a genuine, arguable position with a conditional qualifier; claim is present but its alignment with the paragraph's reasons is unconfirmed.",
+            "trend": "emerging",
+            "evidence": "First sentence states a conditional position; reasons follow but argue broadly; student has not yet demonstrated awareness of claim-body alignment.",
+            "episodes": 1,
+            "updated_at": "2026-07-26T18:06:35.961699+00:00"
+          },
+          {
+            "element": "Paragraph Purpose",
+            "control_statement": "Demonstrates intentional argument structure (claim, reasons, concession, close) in a single paragraph; no concrete examples yet despite assignment requiring them.",
+            "trend": "developing",
+            "evidence": "Paragraph moves through recognizable argument moves with transitional markers; concession/rebuttal present; evidence remains at the level of assertion.",
+            "episodes": 1,
+            "updated_at": "2026-07-26T18:06:35.961704+00:00"
+          }
+        ],
+        "revision_history": [],
+        "teacher_edits": [],
+        "is_preview": false,
+        "preview_analytics": {},
+        "experience_control": null,
+        "reasoning_mode": "exhaustive",
+        "teacher_id": "",
+        "config_id": "",
+        "assignment_code": "",
+        "student_name": "",
+        "origin_representation": {},
+        "created_at": "2026-07-26T18:05:08.781598+00:00",
+        "updated_at": "2026-07-26T18:06:35.961735+00:00"
+      }
+    },
+    {
+      "id": "student-f",
+      "label": "Student F",
+      "assignment": "Some schools have banned personal cell phones during class. Write one paragraph arguing whether your school should allow or ban personal cell phones during class. Take a clear position and support it with reasons and examples.",
+      "response": "In my opinion the school need to allow the phone in class. Many student use phone for translate the difficult word, this help us to understand the lesson better. Also when we don't understand, we can search fast the information. If the school ban all phone, is more hard for student like me who still learning English. So I think phone can help if we use with respect.",
+      "session": {
+        "id": "2aad7e29-79bf-4434-b401-1720a84cf007",
+        "assignment": "Some schools have banned personal cell phones during class. Write one paragraph arguing whether your school should allow or ban personal cell phones during class. Take a clear position and support it with reasons and examples.",
+        "pedagogical_purpose": "Help the student clarify and develop their position so a reader understands and is persuaded, and understand what each part of the writing is doing for the reader.",
+        "current_writing_task": "Write one paragraph arguing your position, with reasons and examples.",
+        "teacher_notes": "The writer is a high school student. Respond developmentally to their actual paragraph.",
+        "assignment_prompt": "",
+        "turns": [
+          {
+            "id": "3a173e06-6e53-4dca-b655-138e27a88673",
+            "role": "student",
+            "kind": "writing",
+            "content": "In my opinion the school need to allow the phone in class. Many student use phone for translate the difficult word, this help us to understand the lesson better. Also when we don't understand, we can search fast the information. If the school ban all phone, is more hard for student like me who still learning English. So I think phone can help if we use with respect.",
+            "status": "complete",
+            "reasoning_path": "",
+            "created_at": "2026-07-26T18:05:09.329532+00:00"
+          },
+          {
+            "id": "f80261fe-3fb8-4c90-ab23-42fae216cf3e",
+            "role": "ai",
+            "kind": "invitation",
+            "content": "You've made a clear argument: phones help students \u2014 especially English learners \u2014 understand lessons better. That's a real position a reader could agree or disagree with. Right now your opening sentence says 'the school need to allow the phone in class,' which tells us your topic but doesn't yet tell the reader the specific reason that makes your case worth accepting. Can you rewrite that opening sentence so it names not just your position (allow phones) but the key reason that drives your whole argument \u2014 the one that makes someone who disagrees stop and think?",
+            "status": "complete",
+            "reasoning_path": "exhaustive_full",
+            "created_at": "2026-07-26T18:05:09.329545+00:00"
+          }
+        ],
+        "telos": {
+          "governing_pedagogical_purpose": "Help the student clarify and develop their position so a reader understands and is persuaded, and understand what each part of the writing is doing for the reader.",
+          "immediate_task_purpose": "Write one paragraph arguing your position, with reasons and examples.",
+          "teacher_intentions": "The writer is a high school student. Respond developmentally to their actual paragraph.",
+          "assignment_context": "Some schools have banned personal cell phones during class. Write one paragraph arguing whether your school should allow or ban personal cell phones during class. Take a clear position and support it with reasons and examples.",
+          "audience_or_communicative_purpose": "Persuade a reader (likely teacher/classmates) that phones should be allowed in class.",
+          "unresolved_ambiguity": "Whether 'phones in class' means unrestricted or limited use \u2014 student's draft implies responsible/limited use but claim doesn't scope it.",
+          "telos_changed": "no change"
+        },
+        "theory": {
+          "current_telos": "Student argues phones should be allowed in class, grounding the claim in ELL learning needs; telos is to clarify and develop a persuasive position with reasons and examples.",
+          "communicative_purpose": {
+            "primary": "persuade",
+            "secondary": [
+              "explain"
+            ],
+            "inferred_from": "assignment prompt ('arguing whether') + student's own framing ('I think phone can help')",
+            "uncertainty": ""
+          },
+          "paragraph_function": {
+            "applies": true,
+            "purpose": "Argue that phones should be allowed in class by offering reasons grounded in learning needs, especially for ELL students.",
+            "contribution_to_whole": "This IS the whole piece; the paragraph must carry both the claim and its support.",
+            "coherence": "Sentences share a common theme (phones help learning) but shift between general students and personal ELL identity; no single controlling idea stated explicitly.",
+            "development": "Two brief reasons offered (translation, information search) plus a personal ELL appeal; minimal elaboration of either reason.",
+            "placement": "Single-paragraph argument; opening and closing sentences both restate opinion without adding organizational direction."
+          },
+          "evidence_function": {
+            "applies": true,
+            "forms": [
+              "personal example (translation use)",
+              "general behavior claim (search for information)",
+              "personal experience/identity (ELL student)"
+            ],
+            "function": "Illustrate how phones support learning; ground the argument in a relatable scenario.",
+            "interpretation_gap": "Both examples (translation and searching) are stated but not explained \u2014 the reader is not shown WHY these uses constitute a strong reason to allow phones broadly. The ELL appeal is emotionally present but not developed as reasoning.",
+            "quality": "Relevant to the topic; insufficient to carry a general 'allow phones' claim; no explanation of how examples establish the claim."
+          },
+          "coherence_function": {
+            "applies": true,
+            "intended_relationship": "elaboration \u2014 each sentence adds a reason or consequence supporting the main position",
+            "level": "paragraph-level",
+            "resources_in_use": [
+              "'Also' as additive connector",
+              "'So' as causal connector",
+              "repeated noun 'phone'/'student'"
+            ],
+            "reader_can_follow": "Reader can follow the general direction but the opening sentence doesn't commit to a specific controlling reason, so the paragraph feels like a list of observations rather than a driven argument."
+          },
+          "conclusion_function": {
+            "applies": true,
+            "functions_in_play": [
+              "restatement of position",
+              "brief qualification ('if we use with respect')"
+            ],
+            "completes_purpose": "Weakly \u2014 it adds a useful qualification but doesn't connect back to the strongest reason or leave the reader with a clear understanding of why the argument should be accepted.",
+            "relationship_to_opening": "Mirrors the opening opinion without adding synthesis or significance.",
+            "final_understanding": "Reader is left with 'phones can help if used responsibly' \u2014 slightly stronger scoping than the opener, but the key reason (ELL/learning support) isn't reinforced."
+          },
+          "scaffolding_control": {
+            "current_unit": "paragraph",
+            "diagnosed_opportunities": [
+              "Central claim lacks a governing reason \u2014 position stated but not yet a full arguable claim",
+              "Evidence is present but uninterpreted \u2014 examples dropped without explanation of how they establish the claim",
+              "Conclusion restates without synthesizing or reinforcing the strongest reason",
+              "ELL identity is a distinctive and potentially powerful warrant but is undeveloped"
+            ],
+            "primary_target": "Central Claim \u2014 the opening sentence needs to embed the key reason so the paragraph has a controlling arguable claim, not just a topic/opinion",
+            "prioritization_rationale": "Claim is the prerequisite: until the opening states an arguable, reasoned position, the evidence and conclusion have nothing to serve. ELL-grounded reasoning is already in the draft \u2014 the developmental act is to surface it in the claim.",
+            "instructional_mode": "explicit_instruction",
+            "postponed": [
+              "evidence interpretation (how examples connect to claim)",
+              "conclusion synthesis",
+              "ELL warrant development"
+            ],
+            "cycle_status": "continue",
+            "stopping_reason": "",
+            "future_opportunity": "Evidence interpretation \u2014 helping the student explain WHY translation/searching helps, rather than just stating it"
+          },
+          "reader_construction": {
+            "applies": true,
+            "reader_understanding": "Reader understands the student wants phones allowed and that phones help with translation and searching. Reader is aware the student is an ELL learner.",
+            "likely_reader_questions": [
+              "Why should phones be allowed for everyone if the main reason is ELL needs?",
+              "How does translating help enough to outweigh distraction concerns?"
+            ],
+            "assumed_knowledge": "Reader is assumed to accept that translation = better understanding without any elaboration \u2014 reasonable inference but underdeveloped.",
+            "clarification_needed": "What specific kind of phone use is being argued for \u2014 any use, or only learning-focused use?",
+            "elaboration_needed": "How translation/searching actually produces better understanding (the causal step is missing).",
+            "precision_risk": "'Allow the phone in class' could mean unrestricted use; the conclusion qualifies this ('with respect') but the claim doesn't.",
+            "next_reader_need": "A claim that tells the reader not just what the student wants but the reason that makes the position worth accepting."
+          },
+          "revision_development": {
+            "applies": false,
+            "development_detected": "",
+            "primary_growth": "",
+            "communication_change": "",
+            "reader_change": "",
+            "remaining_opportunity": "",
+            "transfer_message": ""
+          },
+          "integration_calibration": {
+            "applies": true,
+            "primary_framework": "Central Claim (M6 communicative purpose + instructional_reasoning)",
+            "supporting_frameworks": [
+              "reader_construction \u2014 identifies that the reader needs a reason in the claim",
+              "paragraph_function \u2014 confirms the paragraph lacks a controlling idea sentence"
+            ],
+            "calibration_check": "Proportionate \u2014 the claim is the highest-leverage fix; the student has evidence and a genuine position, so one targeted act (claim revision) is sufficient this turn.",
+            "consistency_check": "Yes \u2014 a paragraph with a topic-only opener and present-but-uninterpreted evidence would always get claim as the primary target first.",
+            "integration_notes": "Reader construction and paragraph function both point to the same gap: the controlling idea sentence. Unified into one target: revise the claim to include the key reason."
+          },
+          "instructional_reasoning": {
+            "applies": true,
+            "current_unit_of_writing": "paragraph",
+            "active_instructional_element": "Central Claim",
+            "element_communicative_purpose": "Assert a clear, supportable position the reader is asked to accept \u2014 commits the writer to a scoped, reasoned stance.",
+            "student_current_organization": "Student states an opinion ('I think we should allow phones') and lists reasons but the opening sentence presents a topic/position without embedding a reason; the paragraph's strongest reasoning (ELL learning support) appears mid-paragraph rather than governing the whole.",
+            "canonical_performance_structure": "State a clear position; embed a reason or scope; make it contestable and supportable.",
+            "primary_developmental_tension": "Opening sentence is a bare opinion ('school need to allow the phone') rather than a claim that gives the reader a reason to weigh \u2014 the ELL/learning-support reasoning that governs the paragraph isn't in the governing sentence.",
+            "next_student_act": "Revise the opening sentence to embed the key reason alongside the position.",
+            "selected_developmental_resources": [
+              "brief direct explanation",
+              "focused question",
+              "reminder of the assignment"
+            ],
+            "resource_selection_rationale": "Brief explanation names the difference between a topic/opinion and a claim-with-reason; focused question directs the student to their own strongest reasoning already in the draft; reminder of assignment grounds the act in the persuasive task.",
+            "evidence_of_developmental_movement": "initial",
+            "degree_of_student_control": "emerging",
+            "continue_consolidate_release_or_shift": "continue"
+          },
+          "current_organization": "Opinion opener \u2192 two reasons (translation, fast information search) \u2192 concession to ELL identity \u2192 closing restatement. Loosely organized around support claim; no governing thesis sentence that names a reason.",
+          "observed_differentiations": [
+            "distinguishes position from reasons (reasons follow the opener separately)",
+            "includes a personal identity element (ELL) as a distinct appeal"
+          ],
+          "observed_integrations": [
+            "loosely integrates position + reasons + personal experience into one paragraph"
+          ],
+          "observed_coordinations": [
+            "'Also' and 'So' coordinate additive and causal relationships across sentences"
+          ],
+          "emerging_intentional_control": "Student is beginning to organize argument around reasons; intentional use of personal experience as warrant is emerging.",
+          "unresolved_tensions": [
+            "Claim scope: 'allow phones' vs 'allow phones for learning purposes'",
+            "Evidence interpretation absent \u2014 reasons stated but not explained"
+          ],
+          "cultural_resources_in_use": [
+            "position/opinion statement",
+            "example as support",
+            "personal experience"
+          ],
+          "potential_cultural_resources": [
+            "claim-with-reason (because-structure)",
+            "interpretation/warrant after evidence",
+            "qualification/scope in the claim"
+          ],
+          "possible_reorganizations": [
+            "Revise opener to embed key reason \u2192 paragraph gains a controlling claim",
+            "Add one sentence after translation example explaining HOW it helps \u2192 evidence gains interpretation"
+          ],
+          "current_uncertainty": [
+            "Whether student understands distinction between stating a position and making an arguable claim",
+            "Whether ELL framing is the student's intended primary reason or incidental detail"
+          ],
+          "supporting_evidence": [
+            "Student already has the strongest reason (ELL learning support) in the draft",
+            "Closing qualification ('with respect') shows some awareness of scope"
+          ],
+          "complicating_evidence": [
+            "Two reasons given (translation, searching) \u2014 unclear which is primary",
+            "Language errors present but do not obscure meaning"
+          ],
+          "alternative_interpretations": [
+            "Student may already understand claim-with-reason intuitively but lacks the sentence-level control to write it",
+            "ELL framing may be the student's most authentic and central reason, not a secondary appeal"
+          ],
+          "currently_relevant_domains": [
+            "Central Claim / Thesis",
+            "Paragraph Purpose"
+          ],
+          "changes_since_previous": "initial"
+        },
+        "theory_history": [
+          {
+            "version": 1,
+            "telos": {
+              "governing_pedagogical_purpose": "Help the student clarify and develop their position so a reader understands and is persuaded, and understand what each part of the writing is doing for the reader.",
+              "immediate_task_purpose": "Write one paragraph arguing your position, with reasons and examples.",
+              "teacher_intentions": "The writer is a high school student. Respond developmentally to their actual paragraph.",
+              "assignment_context": "Some schools have banned personal cell phones during class. Write one paragraph arguing whether your school should allow or ban personal cell phones during class. Take a clear position and support it with reasons and examples.",
+              "audience_or_communicative_purpose": "",
+              "unresolved_ambiguity": "",
+              "telos_changed": ""
+            },
+            "theory": {
+              "current_telos": "",
+              "communicative_purpose": {
+                "primary": "",
+                "secondary": [],
+                "inferred_from": "",
+                "uncertainty": ""
+              },
+              "paragraph_function": {
+                "applies": false,
+                "purpose": "",
+                "contribution_to_whole": "",
+                "coherence": "",
+                "development": "",
+                "placement": ""
+              },
+              "evidence_function": {
+                "applies": false,
+                "forms": [],
+                "function": "",
+                "interpretation_gap": "",
+                "quality": ""
+              },
+              "coherence_function": {
+                "applies": false,
+                "intended_relationship": "",
+                "level": "",
+                "resources_in_use": [],
+                "reader_can_follow": ""
+              },
+              "conclusion_function": {
+                "applies": false,
+                "functions_in_play": [],
+                "completes_purpose": "",
+                "relationship_to_opening": "",
+                "final_understanding": ""
+              },
+              "scaffolding_control": {
+                "current_unit": "",
+                "diagnosed_opportunities": [],
+                "primary_target": "",
+                "prioritization_rationale": "",
+                "instructional_mode": "",
+                "postponed": [],
+                "cycle_status": "",
+                "stopping_reason": "",
+                "future_opportunity": ""
+              },
+              "reader_construction": {
+                "applies": false,
+                "reader_understanding": "",
+                "likely_reader_questions": [],
+                "assumed_knowledge": "",
+                "clarification_needed": "",
+                "elaboration_needed": "",
+                "precision_risk": "",
+                "next_reader_need": ""
+              },
+              "revision_development": {
+                "applies": false,
+                "development_detected": "",
+                "primary_growth": "",
+                "communication_change": "",
+                "reader_change": "",
+                "remaining_opportunity": "",
+                "transfer_message": ""
+              },
+              "integration_calibration": {
+                "applies": false,
+                "primary_framework": "",
+                "supporting_frameworks": [],
+                "calibration_check": "",
+                "consistency_check": "",
+                "integration_notes": ""
+              },
+              "instructional_reasoning": {
+                "applies": true,
+                "current_unit_of_writing": "",
+                "active_instructional_element": "",
+                "element_communicative_purpose": "",
+                "student_current_organization": "",
+                "canonical_performance_structure": "",
+                "primary_developmental_tension": "",
+                "next_student_act": "",
+                "selected_developmental_resources": [],
+                "resource_selection_rationale": "",
+                "evidence_of_developmental_movement": "",
+                "degree_of_student_control": "",
+                "continue_consolidate_release_or_shift": ""
+              },
+              "current_organization": "",
+              "observed_differentiations": [],
+              "observed_integrations": [],
+              "observed_coordinations": [],
+              "emerging_intentional_control": "",
+              "unresolved_tensions": [],
+              "cultural_resources_in_use": [],
+              "potential_cultural_resources": [],
+              "possible_reorganizations": [],
+              "current_uncertainty": [],
+              "supporting_evidence": [],
+              "complicating_evidence": [],
+              "alternative_interpretations": [],
+              "currently_relevant_domains": [],
+              "changes_since_previous": ""
+            },
+            "created_at": "2026-07-26T18:06:40.362203+00:00"
+          }
+        ],
+        "interactions": [
+          {
+            "id": "1b7493d3-5f64-488d-9bce-f519ae0dddc1",
+            "student_kind": "writing",
+            "student_content": "In my opinion the school need to allow the phone in class. Many student use phone for translate the difficult word, this help us to understand the lesson better. Also when we don't understand, we can search fast the information. If the school ban all phone, is more hard for student like me who still learning English. So I think phone can help if we use with respect.",
+            "candidate_invitations": [
+              {
+                "invitation": "Your opening says 'the school need to allow the phone in class' \u2014 that's your position, but a persuasive claim also gives the reader a reason to accept it. The strongest reason is already in your paragraph (phones help students understand, especially English learners). Can you rewrite that first sentence so it says both your position AND that key reason?",
+                "developmental_possibility": "Student moves from bare opinion to a claim-with-reason, giving the paragraph a controlling idea.",
+                "coherence_with_telos": "Directly serves the assignment (argue a position with reasons) and the governing purpose (persuasion).",
+                "intended_participation": "Student revises the opening sentence to embed a reason.",
+                "what_ai_could_learn": "Whether student can coordinate position + reason in one sentence, or needs further scaffolding.",
+                "uncertainty_or_risk": "Student may produce a list of reasons rather than one governing reason."
+              },
+              {
+                "invitation": "A strong persuasive claim doesn't just say what you want \u2014 it gives a reader a reason to agree. Your paragraph already has your best reason inside it (phones help students, especially those still learning English, understand the lesson). Try rewriting your first sentence to include that reason alongside your position, so a reader knows from the start why they should accept your argument.",
+                "developmental_possibility": "Student surfaces the implicit governing reason and integrates it into the claim.",
+                "coherence_with_telos": "Aligns with persuasive purpose and assignment requirement to take a supported position.",
+                "intended_participation": "Revise opener with embedded reason; student draws on their own draft content.",
+                "what_ai_could_learn": "Whether student can identify their own strongest reason and place it in the claim.",
+                "uncertainty_or_risk": "Student may copy language from mid-paragraph verbatim without integrating it as a claim."
+              }
+            ],
+            "selected_invitation": {
+              "invitation": "You've made a clear argument: phones help students \u2014 especially English learners \u2014 understand lessons better. That's a real position a reader could agree or disagree with. Right now your opening sentence says 'the school need to allow the phone in class,' which tells us your topic but doesn't yet tell the reader the specific reason that makes your case worth accepting. Can you rewrite that opening sentence so it names not just your position (allow phones) but the key reason that drives your whole argument \u2014 the one that makes someone who disagrees stop and think?",
+              "selection_basis": "Coherence with telos: the student already has their strongest reason in the draft; this invitation asks them to surface and integrate it into the claim without supplying the content for them. More specific than candidate 2, more explicit about the function than candidate 1."
+            },
+            "intervention": {
+              "type": "instruct_then_invite",
+              "interpretation": "Student has a genuine position and real reasons; the opening sentence is an opinion statement rather than an arguable claim with a reason embedded.",
+              "instruction": "A persuasive claim does two things: it states your position AND gives the reader a reason to weigh. 'Allow phones' is your position; the reason (phones help students understand, especially ELL students) is what makes it arguable rather than just a preference. Writers put that reason in the claim so the reader knows from the first sentence what the whole argument is earning.",
+              "consolidation": "",
+              "cultural_resource": "Claim (Central Claim with reason / because-structure)",
+              "timing_rationale": "Student lacks the claim-with-reason form \u2014 the concept needs naming before the invitation to revise; instruction reorganizes present organization rather than replacing it.",
+              "focus": "writing",
+              "writing_not_content_check": "Teaches the communicative function of embedding a reason in a claim (writing principle); does not supply the reason or the sentence \u2014 student draws on their own draft content."
+            },
+            "observed_reorganization": "initial",
+            "created_at": "2026-07-26T18:06:40.362254+00:00"
+          }
+        ],
+        "developmental_profile": [
+          {
+            "element": "Central Claim",
+            "control_statement": "States a clear position on the assigned topic but does not yet embed a governing reason in the claim sentence; reasons appear separately in the body.",
+            "trend": "emerging",
+            "evidence": "Opening sentence 'school need to allow the phone' is a topic/opinion; strongest reason (ELL learning support) appears mid-paragraph rather than governing the whole.",
+            "episodes": 1,
+            "updated_at": "2026-07-26T18:06:40.362225+00:00"
+          },
+          {
+            "element": "Evidence",
+            "control_statement": "Produces relevant examples (translation, searching) but does not yet interpret them \u2014 states what the examples are without explaining how they establish the claim.",
+            "trend": "emerging",
+            "evidence": "Two examples present; no sentence in the draft explains WHY translation helps or HOW searching leads to better understanding.",
+            "episodes": 1,
+            "updated_at": "2026-07-26T18:06:40.362230+00:00"
+          }
+        ],
+        "revision_history": [],
+        "teacher_edits": [],
+        "is_preview": false,
+        "preview_analytics": {},
+        "experience_control": null,
+        "reasoning_mode": "exhaustive",
+        "teacher_id": "",
+        "config_id": "",
+        "assignment_code": "",
+        "student_name": "",
+        "origin_representation": {},
+        "created_at": "2026-07-26T18:05:08.780413+00:00",
+        "updated_at": "2026-07-26T18:06:40.362259+00:00"
+      }
+    }
+  ]
+}

@@ -1633,6 +1633,80 @@ async def create_preview_session(payload: Optional[PreviewStart] = None):
     return session
 
 
+# ---------------------------------------------------------------------------
+# Teacher Review — precomputed sample cases (frozen-engine outputs generated
+# offline). Returns CURATED, teacher-facing fields only; never raw theory.
+# ---------------------------------------------------------------------------
+_TEACHER_REVIEW_PATH = ROOT_DIR / "teacher_review_fixtures.json"
+
+
+def _clean_list(items, limit=4):
+    out = []
+    for it in (items or []):
+        s = (it or "").strip() if isinstance(it, str) else ""
+        if s:
+            out.append(s)
+    return out[:limit]
+
+
+def _curate_case(case: dict) -> dict:
+    sess = case.get("session", {})
+    th = sess.get("theory", {}) or {}
+    ai = [t for t in sess.get("turns", []) if t.get("role") == "ai"]
+    invitation = (ai[-1].get("content") if ai else "") or ""
+
+    comm = th.get("communicative_purpose", {}) or {}
+    para = th.get("paragraph_function", {}) or {}
+    reader = th.get("reader_construction", {}) or {}
+    scaf = th.get("scaffolding_control", {}) or {}
+    instr = th.get("instructional_reasoning", {}) or {}
+
+    recognized = _clean_list(
+        (th.get("observed_differentiations") or [])
+        + (th.get("observed_integrations") or [])
+        + (th.get("cultural_resources_in_use") or [])
+    )
+    emerging = (th.get("emerging_intentional_control") or "").strip()
+    if emerging:
+        recognized.append(emerging)
+
+    set_aside = _clean_list(scaf.get("postponed") or scaf.get("diagnosed_opportunities"))
+
+    return {
+        "id": case.get("id"),
+        "label": case.get("label"),
+        "assignment": case.get("assignment"),
+        "response": case.get("response"),
+        "invitation": invitation,
+        "explanation": {
+            "understood": _clean_list([
+                f"The student is primarily trying to {comm.get('primary','').strip()}." if comm.get("primary") else "",
+                para.get("purpose", ""),
+                reader.get("reader_understanding", ""),
+            ]),
+            "recognized": recognized[:4],
+            "focus": {
+                "target": (scaf.get("primary_target") or instr.get("active_instructional_element") or "").strip(),
+                "element": (instr.get("active_instructional_element") or "").strip(),
+                "purpose": (instr.get("element_communicative_purpose") or "").strip(),
+            },
+            "why": (scaf.get("prioritization_rationale") or "").strip(),
+            "set_aside": set_aside,
+            "broader": (scaf.get("future_opportunity") or instr.get("element_communicative_purpose") or "").strip(),
+        },
+    }
+
+
+@api_router.get("/teacher-review/cases")
+async def teacher_review_cases():
+    if not _TEACHER_REVIEW_PATH.exists():
+        return {"assignment": "", "cases": []}
+    data = json.loads(_TEACHER_REVIEW_PATH.read_text())
+    cases = [_curate_case(c) for c in data.get("cases", []) if c.get("session")]
+    assignment = cases[0]["assignment"] if cases else ""
+    return {"assignment": assignment, "cases": cases}
+
+
 @api_router.get("/sessions/{session_id}", response_model=Session)
 async def get_session(session_id: str):
     doc = await db.sessions.find_one({"id": session_id}, {"_id": 0})
