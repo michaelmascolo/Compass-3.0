@@ -45,5 +45,13 @@ Files (Ch4): `frontend/src/components/PublicPreview.jsx` (AssignmentScreen + Wri
 ## Chapter 6 — pre-noted (DO NOT implement until Ch6 spec is approved)
 - Terminology cleanup owned by Ch6: the downstream Thinking + coaching/Developmental Response surface still uses essay/"passage" language that predates the assignment→response architecture. When Ch6 is implemented, review ALL visible language there and make it consistently refer to the learner's assignment / response / first draft (not "essay" or "passage"). Known instances: "YOUR PASSAGE" label; the Thinking lines ("Reading your passage as a reader would…", etc.); the "Reading…" submit label; likely others in the coaching card / revision controls. Leave unchanged until Ch6.
 
+## Chapter 6 — ARCHITECTURAL DECISION (approved direction; NOT yet implemented)
+- Compass Thinking + Developmental Response = ONE continuous instructional encounter, sequenced: **Understanding → Recognition → Invitation → Teaching**. The invitation must feel like the natural continuation of having first been understood.
+- REJECTED: streaming the Stage-B invitation immediately (even though it is produced first) — it would improve latency but violate the instructional sequence.
+- Provisional architecture (leading candidate, NOT approved for build): Submission → fast pedagogical-noticing process (establishes the relationship: "I see your main idea as…", "I notice…", "I'm considering…") → existing frozen Stage-B engine → developmental invitation → remaining DevelopmentalTheory completes in background. The noticing process does NOT replace the frozen engine; it establishes the instructional relationship before teaching.
+- Hard constraints reaffirmed: do NOT stream the invitation, reorder the Stage-B schema, modify prompts, or modify the frozen engine until the complete Chapter 6 instructional architecture is finalized.
+- Investigation facts feeding this (from COMPASS_PERFORMANCE_AUDIT.md addendum): latency is a serialization/transport artifact, not reasoning; prompt caching NOT available via the client/proxy; token streaming IS supported (used in triage_experiment); Stage-B emits student_facing_invitation FIRST and reader_understanding late.
+- OPEN design questions to resolve before implementation: (1) source of the noticing judgments (a new fast LLM call vs. an early slice of the same engine call) and its cost/latency/load; (2) keeping noticing truthful/grounded without exposing chain-of-thought or revealing the withheld target; (3) the terminology cleanup (assignment/response/first draft, not "passage"/"essay") folds into this chapter.
+
 ## Pending
-- Chapters 6–9 not yet specified/approved. Do not implement ahead.
+- Chapter 6 instructional architecture to be finalized before build. Chapters 7–9 not yet specified. Do not implement ahead.
