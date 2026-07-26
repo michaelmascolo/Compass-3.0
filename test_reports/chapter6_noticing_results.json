@@ -1,0 +1,255 @@
+{
+  "summary": {
+    "total": 16,
+    "passed": 16,
+    "failed": 0,
+    "pass_rate": 100.0,
+    "latency_min": 1.16,
+    "latency_max": 2.38,
+    "latency_avg": 1.81,
+    "recognition_present": 9,
+    "recognition_absent": 7
+  },
+  "results": [
+    {
+      "id": "strong_explanatory",
+      "generated": true,
+      "latency": 2.38,
+      "understanding": "You're explaining that exercise works to improve mental health through a specific biological mechanism\u2014the release of endorphins\u2014which directly counteracts stress and low mood, and you're using the fact that doctors prescribe it as evidence that this mechanism is real and meaningful.",
+      "recognition": "You've grounded your explanation in an actual mechanism rather than just asserting that exercise helps; you've named what happens in the body and traced how that change produces the mental health benefit.",
+      "bridge": "I'd like to explore this with you.",
+      "eval": {
+        "grounded_understanding": "pass",
+        "authentic_recognition": "pass",
+        "no_teaching_leakage": "pass",
+        "notes": "All three components accurately reflect this learner's specific content without leaking any instructional target; the bridge 'I'd like to explore this with you' opens collaboration without naming anything to fix."
+      },
+      "overall": "pass"
+    },
+    {
+      "id": "weak_vague",
+      "generated": true,
+      "latency": 1.16,
+      "understanding": "You're making a claim that exercise benefits both body and mind, and that this is reason enough for people to make it a regular practice.",
+      "recognition": null,
+      "bridge": "I'd like to explore this with you.",
+      "eval": {
+        "grounded_understanding": "pass",
+        "authentic_recognition": "na",
+        "no_teaching_leakage": "pass",
+        "notes": "The understanding accurately captures the learner's core claim without surface rewording, and the bridge contains no instructional targets or advice."
+      },
+      "overall": "pass"
+    },
+    {
+      "id": "minimal",
+      "generated": true,
+      "latency": 1.59,
+      "understanding": "You're arguing that homework is harmful to students\u2014not because of what it fails to teach, but because of the concrete toll it takes: the time burden and the stress it creates.",
+      "recognition": null,
+      "bridge": "I'd like to understand more about what you're seeing here.",
+      "eval": {
+        "grounded_understanding": "pass",
+        "authentic_recognition": "na",
+        "no_teaching_leakage": "pass",
+        "notes": "The understanding correctly identifies the learner's harm-based framing ('concrete toll...time burden and the stress') rather than just restating 'homework is bad,' showing genuine comprehension of the argument's logic."
+      },
+      "overall": "pass"
+    },
+    {
+      "id": "off_topic",
+      "generated": true,
+      "latency": 1.44,
+      "understanding": "You're expressing why you enjoy science as a subject \u2014 it's not primarily the content itself, but the experience of having a teacher you connect with and the hands-on work you do together.",
+      "recognition": null,
+      "bridge": null,
+      "eval": {
+        "grounded_understanding": "pass",
+        "authentic_recognition": "na",
+        "no_teaching_leakage": "pass",
+        "notes": "The understanding correctly identifies that the learner's response is about enjoyment of science through relationship and experience ('teacher you connect with and the hands-on work') rather than restating surface words, and no teaching leaks in."
+      },
+      "overall": "pass"
+    },
+    {
+      "id": "narrative",
+      "generated": true,
+      "latency": 2.32,
+      "understanding": "I see you're describing a moment when solitude, rather than feeling like loneliness or something to escape, revealed itself to you as something genuinely satisfying\u2014even preferable to your usual need for company.",
+      "recognition": "You've grounded this self-discovery in a specific sensory scene\u2014the rain, the pooling water\u2014rather than just stating the realization, which lets the mood and the moment do some of the work of showing why this recognition happened then.",
+      "bridge": "I'm curious about what you're working toward here.",
+      "eval": {
+        "grounded_understanding": "pass",
+        "authentic_recognition": "pass",
+        "no_teaching_leakage": "pass",
+        "notes": "The recognition names something specific and real\u2014'grounded this self-discovery in a specific sensory scene...rather than just stating the realization'\u2014without framing it as advice or deficit, and the bridge asks an open question without naming anything to fix."
+      },
+      "overall": "pass"
+    },
+    {
+      "id": "argumentative_strong",
+      "generated": true,
+      "latency": 1.81,
+      "understanding": "You're arguing that schools should start later because teenage biology actually makes early wake times harmful\u2014their bodies are wired to sleep later, so forcing them awake creates real, measurable damage to their learning and mental health.",
+      "recognition": "You're grounding your argument in a mechanism\u2014showing *why* the problem exists (biological shift in sleep timing) rather than just asserting that sleep matters.",
+      "bridge": "I'd like to explore this with you.",
+      "eval": {
+        "grounded_understanding": "pass",
+        "authentic_recognition": "pass",
+        "no_teaching_leakage": "pass",
+        "notes": "All three components are clean: the understanding paraphrases the causal chain ('bodies are wired to sleep later, so forcing them awake creates real, measurable damage') without merely echoing surface wording; the recognition names a specific rhetorical move ('grounding your argument in a mechanism') that is genuinely distinctive to this draft; and the bridge contains no instructional target or advice."
+      },
+      "overall": "pass"
+    },
+    {
+      "id": "reflective_tentative",
+      "generated": true,
+      "latency": 2.3,
+      "understanding": "You're sensing that real friendship isn't necessarily about dramatic moments or intense conversations\u2014it's something quieter, about presence and companionship when there's nothing special going on. You're drawn to that idea but you're still sitting with why it feels so important to you.",
+      "recognition": "You're letting uncertainty be part of your thinking rather than rushing to a neat answer, which means you're staying honest with what you actually notice about friendship instead of settling for something that sounds good.",
+      "bridge": "I'd like to sit with this question alongside you and see where it leads.",
+      "eval": {
+        "grounded_understanding": "pass",
+        "authentic_recognition": "pass",
+        "no_teaching_leakage": "pass",
+        "notes": "All three components accurately reflect the learner's specific draft without reshuffling surface wording, the recognition names something genuinely specific ('letting uncertainty be part of your thinking'), and no instructional targets or corrections appear anywhere."
+      },
+      "overall": "pass"
+    },
+    {
+      "id": "ell_surface_errors",
+      "generated": true,
+      "latency": 1.93,
+      "understanding": "I see you're arguing that learning a second language matters because it fundamentally changes how you think and perceive the world\u2014letting you access other people's perspectives and ways of understanding\u2014and that it also has practical benefits for your brain and your future.",
+      "recognition": "You've grounded your argument in a real mechanism: the idea that language and thought are connected, so speaking another language actually shifts how you see things, not just what words you know.",
+      "bridge": "I'd love to explore this with you.",
+      "eval": {
+        "grounded_understanding": "pass",
+        "authentic_recognition": "pass",
+        "no_teaching_leakage": "pass",
+        "notes": "All three components hold: the understanding restates the learner's core claim about perspective-shifting without mere rewording; the recognition isolates the specific mechanism (language-thought connection) that is genuinely present in this draft and not generic; and the bridge contains no instructional target or deficiency."
+      },
+      "overall": "pass"
+    },
+    {
+      "id": "confident_unsupported",
+      "generated": true,
+      "latency": 1.2,
+      "understanding": "I see you're taking a strong position that social media poses a serious threat to teenagers' wellbeing\u2014serious enough that you view it as fundamentally damaging to their generation.",
+      "recognition": null,
+      "bridge": "I'd love to explore what's driving this conviction with you.",
+      "eval": {
+        "grounded_understanding": "pass",
+        "authentic_recognition": "na",
+        "no_teaching_leakage": "pass",
+        "notes": "The understanding accurately captures the learner's stance ('fundamentally damaging to their generation') without merely echoing 'completely destroying an entire generation,' showing genuine comprehension of intent, and the bridge invites collaboration without naming any deficiency."
+      },
+      "overall": "pass"
+    },
+    {
+      "id": "descriptive",
+      "generated": true,
+      "latency": 2.15,
+      "understanding": "You're painting a portrait of home through sensory details and your grandmother's way of seeing\u2014suggesting that what makes a place feel like home isn't perfection, but the accumulated marks of time and the people who live there with intention.",
+      "recognition": "You've let a single physical detail\u2014the crack in the table\u2014do the work of revealing your grandmother's philosophy and why this space mattered to you, rather than simply stating it.",
+      "bridge": "I'd love to explore this with you.",
+      "eval": {
+        "grounded_understanding": "pass",
+        "authentic_recognition": "pass",
+        "no_teaching_leakage": "pass",
+        "notes": "The understanding captures the learner's implicit argument about imperfection and intentionality, and the recognition pinpoints the specific crack-in-the-table detail and its narrative function without prescribing any fix."
+      },
+      "overall": "pass"
+    },
+    {
+      "id": "compare_contrast",
+      "generated": true,
+      "latency": 1.75,
+      "understanding": "You're making a straightforward case that cities and small towns offer genuinely different experiences\u2014cities give you activity and anonymity, while small towns offer quiet and community\u2014and that neither is objectively better because what matters is what fits the person living there.",
+      "recognition": null,
+      "bridge": "I'd like to explore this with you.",
+      "eval": {
+        "grounded_understanding": "pass",
+        "authentic_recognition": "na",
+        "no_teaching_leakage": "pass",
+        "notes": "The understanding goes beyond surface rewording to articulate the implicit argument: 'neither is objectively better because what matters is what fits the person living there,' which captures the learner's actual meaning without leaking any instructional target."
+      },
+      "overall": "pass"
+    },
+    {
+      "id": "cause_effect",
+      "generated": true,
+      "latency": 2.31,
+      "understanding": "You're arguing that the Civil War grew out of multiple overlapping tensions\u2014slavery at the core, but also a fundamental disagreement about where power should sit between states and the federal government\u2014and that economic differences between two very different regional systems intensified all of these conflicts.",
+      "recognition": "You're layering causes rather than treating them as separate, which lets you show how they reinforced and complicated each other over time.",
+      "bridge": "I'd like to explore this with you.",
+      "eval": {
+        "grounded_understanding": "pass",
+        "authentic_recognition": "pass",
+        "no_teaching_leakage": "pass",
+        "notes": "The recognition names a specific intellectual move\u2014'layering causes rather than treating them as separate'\u2014that reflects what this learner actually did, not generic praise."
+      },
+      "overall": "pass"
+    },
+    {
+      "id": "process",
+      "generated": true,
+      "latency": 2.06,
+      "understanding": "You're explaining that effective exam studying comes down to three interconnected moves: spacing your work over time rather than cramming, dividing material into manageable chunks, and actively testing yourself because it reveals gaps in your knowledge in a way passive rereading cannot.",
+      "recognition": "You've grounded your point about self-testing in a real mechanism\u2014the idea that it functions as a diagnostic tool, showing what you don't know\u2014rather than just asserting that it works better.",
+      "bridge": "I'd like to explore this thinking with you.",
+      "eval": {
+        "grounded_understanding": "pass",
+        "authentic_recognition": "pass",
+        "no_teaching_leakage": "pass",
+        "notes": "All three components accurately reflect the learner's specific content without leaking any instructional targets; the recognition correctly identifies the distinctive 'diagnostic tool' reasoning unique to this draft."
+      },
+      "overall": "pass"
+    },
+    {
+      "id": "literary_analysis",
+      "generated": true,
+      "latency": 1.93,
+      "understanding": "I see your main idea as: the green light works as a symbol precisely because its distance from Gatsby mirrors the fundamental impossibility of his dream\u2014it's not just what he wants, but the untouchability of what he wants that gives the symbol its meaning.",
+      "recognition": "You've noticed that the physical geography of the light (across the water, unreachable) is doing the symbolic work\u2014the distance isn't incidental to what it means; it's central to it.",
+      "bridge": "I'd love to explore this with you.",
+      "eval": {
+        "grounded_understanding": "pass",
+        "authentic_recognition": "pass",
+        "no_teaching_leakage": "pass",
+        "notes": "All three components accurately reflect the learner's specific insight that unreachability is constitutive of the symbol's meaning, with no instructional targets or corrective language present."
+      },
+      "overall": "pass"
+    },
+    {
+      "id": "very_short_idea",
+      "generated": true,
+      "latency": 1.43,
+      "understanding": "I see your main idea as: courage isn't the absence of fear, but rather the choice to act despite feeling afraid.",
+      "recognition": null,
+      "bridge": "I'd love to explore this with you.",
+      "eval": {
+        "grounded_understanding": "pass",
+        "authentic_recognition": "na",
+        "no_teaching_leakage": "pass",
+        "notes": "The understanding genuinely paraphrases the learner's meaning ('the choice to act despite feeling afraid') without merely reshuffling surface words, showing real comprehension of the idea."
+      },
+      "overall": "pass"
+    },
+    {
+      "id": "dense_but_unclear",
+      "generated": true,
+      "latency": 1.16,
+      "understanding": "You're explaining that the water cycle matters because it's a continuous, self-renewing system\u2014water doesn't disappear; it just keeps changing forms and moving between different places on Earth, which is why we never run out of it.",
+      "recognition": null,
+      "bridge": "I'd love to explore this with you.",
+      "eval": {
+        "grounded_understanding": "pass",
+        "authentic_recognition": "na",
+        "no_teaching_leakage": "pass",
+        "notes": "The understanding captures the learner's core idea\u2014'water doesn't disappear; it just keeps changing forms'\u2014demonstrating genuine comprehension of their 'never really used up' claim rather than merely restating surface wording."
+      },
+      "overall": "pass"
+    }
+  ]
+}

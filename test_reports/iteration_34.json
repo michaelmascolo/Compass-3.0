@@ -1,0 +1,29 @@
+{
+  "summary": "Frontend-only verification of Chapter 6 Pedagogical Noticing + homepage restructure + terminology cleanup. Homepage shows single Experience Compass panel with three stage cards (current/next/future) and single CTA linking to ?preview; no Teacher/Student split. Preview flow: welcome -> assignment -> writing works. After submit, preview-noticing appeared in 2.8s (well within 6s target) with understanding, recognition, and bridge beats populated with authentic grounded text (no teaching/corrections). preview-thinking-with cue visible while engine reasoned. Developmental preview-coaching-card appeared in 53.5s via polling; noticing block remained above it (DOM order confirmed: noticing_before_coaching). Terminology: no 'passage'/'essay' anywhere in learner-facing preview; placeholder is 'Your response…'; helper text 'Revise your response above, then send it back.' present; 'Your first draft' label present (rendered uppercase via CSS).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "PublicPreview.jsx is ~720 lines with multiple sub-components (AssignmentScreen, WritingScreen, Thinking, ThinkingWith, NoticingBeats, Beat) inline — consider splitting each sub-component into its own file for maintainability."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a (not tested)", "frontend": "100%"},
+  "test_credentials": "none — public routes",
+  "seed_data_creation": "none",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Chapter 6 noticing UX verified end-to-end on live preview URL. Noticing endpoint responds ~3s; frozen engine coaching completes ~50-90s via polling. Both blocks coexist on-screen (continuous encounter). Ch6 acceptance fully met.",
+  "verified_flows": [
+    "Homepage: experience-compass-panel + stage-current/next/future + btn-experience-compass -> ?preview",
+    "Preview: welcome-begin -> assignment-input -> assignment-continue -> writing-input -> writing-submit",
+    "Noticing appeared in 2.8s with understanding+recognition+bridge; grounded to draft; no teaching/corrections",
+    "preview-thinking-with visible during engine reasoning",
+    "preview-coaching-card appeared in 53.5s; preview-noticing still present above (noticing_before_coaching)",
+    "Terminology: no 'passage'/'essay' in learner-facing preview; placeholder='Your response…'; helper text present; label 'Your first draft' present"
+  ]
+}

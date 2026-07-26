@@ -8,7 +8,7 @@ import {
   X,
   CornerDownRight,
 } from "lucide-react";
-import { startPreview, getSession, interact } from "@/lib/api";
+import { startPreview, getSession, interact, getNoticing } from "@/lib/api";
 import ExperienceReflection from "@/components/ExperienceReflection";
 import TeacherReflection from "@/components/TeacherReflection";
 import WelcomeScreen from "@/components/WelcomeScreen";
@@ -34,6 +34,10 @@ export default function PublicPreview() {
   const [writingStarted, setWritingStarted] = useState(false);
   // Post-experience: the teacher chooses to review their own experience.
   const [reviewingAsTeacher, setReviewingAsTeacher] = useState(false);
+  // Chapter 6 — Pedagogical Noticing: the "I understand you" beats shown before
+  // the frozen engine's developmental response, on the FIRST encounter only.
+  const [noticing, setNoticing] = useState(null); // {understanding, recognition, bridge}
+  const [revealStage, setRevealStage] = useState(0); // 0 none · 1 understanding · 2 +recognition · 3 +bridge
 
   const isProcessing = !!session?.turns?.some((t) => t.status === "processing");
   const busy = starting || sending || isProcessing;
@@ -44,6 +48,10 @@ export default function PublicPreview() {
   const activeCoaching = completedAi.length ? completedAi[completedAi.length - 1] : null;
   const started = !!session;
   const reviseCount = studentTurns.filter((t) => t.kind === "revise").length;
+  // Chapter 6 — the "first encounter" is the learner's first draft and Compass's
+  // first response to it. Pedagogical Noticing runs only here; later revisions
+  // keep the established relationship (existing coaching behavior).
+  const isFirstMoment = started && reviseCount === 0;
   // Completion is driven ONLY by the single-objective experience_control phase,
   // never by an AI turn count.
   const phase = session?.experience_control?.phase || "active";
@@ -71,13 +79,32 @@ export default function PublicPreview() {
     };
   }, [session?.id, isProcessing]);
 
-  // A new coaching target auto-surfaces its marker.
+  // A new coaching target auto-surfaces its marker. On the FIRST encounter the
+  // developmental response auto-expands so it flows continuously from the
+  // noticing beats (no marker click, no abrupt screen change).
   useEffect(() => {
     if (activeCoaching) {
       setCardOpen(true);
-      setOpenCoachingId(null);
+      setOpenCoachingId(isFirstMoment ? activeCoaching.id : null);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeCoaching?.id]);
+
+  // Chapter 6 — reveal the noticing beats as a conversational sequence: subtle
+  // timing (gentle fades), never a performed animation.
+  useEffect(() => {
+    if (!noticing) {
+      setRevealStage(0);
+      return;
+    }
+    setRevealStage(1);
+    const t2 = setTimeout(() => setRevealStage((s) => (s < 2 ? 2 : s)), 1400);
+    const t3 = setTimeout(() => setRevealStage((s) => (s < 3 ? 3 : s)), 2800);
+    return () => {
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
+  }, [noticing]);
 
   // Writing Screen submit — creates the session with the educator's authentic
   // assignment as the authoritative task, then submits their EXACT response
@@ -90,6 +117,14 @@ export default function PublicPreview() {
       const updated = await interact(s.id, { kind: "writing", content: response });
       setDraft(response);
       setSession(updated);
+      // Chapter 6 — establish the relationship first. Fire Pedagogical Noticing
+      // in parallel with the frozen engine's background reasoning. If it fails
+      // or times out, the generic thinking experience remains (graceful).
+      getNoticing(s.id)
+        .then((res) => {
+          if (res && res.ok) setNoticing(res);
+        })
+        .catch(() => {});
     } catch (e) {
       /* stay on writing screen */
     } finally {
@@ -110,6 +145,8 @@ export default function PublicPreview() {
     setReplyOpen(false);
     setReply("");
     setReviewingAsTeacher(false);
+    setNoticing(null);
+    setRevealStage(0);
   }, []);
 
   const dirty = draft.trim() !== (studentTurns[studentTurns.length - 1]?.content || "").trim();
@@ -213,7 +250,7 @@ export default function PublicPreview() {
                 data-testid="preview-revision-progress"
                 className="font-mono-panel text-[10px] uppercase tracking-[0.18em] text-stone-400 mb-3"
               >
-                {reviseCount > 0 ? `Revision ${reviseCount}` : "Your passage"}
+                {reviseCount > 0 ? `Revision ${reviseCount}` : "Your first draft"}
               </p>
             )}
 
@@ -223,7 +260,7 @@ export default function PublicPreview() {
                 data-testid="preview-document"
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
-                placeholder="Your passage…"
+                placeholder="Your response…"
                 className="block w-full min-h-[34vh] bg-transparent px-7 sm:px-10 py-8 text-[17px] leading-9 text-stone-900 placeholder:text-stone-400 outline-none resize-none custom-scroll font-serif-display"
               />
               <AnimatePresence>
@@ -236,7 +273,7 @@ export default function PublicPreview() {
                     onClick={() => setOpenCoachingId(activeCoaching.id)}
                     data-testid="preview-coaching-marker"
                     className="absolute right-[-12px] bottom-8 group flex items-center gap-2 p-2 -m-2"
-                    title="Your coach has a note on this passage"
+                    title="Your coach has a note on this response"
                   >
                     <span className="coach-pulse h-3.5 w-3.5 rounded-full bg-[#8C3A2A] ring-4 ring-[#8C3A2A]/15" />
                     <span className="hidden group-hover:inline-block text-[10px] font-mono-panel uppercase tracking-[0.15em] text-[#8C3A2A] bg-white border border-[#8C3A2A]/30 rounded-sm px-2 py-1">
@@ -247,9 +284,15 @@ export default function PublicPreview() {
               </AnimatePresence>
             </div>
 
+            {/* Chapter 6 — Pedagogical Noticing beats: "I understand you" before
+                any teaching. First encounter only; continuous with the response. */}
+            {isFirstMoment && noticing && (
+              <NoticingBeats noticing={noticing} revealStage={revealStage} />
+            )}
+
             {busy && (
               <div data-testid="preview-thinking" className="mt-4">
-                <Thinking />
+                {isFirstMoment && noticing ? <ThinkingWith /> : <Thinking />}
               </div>
             )}
 
@@ -288,7 +331,7 @@ export default function PublicPreview() {
                   <div className="mt-4 flex flex-wrap items-center gap-4">
                     <span className="inline-flex items-center gap-1.5 text-[11px] text-stone-500">
                       <CornerDownRight className="h-3.5 w-3.5" />
-                      Revise your passage above, then send it back.
+                      Revise your response above, then send it back.
                     </span>
                     <button
                       onClick={sendExplain}
@@ -316,7 +359,7 @@ export default function PublicPreview() {
                           if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) sendReply();
                         }}
                         rows={2}
-                        placeholder="Think aloud to your coach (this doesn't change your passage)…"
+                        placeholder="Think aloud to your coach (this doesn't change your response)…"
                         className="flex-1 bg-[#faf9f6] border border-stone-300 rounded-sm p-2.5 text-sm text-stone-900 placeholder:text-stone-400 outline-none focus:ring-1 focus:ring-stone-900 resize-none"
                       />
                       <button
@@ -359,7 +402,7 @@ export default function PublicPreview() {
             </div>
             {!dirty && !busy && activeCoaching && (
               <p className="mt-2 text-right text-[11px] text-stone-400">
-                Change something in your passage to send a revision.
+                Change something in your response to send a revision.
               </p>
             )}
           </div>
@@ -573,7 +616,7 @@ function WritingScreen({ assignment, response, setResponse, onSubmit, onBack, su
 
 function Thinking() {
   const lines = [
-    "Reading your passage as a reader would…",
+    "Reading your response as a reader would…",
     "Sitting with what you actually said…",
     "Thinking about what a reader needs here…",
   ];
@@ -600,5 +643,75 @@ function Thinking() {
         {lines[i]}
       </motion.span>
     </div>
+  );
+}
+
+// Chapter 6 — a subtle "thinking with you" cue shown AFTER the noticing beats,
+// while the frozen engine finishes its developmental response. Conversational,
+// not a performance.
+function ThinkingWith() {
+  return (
+    <div className="flex items-center gap-3 pl-1" data-testid="preview-thinking-with">
+      <div className="flex items-center gap-1.5">
+        <span className="thinking-dot h-2 w-2 rounded-full bg-[#8C3A2A]" />
+        <span className="thinking-dot h-2 w-2 rounded-full bg-[#8C3A2A]" style={{ animationDelay: "0.2s" }} />
+        <span className="thinking-dot h-2 w-2 rounded-full bg-[#8C3A2A]" style={{ animationDelay: "0.4s" }} />
+      </div>
+      <span className="text-stone-500 text-sm italic font-serif-display">
+        Thinking with you about your response…
+      </span>
+    </div>
+  );
+}
+
+// Chapter 6 — the Pedagogical Noticing beats. Understanding → (pause) →
+// Recognition (only if genuine) → (pause) → Bridge. Same voice and surface as
+// the coaching that follows, so the encounter reads as one continuous
+// conversation. Gentle fades only.
+function NoticingBeats({ noticing, revealStage }) {
+  const { understanding, recognition, bridge } = noticing || {};
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      data-testid="preview-noticing"
+      className="mt-5 bg-white border-l-2 border-[#8C3A2A] border-y border-r border-stone-200 rounded-sm p-5"
+    >
+      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.18em] text-[#8C3A2A] font-mono-panel mb-3">
+        <MessageSquareQuote className="h-3.5 w-3.5" />
+        Your coach
+      </div>
+      <div className="space-y-3">
+        <Beat show={revealStage >= 1} testid="preview-noticing-understanding">
+          {understanding}
+        </Beat>
+        {recognition && (
+          <Beat show={revealStage >= 2} testid="preview-noticing-recognition">
+            {recognition}
+          </Beat>
+        )}
+        {bridge && (
+          <Beat show={revealStage >= 3} testid="preview-noticing-bridge">
+            {bridge}
+          </Beat>
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
+function Beat({ show, testid, children }) {
+  if (!show) return null;
+  return (
+    <motion.p
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.7, ease: "easeOut" }}
+      data-testid={testid}
+      className="text-stone-800 leading-relaxed text-[16px] font-serif-display"
+    >
+      {children}
+    </motion.p>
   );
 }

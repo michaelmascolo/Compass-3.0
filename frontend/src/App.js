@@ -23,8 +23,8 @@ const TEST_PRESET = {
   assignment_prompt:
     "Does social media improve or harm teen friendships? Take a clear position and defend it.",
   pedagogical_purpose:
-    "Help the student form and clarify a central claim that organizes the essay, and understand what each part of the writing is doing for the reader.",
-  current_writing_task: "Draft your essay.",
+    "Help the student form and clarify a central claim that organizes the response, and understand what each part of the writing is doing for the reader.",
+  current_writing_task: "Draft your response.",
   teacher_notes: "",
 };
 

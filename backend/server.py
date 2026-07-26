@@ -1734,8 +1734,86 @@ async def teacher_reflection(session_id: str):
     return _curate_case(case)
 
 
+# ---------------------------------------------------------------------------
+# Chapter 6 — Pedagogical Noticing (ADDITIVE; independent of the FROZEN engine).
+# Its ONLY job is to establish the instructional relationship — "I understand
+# you" — before any teaching begins. It NEVER selects targets, diagnoses, or
+# coaches. Deliberately small. Fast model; graceful fallback on failure/timeout.
+# ---------------------------------------------------------------------------
+NOTICING_SYSTEM_MESSAGE = """You are Compass, a thoughtful writing teacher, at the very first moment after a learner has shared a first draft with you. Your ONLY task right now is to show the learner that you have genuinely read and UNDERSTOOD what they were trying to say — BEFORE any teaching begins.
+
+You are NOT evaluating. You are NOT correcting. You are NOT diagnosing. You are NOT choosing anything to work on. You are NOT giving advice. You are simply demonstrating real understanding, and — only if it is honestly warranted — recognizing something genuinely productive.
+
+Respond with ONLY this JSON object (no prose, no code fences):
+{
+  "understanding": "1-2 sentences, in your own words, showing you grasped the learner's ACTUAL MEANING and intent — the substance of what they are trying to say, argue, explain, or express. This is REQUIRED. Do NOT merely repeat or lightly reword their surface wording; reflect what they mean as a reader who truly understood them. Describe ONLY what they ARE saying or doing — NEVER contrast it with the assignment, with what they did not do, or with what is missing (no 'rather than', 'instead of', 'without', 'not yet', 'you haven't'). Open naturally, e.g. 'I see your main idea as…', 'It sounds like you're arguing that…', 'I think you're trying to…'.",
+  "recognition": "OPTIONAL. One sentence naming something authentically productive THIS learner has actually begun to DO — a genuine thinking or writing MOVE they made (e.g., grounding a claim in a real mechanism, tracking a change over time, holding two ideas together, letting a detail carry meaning). Ground it in the specifics of THIS response and phrase it as an observation of what they accomplished, NOT a restatement or paraphrase of the claim/content they wrote. It must be specific enough that it could not be said about just any piece of writing. If there is nothing you can honestly recognize, set this to null. NEVER invent, inflate, or manufacture a strength. Never generic praise.",
+  "bridge": "OPTIONAL and purely RELATIONAL. A single warm sentence that simply opens the door to working together, e.g. 'I'm thinking about how we might work on this together.' or 'I'd love to explore this with you.' It must NOT reference any quality of the writing — no mention of clarity, structure, strength, impact, sharpening, shaping, the reader's experience, or anything to improve or strengthen. If you cannot write a bridge without implying something to fix, set it to null."
+}
+
+ABSOLUTE PROHIBITIONS (these belong to the later Developmental Response, never here): no instructional targets; no deficiencies or weaknesses; no corrections; no 'you should' / 'try to' / 'consider adding'; no advice or coaching; no developmental diagnoses; no naming of writing elements to improve; no comparisons to other writers; no scores or evaluation; and no IMPLICIT signaling of a gap (do not contrast what they wrote with what was expected, and do not hint that the writing could be clearer/stronger/more developed). Keep it brief, warm, and human. If you are unsure whether something crosses into teaching or hints at a gap, leave it out."""
+
+
+async def _pedagogical_noticing(assignment: str, response: str, session_id: str) -> Optional[dict]:
+    """Run the small, fast noticing generation. Returns {understanding, recognition,
+    bridge} on success, or None on failure/timeout (caller falls back)."""
+    prompt = (
+        f"The assignment the learner is responding to:\n\"\"\"{(assignment or '').strip()}\"\"\"\n\n"
+        f"The learner's first draft:\n\"\"\"{(response or '').strip()}\"\"\"\n\n"
+        "Show that you understand them. Respond with ONLY the JSON object."
+    )
+    try:
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=f"noticing-{session_id}",
+            system_message=NOTICING_SYSTEM_MESSAGE,
+        ).with_model("anthropic", "claude-haiku-4-5-20251001")
+        raw = await asyncio.wait_for(
+            chat.send_message(UserMessage(text=prompt)), timeout=8.0
+        )
+        data = _extract_json(raw)
+        understanding = (data.get("understanding") or "").strip()
+        if not understanding:
+            return None
+        rec = data.get("recognition")
+        rec = rec.strip() if isinstance(rec, str) and rec.strip() and rec.strip().lower() != "null" else None
+        bridge = data.get("bridge")
+        bridge = bridge.strip() if isinstance(bridge, str) and bridge.strip() and bridge.strip().lower() != "null" else None
+        return {"understanding": understanding, "recognition": rec, "bridge": bridge}
+    except Exception as e:  # noqa: BLE001
+        logger.warning(f"pedagogical noticing failed for {session_id}: {e}")
+        return None
+
+
+@api_router.post("/sessions/{session_id}/noticing")
+async def pedagogical_noticing(session_id: str):
+    doc = await db.sessions.find_one(
+        {"id": session_id}, {"_id": 0, "assignment": 1, "turns": 1}
+    )
+    if not doc:
+        raise HTTPException(status_code=404, detail="Session not found")
+    turns = doc.get("turns", []) or []
+    writing = next(
+        (t for t in turns if t.get("role") == "student" and t.get("kind") == "writing"),
+        None,
+    )
+    if writing is None:
+        writing = next((t for t in turns if t.get("role") == "student"), None)
+    response = (writing.get("content") if writing else "") or ""
+    if not response.strip():
+        return {"ok": False}
+    result = await _pedagogical_noticing(doc.get("assignment", ""), response, session_id)
+    if not result:
+        return {"ok": False}
+    return {"ok": True, **result}
+
+
 @api_router.get("/sessions/{session_id}", response_model=Session)
 async def get_session(session_id: str):
+    doc = await db.sessions.find_one({"id": session_id}, {"_id": 0})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Session not found")
+    return Session(**doc)
     doc = await db.sessions.find_one({"id": session_id}, {"_id": 0})
     if not doc:
         raise HTTPException(status_code=404, detail="Session not found")

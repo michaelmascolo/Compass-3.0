@@ -89,6 +89,11 @@ export const getTeacherReflection = async (id) => {
   return data;
 };
 
+export const getNoticing = async (id) => {
+  const { data } = await axios.post(`${API}/sessions/${id}/noticing`);
+  return data;
+};
+
 export const interact = async (id, payload) => {
   const { data } = await axios.post(`${API}/sessions/${id}/interact`, payload);
   return data;
