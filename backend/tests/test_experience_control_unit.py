@@ -62,9 +62,11 @@ def test_support_cap_transitions_to_reflection():
     assert ec.resolved is False
     r = ec.reflection
     assert r.completion_reason == "support_cap"
-    assert r.resolved is False
-    # must NOT falsely claim mastery
-    assert "haven't revised" in r.how_your_writing_changed.lower()
+    # must NOT falsely claim mastery / change
+    how = r.how_your_writing_changed.lower()
+    assert not any(w in how for w in ("strengthened", "sharpened", "mastered", "improved", "made your"))
+    # must clearly signal the passage was not yet revised
+    assert any(m in how for m in ("haven't revised", "still as you first wrote", "revising it"))
     # all four sections present
     assert r.objective and r.how_your_writing_changed and r.why_it_helps_your_reader and r.carry_it_forward
     print("PASS support_cap_transitions_to_reflection")
@@ -92,7 +94,6 @@ def test_resolved_revision_transitions_to_reflection_yes():
     assert ec.phase == "reflection"
     assert ec.resolved is True
     assert ec.reflection.completion_reason == "resolved"
-    assert ec.reflection.resolved is True
     print("PASS resolved_revision_transitions_to_reflection (development_detected=yes)")
 
 

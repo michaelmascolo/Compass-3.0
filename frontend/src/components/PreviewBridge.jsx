@@ -5,6 +5,9 @@ import { previewContinue } from "@/lib/api";
 
 const ease = [0.22, 1, 0.36, 1];
 
+// RETAINED FOR SLICE 2 — the planned "Bring your own writing" bridge. Intentionally
+// NOT imported by PublicPreview (unlinked from the Slice 1 reflection). Do not
+// reconnect until the Slice 2 "Bring your own writing" workflow is implemented.
 // S3 — the quiet room after the aha. One question: "Could I use this with my students?"
 // Grounded ONLY in what the visitor just did; never a fabricated claim about their students.
 export default function PreviewBridge({ sessionId, onBack }) {

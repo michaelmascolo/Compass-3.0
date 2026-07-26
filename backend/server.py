@@ -462,22 +462,27 @@ class ExperienceReflection(BaseModel):
     how_your_writing_changed: str = ""      # 2. How your writing changed (from the revision record only; no exaggeration)
     why_it_helps_your_reader: str = ""      # 3. Why it helps your reader (communicative function)
     carry_it_forward: str = ""              # 4. Carry it forward (transfer statement)
-    completion_reason: str = ""             # "resolved" | "support_cap"
-    resolved: bool = False                  # true only when the engine determined the target was resolved
+    completion_reason: str = ""             # AUTHORITATIVE reason metadata: "resolved" | "support_cap"
 
 
 class ExperienceControl(BaseModel):
     """Experience Compass — caps a preview at exactly ONE developmental objective and
     then stops at a reflection. Wraps the FROZEN engine; adds no evaluator. Present
-    ONLY on preview sessions (ordinary sessions leave this None and are unchanged)."""
-    phase: str = "active"                   # active | reflection
+    ONLY on preview sessions (ordinary sessions leave this None and are unchanged).
+
+    TERMINAL-STATE AUTHORITY: `phase` is the single source of truth for session flow;
+    `phase == "reflection"` is the sole completed/terminal condition (there is no
+    separate "complete" state). `resolved` is the flow-layer record of whether the
+    objective was resolved; the reflection's `completion_reason` mirrors it as
+    explanatory metadata."""
+    phase: str = "active"                   # active | reflection  (reflection is terminal)
     objective_locked: bool = False          # the single objective is locked on the first completed turn, forever
     objective_element: str = ""             # locked canonical instructional element (e.g. "Central Claim")
     objective_target: str = ""              # descriptive primary_target from the engine (context only)
     support_count: int = 0                  # answer/explain exchanges since the last substantive revision
     support_cap: int = 3                    # deliberate stop after 3 support exchanges without a substantive revision
     revision_count: int = 0                 # substantive revisions attempted on the objective
-    resolved: bool = False                  # engine determined the objective was resolved
+    resolved: bool = False                  # authoritative flow flag: engine determined the objective was resolved
     reflection: Optional[ExperienceReflection] = None
 
 
@@ -1027,16 +1032,6 @@ def _select_names(selections: list) -> List[str]:
     return [s["domain_name"] if isinstance(s, dict) else s for s in selections]
 
 
-# --- R1: Public Preview fixed retrieval (skip the STAGE-A selector model call).
-# The preview's unit is ALWAYS the opening of an essay, so the relevant domains and
-# instructional objects are constant — no need to discover them with a model call.
-PREVIEW_FIXED_SELECTIONS = [
-    {"domain_name": "Opening / Introduction", "sections": []},
-    {"domain_name": "Central Claim / Thesis", "sections": []},
-    {"domain_name": "Audience Awareness", "sections": []},
-]
-PREVIEW_FIXED_IO = ["Introduction", "Thesis", "Hook / Opening Move"]
-
 # --- R3: Public Preview OUTPUT-SCHEMA trim (payload only; reasoning UNCHANGED).
 # Appended to the reasoner prompt for preview sessions. It does NOT alter, shorten,
 # or simplify the instructional reasoning or the decision — it only reduces which
@@ -1330,32 +1325,63 @@ def _experience_reader_effect(element: str) -> str:
     return _EXPERIENCE_READER_FALLBACK
 
 
+def _humanize_element(element: str) -> str:
+    """Plain-language name of the locked element for product-authored FALLBACK
+    sentences only. Presentation formatting; never reinterprets or reselects the
+    objective (the engine remains the sole authority for that)."""
+    e = (element or "").strip().split(" / ")[0].strip()
+    return e.lower() if e else "this part of your writing"
+
+
+def _reflection_variant(session: Session, options: tuple) -> str:
+    """Pick one of 2-3 deterministic wording variants, stable per session (so a
+    given session always reads the same) but varied across sessions (so repeat
+    cycles don't read identically). No randomness, no LLM call."""
+    seed = (session.id if session and session.id else "") or ""
+    idx = (sum(ord(c) for c in seed) % len(options)) if options else 0
+    return options[idx]
+
+
 def _build_experience_reflection(session: Session, result: dict, reason: str) -> "ExperienceReflection":
     """Build the four-section reflection. `reason` is 'resolved' or 'support_cap'.
-    Uses ONLY evidence already present; never claims mastery unless the engine
-    determined the target was resolved."""
+    Prefers engine-provided communication_change / primary_growth / transfer_message
+    when present; otherwise uses humanized, deterministic fallbacks. Uses ONLY
+    evidence already present; never claims mastery unless the engine resolved the
+    target; never selects or reinterprets the objective."""
     ec = session.experience_control
     element = (ec.objective_element if ec else "") or "your writing"
+    elem_plain = _humanize_element(element)
     theory = result["theory"]
     rev_dev = theory.revision_development
     resolved = reason == "resolved"
 
-    # 2. How your writing changed — evidence-only, no exaggeration.
+    # 2. How your writing changed — prefer the engine's own account; else humanized fallback.
     if resolved:
-        change = (rev_dev.primary_growth or rev_dev.communication_change or "").strip()
-        how = change or f"You revised your passage and strengthened how it works as {element.lower()}."
+        change = (rev_dev.communication_change or rev_dev.primary_growth or "").strip()
+        how = change or _reflection_variant(session, (
+            f"You revised your passage and made your {elem_plain} do more of the work for your reader.",
+            f"Your revision sharpened your {elem_plain} so a reader can follow it more easily.",
+            f"You reworked your {elem_plain}, and it carries your meaning more clearly now.",
+        ))
     else:
-        how = ("You explored this writing idea through the coaching conversation. "
-               "You haven't revised your passage yet — that is the natural next step when you return to it.")
+        # support cap — explored the objective but did NOT revise; never imply change.
+        how = _reflection_variant(session, (
+            f"You spent this session exploring your {elem_plain}. You haven't revised the passage yet — that is the natural next step when you come back to it.",
+            f"You worked through what your {elem_plain} needs, but haven't revised the passage yet. Revising it is where this goes next.",
+            f"You explored your {elem_plain} in the conversation. The passage is still as you first wrote it — revising it is the next move.",
+        ))
 
-    # 3. Why it helps your reader — communicative function.
+    # 3. Why it helps your reader — communicative function (canonical KB, not a claim).
     why = _experience_reader_effect(element)
 
-    # 4. Carry it forward — transfer statement.
+    # 4. Carry it forward — prefer the engine's transfer message; else humanized fallback.
     transfer = (rev_dev.transfer_message or "").strip() if resolved else ""
     if not transfer:
-        transfer = ("When you write your next paragraph, look for another opportunity "
-                    "to strengthen this same writing move for your reader.")
+        transfer = _reflection_variant(session, (
+            f"Next time you draft, look for the same move — a chance to make your {elem_plain} work harder for your reader.",
+            f"When you write your next piece, watch for another place where a stronger {elem_plain} would help your reader.",
+            f"Carry this forward: in your next draft, notice where this same {elem_plain} choice could guide your reader.",
+        ))
 
     return ExperienceReflection(
         objective=element,
@@ -1363,7 +1389,6 @@ def _build_experience_reflection(session: Session, result: dict, reason: str) ->
         why_it_helps_your_reader=why,
         carry_it_forward=transfer,
         completion_reason=reason,
-        resolved=resolved,
     )
 
 
@@ -1489,6 +1514,14 @@ def _update_preview_analytics(session: Session, req: InteractRequest, result: di
     transfer_presented_ever = transfer_idx is not None
     learner_responded_after_transfer = transfer_presented_ever and (len(turns) - 1 > transfer_idx)
 
+    # Experience Compass support cap (authoritative = experience_control). The legacy
+    # 6-exchange "soft cap" is retired: it never governed flow and contradicted the
+    # actual support_cap of 3. Analytics now records the real Experience Compass cap.
+    ec = session.experience_control
+    support_cap = ec.support_cap if ec else None
+    support_count = ec.support_count if ec else None
+    support_cap_reached = bool(ec and ec.reflection and ec.reflection.completion_reason == "support_cap")
+
     a.update({
         "turns": turns,
         "seed": a.get("seed") or (student_text if is_first else a.get("seed")),
@@ -1499,7 +1532,9 @@ def _update_preview_analytics(session: Session, req: InteractRequest, result: di
         "transfer_question_presented": transfer_presented_ever,
         "learner_responded_after_transfer": learner_responded_after_transfer,
         "projection_meets_criterion": a.get("projection_meets_criterion", None),
-        "soft_cap_reached": exchange_count >= 6,
+        "support_cap": support_cap,
+        "support_count": support_count,
+        "support_cap_reached": support_cap_reached,
         "continued_to_real_work": a.get("continued_to_real_work", False),
         "updated_at": now_iso(),
     })
@@ -2475,9 +2510,10 @@ async def interact(session_id: str, req: InteractRequest):
     if not req.content.strip():
         raise HTTPException(status_code=400, detail="Empty submission")
 
-    # Experience Compass: a completed single-objective cycle is a deliberate stop.
+    # Experience Compass: reflection is the sole terminal phase — reject further
+    # interaction on a completed cycle.
     ec = session.experience_control
-    if ec and ec.phase in ("reflection", "complete"):
+    if ec and ec.phase == "reflection":
         raise HTTPException(
             status_code=409,
             detail="This Experience Compass cycle is complete. Start a new passage to continue.",
