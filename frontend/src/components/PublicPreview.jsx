@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { startPreview, getSession, interact } from "@/lib/api";
 import ExperienceReflection from "@/components/ExperienceReflection";
+import TeacherReflection from "@/components/TeacherReflection";
 import WelcomeScreen from "@/components/WelcomeScreen";
 
 // Experience Compass public flow: Welcome (Ch3) -> Assignment (Ch4) -> Writing
@@ -31,6 +32,8 @@ export default function PublicPreview() {
   const [entered, setEntered] = useState(false);
   // Chapter 4 — once the educator confirms the assignment, advance to the Writing screen.
   const [writingStarted, setWritingStarted] = useState(false);
+  // Post-experience: the teacher chooses to review their own experience.
+  const [reviewingAsTeacher, setReviewingAsTeacher] = useState(false);
 
   const isProcessing = !!session?.turns?.some((t) => t.status === "processing");
   const busy = starting || sending || isProcessing;
@@ -106,6 +109,7 @@ export default function PublicPreview() {
     setOpenCoachingId(null);
     setReplyOpen(false);
     setReply("");
+    setReviewingAsTeacher(false);
   }, []);
 
   const dirty = draft.trim() !== (studentTurns[studentTurns.length - 1]?.content || "").trim();
@@ -189,11 +193,19 @@ export default function PublicPreview() {
             submitting={starting}
           />
         ) : inReflection ? (
-          <ExperienceReflection
-            reflection={session?.experience_control?.reflection}
-            draft={draft}
-            onRestart={restart}
-          />
+          reviewingAsTeacher ? (
+            <TeacherReflection
+              sessionId={session?.id}
+              onBack={() => setReviewingAsTeacher(false)}
+            />
+          ) : (
+            <ExperienceReflection
+              reflection={session?.experience_control?.reflection}
+              draft={draft}
+              onRestart={restart}
+              onReviewAsTeacher={() => setReviewingAsTeacher(true)}
+            />
+          )
         ) : (
           <div className="flex-1 flex flex-col py-4">
             {started && (

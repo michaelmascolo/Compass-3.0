@@ -84,6 +84,11 @@ export const getSession = async (id) => {
   return data;
 };
 
+export const getTeacherReflection = async (id) => {
+  const { data } = await axios.get(`${API}/sessions/${id}/teacher-reflection`);
+  return data;
+};
+
 export const interact = async (id, payload) => {
   const { data } = await axios.post(`${API}/sessions/${id}/interact`, payload);
   return data;

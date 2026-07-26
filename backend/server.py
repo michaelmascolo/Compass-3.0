@@ -1707,6 +1707,33 @@ async def teacher_review_cases():
     return {"assignment": assignment, "cases": cases}
 
 
+@api_router.get("/sessions/{session_id}/teacher-reflection")
+async def teacher_reflection(session_id: str):
+    """Reflect on the teacher's OWN completed experience: what Compass understood,
+    the single instructional focus it chose, why that focus (and what it set aside),
+    and the broader developmental goal. Reuses the same curation the sample-student
+    review uses, sourced from this session's live theory + turns."""
+    doc = await db.sessions.find_one({"id": session_id}, {"_id": 0})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Session not found")
+    turns = doc.get("turns", []) or []
+    writing = next(
+        (t for t in turns if t.get("role") == "student" and t.get("kind") == "writing"),
+        None,
+    )
+    if writing is None:
+        writing = next((t for t in turns if t.get("role") == "student"), None)
+    response = (writing.get("content") if writing else "") or ""
+    case = {
+        "id": session_id,
+        "label": "Your response",
+        "assignment": doc.get("assignment", ""),
+        "response": response,
+        "session": doc,
+    }
+    return _curate_case(case)
+
+
 @api_router.get("/sessions/{session_id}", response_model=Session)
 async def get_session(session_id: str):
     doc = await db.sessions.find_one({"id": session_id}, {"_id": 0})
