@@ -1,0 +1,36 @@
+# Experience Compass — Canonical Implementation Specification (synchronized)
+Source of truth = the user's approved chapters. This file tracks the approved spec + implementation status. Do not redesign; extend only.
+
+## Architecture / principles (Ch1–2, approved)
+- ~5-minute guided front door to full Compass; educator temporarily becomes the learner. Nonprofit (Common Ground Institute), relational-developmental. No pricing/subscriptions/upgrade/donation/scarcity/sales/account-gate before meaningful exploration. Teaching before technology; learner remains the author; teach, don't edit.
+- Journey: Welcome → Assignment → Writing → Compass thinking → Developmental response → Revision → Reflection → Feedback request → Transition into Compass. No extra stages without approval.
+- Frozen: M1–M14 engine, instructional objects, canonical model, Stage-A, coaching, reflection, experience_control, anti-coauthoring.
+
+## Chapter 3 — Welcome Screen — APPROVED & IMPLEMENTED (frozen 2026)
+- First surface before the assignment screen. Exact copy: title "Welcome to Experience Compass" + 3-sentence body + "Begin". One calm centered area; header hidden here only. Begin → assignment screen (no account/pricing/tour/modal/role/demographics).
+- File: `frontend/src/components/WelcomeScreen.jsx`; gate in `PublicPreview.jsx` (`entered` state). Restart does NOT re-show Welcome; reappears on fresh reload.
+
+## Chapter 4 — Assignment Screen (+ minimal interim Writing Screen) — APPROVED & IMPLEMENTED
+- Assignment Screen (adapted from old SeedScreen): exact copy — heading "Create a brief assignment", intro text, label "Your assignment", the example placeholder, supporting line "Keep the assignment brief. You will respond to it yourself in the next step.", "Continue", "Help me create one". One dominant textarea; no subject/grade/standard/type required; no rubric/criteria asked.
+  - Validation: Continue disabled until trimmed length ≥ 10 chars (blocks empty/whitespace/single-punct). Nonjudgmental hint "Please enter the assignment you would like to respond to." No red banner.
+  - Help me create one: DISPLAY-ONLY inline list (8 starters) + "Choose one beginning and complete it in your own words." No wizard, no auto-fill, no generation.
+  - Privacy line (subtle): "Please do not include a student's name or other identifying information."
+  - Back control (subtle, subordinate to Continue): returns to Welcome, preserves assignment text.
+- Minimal interim Writing Screen (provisional until Ch5): read-only assignment display + one response textarea + one submit ("Share with Compass"). Submit creates the session and posts the writing turn. No unapproved instructional copy.
+- Restart ("Try another paragraph"): returns to a CLEARED Assignment Screen (clears assignment + response + session), never Welcome, same visit.
+- Session timing: created ONLY on Writing-Screen submit (not on assignment entry). Assignment is never evaluated/rewritten/analyzed before the learner writes.
+- Target-learner framing = "an intelligent high school graduate" (NOT grade-agnostic, NOT Grade 9).
+
+### Backend narrow changes (preview wrapper only — approved)
+`backend/server.py`:
+- `PREVIEW_TEACHER_NOTES` clause 1 → "The educator is testing Compass by responding, as a learner, to an authentic assignment they created. They will write one thoughtful paragraph at approximately the level expected of an intelligent high school graduate." Clause 2 → "Treat the response as developing writing produced at approximately the level expected of an intelligent high school graduate." All other instructional rules verbatim (one target/turn, anti-coauthoring, meaning-before-convention, invite revision, fade support).
+- `PreviewStart.assignment` (optional) added; `essay_about`/`passage_type` retained but unused.
+- `create_preview_session`: when `assignment` provided → `session.assignment` + `telos.assignment_context` = exact assignment; notes get "THE ASSIGNMENT THE LEARNER IS RESPONDING TO: <assignment>". No evaluation/rewrite/reinterpretation.
+- `PREVIEW_BOOTSTRAP.assignment` fallback → "Respond in one thoughtful paragraph to the assignment provided, writing at approximately the level expected of an intelligent high school graduate." (used only when no assignment supplied).
+- "ESSAY CONTEXT" and essay-component PASSAGE TYPE hint removed (no essay/intro/body/conclusion presumption).
+- No engine/instructional-object/Stage-A/coaching/reflection/experience-control changes.
+
+Files (Ch4): `frontend/src/components/PublicPreview.jsx` (AssignmentScreen + WritingScreen in-file, state/handlers/gate, `beginPreview`→`submitResponse`, restart), `backend/server.py` (above).
+
+## Pending
+- Chapters 5–9 not yet specified/approved. Do not implement ahead. Writing Screen (Ch4) is provisional pending Ch5.

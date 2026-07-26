@@ -12,26 +12,25 @@ import { startPreview, getSession, interact } from "@/lib/api";
 import ExperienceReflection from "@/components/ExperienceReflection";
 import WelcomeScreen from "@/components/WelcomeScreen";
 
-const PASSAGE_TYPES = ["Let Compass infer it", "Introduction", "Body paragraph", "Transition", "Conclusion", "Other"];
-
-// A faithful miniature of the canonical Student Workspace: the passage is the
-// center, editable in place, and Compass anchors ONE coaching note to it. No
-// chat column, no scoring, no jargon, no developer panel.
+// Experience Compass public flow: Welcome (Ch3) -> Assignment (Ch4) -> Writing
+// (Ch4 minimal interim) -> coaching -> reflection. The educator temporarily
+// becomes the learner: they create an authentic assignment, then respond to it.
 export default function PublicPreview() {
   const [session, setSession] = useState(null);
-  const [seed, setSeed] = useState("");
+  const [assignment, setAssignment] = useState("");   // Ch4 — the educator's authentic assignment (authoritative task)
+  const [response, setResponse] = useState("");        // Ch4 — the one-paragraph response written on the Writing Screen
   const [draft, setDraft] = useState("");
   const [starting, setStarting] = useState(false);
   const [sending, setSending] = useState(false);
-  const [passageType, setPassageType] = useState("Let Compass infer it");
-  const [essayAbout, setEssayAbout] = useState("");
   const [cardOpen, setCardOpen] = useState(false);
   const [openCoachingId, setOpenCoachingId] = useState(null);
   const [replyOpen, setReplyOpen] = useState(false);
   const [reply, setReply] = useState("");
-  // Chapter 3 — Welcome Screen gate. Shows before the seed screen on first entry
+  // Chapter 3 — Welcome gate. Shows before the Assignment screen on first entry
   // this visit; "Try another paragraph" (restart) does NOT re-show it.
   const [entered, setEntered] = useState(false);
+  // Chapter 4 — once the educator confirms the assignment, advance to the Writing screen.
+  const [writingStarted, setWritingStarted] = useState(false);
 
   const isProcessing = !!session?.turns?.some((t) => t.status === "processing");
   const busy = starting || sending || isProcessing;
@@ -47,6 +46,8 @@ export default function PublicPreview() {
   const phase = session?.experience_control?.phase || "active";
   const inReflection = phase === "reflection";
   const showWelcome = !entered && !started;
+  const showAssignment = entered && !writingStarted && !started;
+  const showWriting = entered && writingStarted && !started;
 
   // Poll while the engine is reasoning in the background.
   useEffect(() => {
@@ -75,29 +76,31 @@ export default function PublicPreview() {
     }
   }, [activeCoaching?.id]);
 
-  const beginPreview = useCallback(async () => {
-    if (!seed.trim() || starting) return;
+  // Writing Screen submit — creates the session with the educator's authentic
+  // assignment as the authoritative task, then submits their one-paragraph response.
+  const submitResponse = useCallback(async () => {
+    if (!response.trim() || starting) return;
     setStarting(true);
     try {
-      const s = await startPreview({ essay_about: essayAbout.trim(), passage_type: passageType });
-      const updated = await interact(s.id, { kind: "writing", content: seed.trim() });
-      setDraft(seed.trim());
+      const s = await startPreview({ assignment: assignment.trim() });
+      const updated = await interact(s.id, { kind: "writing", content: response.trim() });
+      setDraft(response.trim());
       setSession(updated);
     } catch (e) {
-      /* stay on seed screen */
+      /* stay on writing screen */
     } finally {
       setStarting(false);
     }
-  }, [seed, starting, essayAbout, passageType]);
+  }, [response, starting, assignment]);
 
-  // "Try another paragraph" — begin a COMPLETELY fresh preview session. Never
-  // reuse or continue the completed one.
+  // "Try another paragraph" — return to a CLEARED Assignment Screen (never the
+  // Welcome Screen during the same visit) and begin a completely fresh session.
   const restart = useCallback(() => {
     setSession(null);
-    setSeed("");
+    setAssignment("");
+    setResponse("");
     setDraft("");
-    setPassageType("Let Compass infer it");
-    setEssayAbout("");
+    setWritingStarted(false);
     setCardOpen(false);
     setOpenCoachingId(null);
     setReplyOpen(false);
@@ -168,16 +171,20 @@ export default function PublicPreview() {
       <main className="w-full max-w-2xl flex-1 flex flex-col px-6 pb-12">
         {showWelcome ? (
           <WelcomeScreen onBegin={() => setEntered(true)} />
-        ) : !started ? (
-          <SeedScreen
-            seed={seed}
-            setSeed={setSeed}
-            onBegin={beginPreview}
-            starting={starting}
-            passageType={passageType}
-            setPassageType={setPassageType}
-            essayAbout={essayAbout}
-            setEssayAbout={setEssayAbout}
+        ) : showAssignment ? (
+          <AssignmentScreen
+            assignment={assignment}
+            setAssignment={setAssignment}
+            onContinue={() => setWritingStarted(true)}
+            onBack={() => setEntered(false)}
+          />
+        ) : showWriting ? (
+          <WritingScreen
+            assignment={assignment}
+            response={response}
+            setResponse={setResponse}
+            onSubmit={submitResponse}
+            submitting={starting}
           />
         ) : inReflection ? (
           <ExperienceReflection
@@ -348,88 +355,176 @@ export default function PublicPreview() {
   );
 }
 
-function SeedScreen({ seed, setSeed, onBegin, starting, passageType, setPassageType, essayAbout, setEssayAbout }) {
-  const empty = !seed.trim();
+const HELP_STARTERS = [
+  "Explain why…",
+  "Compare…",
+  "What do you think about…",
+  "How would you apply…",
+  "What caused…",
+  "What might happen if…",
+  "Describe the relationship between…",
+  "Use evidence to support…",
+];
+
+// Chapter 4 — Assignment Screen. The educator creates a brief, authentic
+// assignment in their own words. No subject/grade/standard/type is required; no
+// evaluation, rewriting, or analysis happens here; no session is created yet.
+function AssignmentScreen({ assignment, setAssignment, onContinue, onBack }) {
+  const [helpOpen, setHelpOpen] = useState(false);
+  const meaningful = assignment.trim().length >= 10;
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
       className="flex-1 flex flex-col justify-center max-w-xl mx-auto w-full py-10"
-      data-testid="preview-seed-screen"
+      data-testid="assignment-screen"
     >
       <h1 className="font-serif-display text-3xl sm:text-4xl leading-snug text-stone-900">
-        Try Compass with a short piece of Grade 9 writing.
+        Create a brief assignment
       </h1>
       <p className="text-stone-600 mt-4 text-[15px] leading-relaxed">
-        Choose any essay topic. Write or paste a short passage as though it were part of a Grade 9
-        student’s essay. You might enter an introduction, a body paragraph, a transition, or a
-        conclusion.
-      </p>
-      <p className="text-stone-500 mt-2 text-[14px] leading-relaxed">
-        The writing can be imperfect. The purpose is to experience how Compass helps a student
-        develop it — you'll revise the passage right on the page.
+        Think of an assignment you might genuinely give to a student. Enter a prompt that could be
+        answered in one thoughtful paragraph. It might ask a learner to explain, interpret, compare,
+        argue, reflect, or apply an idea.
       </p>
 
-      <div className="mt-7">
-        <label className="block font-mono-panel text-[11px] uppercase tracking-[0.14em] text-stone-500 mb-1.5">
-          What is the essay about? <span className="text-stone-400 normal-case tracking-normal">Optional</span>
-        </label>
-        <input
-          data-testid="preview-essay-about"
-          value={essayAbout}
-          onChange={(e) => setEssayAbout(e.target.value)}
-          placeholder="Briefly describe the topic or assignment."
-          className="w-full bg-white border border-stone-300 rounded-sm px-3.5 py-2.5 text-[15px] text-stone-900 placeholder:text-stone-400 outline-none focus:ring-1 focus:ring-[#8C3A2A] focus:border-[#8C3A2A] transition-colors"
-        />
-      </div>
-
-      <div className="mt-4">
-        <label className="block font-mono-panel text-[11px] uppercase tracking-[0.14em] text-stone-500 mb-1.5">
-          What kind of passage are you entering? <span className="text-stone-400 normal-case tracking-normal">Optional</span>
-        </label>
-        <select
-          data-testid="preview-passage-type"
-          value={passageType}
-          onChange={(e) => setPassageType(e.target.value)}
-          className="w-full bg-white border border-stone-300 rounded-sm px-3.5 py-2.5 text-[15px] text-stone-900 outline-none focus:ring-1 focus:ring-[#8C3A2A] focus:border-[#8C3A2A] transition-colors"
-        >
-          {PASSAGE_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
-        </select>
-      </div>
-
+      <label
+        htmlFor="assignment-input"
+        className="mt-7 block font-mono-panel text-[11px] uppercase tracking-[0.14em] text-stone-500 mb-1.5"
+      >
+        Your assignment
+      </label>
       <textarea
-        data-testid="preview-seed-input"
-        value={seed}
-        onChange={(e) => setSeed(e.target.value)}
-        rows={7}
+        id="assignment-input"
+        data-testid="assignment-input"
+        value={assignment}
+        onChange={(e) => setAssignment(e.target.value)}
+        rows={5}
         autoFocus
-        placeholder="Enter a short passage here…"
-        className="mt-5 w-full bg-white border border-stone-300 rounded-sm p-5 text-[16px] leading-8 text-stone-900 placeholder:text-stone-400 outline-none focus:ring-1 focus:ring-stone-900 focus:border-stone-900 transition-colors resize-none"
+        placeholder="For example: Explain why a character made an important decision, compare two approaches to solving a problem, or describe how a concept applies to a real situation."
+        className="w-full bg-white border border-stone-300 rounded-sm p-5 text-[16px] leading-8 text-stone-900 placeholder:text-stone-400 outline-none focus:ring-1 focus:ring-stone-900 focus:border-stone-900 transition-colors resize-none"
+      />
+      <p className="mt-2 text-[13px] text-stone-500">
+        Keep the assignment brief. You will respond to it yourself in the next step.
+      </p>
+      <p className="mt-1 text-[12px] text-stone-400" data-testid="assignment-privacy-note">
+        Please do not include a student's name or other identifying information.
+      </p>
+
+      <div className="mt-3">
+        <button
+          type="button"
+          onClick={() => setHelpOpen((v) => !v)}
+          data-testid="assignment-help-toggle"
+          aria-expanded={helpOpen}
+          className="text-[12px] font-mono-panel uppercase tracking-[0.14em] text-stone-500 hover:text-[#8C3A2A] transition-colors"
+        >
+          Help me create one
+        </button>
+        {helpOpen && (
+          <div
+            data-testid="assignment-help-area"
+            className="mt-3 bg-[#faf9f6] border border-stone-200 rounded-sm p-4"
+          >
+            <p className="text-[13px] text-stone-600 mb-2">Try beginning with one of these:</p>
+            <ul className="space-y-1">
+              {HELP_STARTERS.map((s) => (
+                <li key={s} className="text-[14px] text-stone-700 font-serif-display">• {s}</li>
+              ))}
+            </ul>
+            <p className="text-[13px] text-stone-600 mt-3">
+              Choose one beginning and complete it in your own words.
+            </p>
+          </div>
+        )}
+      </div>
+
+      <div className="mt-7 flex items-center gap-5">
+        <button
+          onClick={onContinue}
+          data-testid="assignment-continue-button"
+          disabled={!meaningful}
+          className="group inline-flex items-center gap-2 bg-[#8C3A2A] text-white px-7 py-3 rounded-sm font-medium tracking-wide hover:bg-[#6B2C20] enabled:hover:-translate-y-px transition-[background-color,transform] disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          Continue
+          <ArrowRight className="h-4 w-4 transition-transform group-enabled:group-hover:translate-x-0.5" />
+        </button>
+        <button
+          type="button"
+          onClick={onBack}
+          data-testid="assignment-back-button"
+          className="text-[12px] font-mono-panel uppercase tracking-[0.14em] text-stone-400 hover:text-stone-700 transition-colors"
+        >
+          Back
+        </button>
+      </div>
+      {!meaningful && (
+        <span className="text-stone-400 text-[13px] mt-2" data-testid="assignment-hint">
+          Please enter the assignment you would like to respond to.
+        </span>
+      )}
+    </motion.div>
+  );
+}
+
+// Chapter 4 — minimal interim Writing Screen (provisional until Chapter 5).
+// Shows the educator's assignment read-only and collects their one-paragraph
+// response. Its submit is where the instructional session is created.
+function WritingScreen({ assignment, response, setResponse, onSubmit, submitting }) {
+  const empty = !response.trim();
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="flex-1 flex flex-col justify-center max-w-xl mx-auto w-full py-10"
+      data-testid="writing-screen"
+    >
+      <p className="font-mono-panel text-[11px] uppercase tracking-[0.14em] text-stone-500 mb-1.5">
+        Your assignment
+      </p>
+      <div
+        data-testid="writing-assignment-display"
+        className="bg-[#faf9f6] border border-stone-200 rounded-sm p-4 text-[15px] leading-relaxed text-stone-800 whitespace-pre-wrap font-serif-display"
+      >
+        {assignment}
+      </div>
+
+      <label
+        htmlFor="writing-input"
+        className="mt-6 block font-mono-panel text-[11px] uppercase tracking-[0.14em] text-stone-500 mb-1.5"
+      >
+        Your response
+      </label>
+      <textarea
+        id="writing-input"
+        data-testid="writing-input"
+        value={response}
+        onChange={(e) => setResponse(e.target.value)}
+        rows={8}
+        autoFocus
+        placeholder="Write one thoughtful paragraph in response to your assignment…"
+        className="w-full bg-white border border-stone-300 rounded-sm p-5 text-[16px] leading-8 text-stone-900 placeholder:text-stone-400 outline-none focus:ring-1 focus:ring-stone-900 focus:border-stone-900 transition-colors resize-none"
       />
       <button
-        onClick={onBegin}
-        data-testid="preview-begin-button"
-        disabled={empty || starting}
+        onClick={onSubmit}
+        data-testid="writing-submit-button"
+        disabled={empty || submitting}
         className="mt-5 self-start group inline-flex items-center gap-2 bg-[#8C3A2A] text-white px-7 py-3 rounded-sm font-medium tracking-wide hover:bg-[#6B2C20] enabled:hover:-translate-y-px transition-[background-color,transform] disabled:opacity-40 disabled:cursor-not-allowed"
       >
-        {starting ? (
+        {submitting ? (
           <>
             <Loader2 className="h-4 w-4 animate-spin" />
-            Reading…
+            Sending…
           </>
         ) : (
           <>
-            Try Compass
+            Share with Compass
             <ArrowRight className="h-4 w-4 transition-transform group-enabled:group-hover:translate-x-0.5" />
           </>
         )}
       </button>
-      {empty && (
-        <span className="text-stone-400 text-[13px] mt-2" data-testid="preview-empty-hint">
-          Enter a short passage to continue.
-        </span>
-      )}
     </motion.div>
   );
 }

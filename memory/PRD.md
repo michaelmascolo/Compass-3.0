@@ -521,3 +521,9 @@ Build Milestone 1 ONLY of an AI writing app that develops students as writers th
 - Reflection wording: humanized element names + 2–3 deterministic per-session variants (no LLM); prefer engine `communication_change`/`primary_growth`/`transfer_message` when present; support-cap wording still states "explored but not yet revised" (no false mastery).
 - PreviewBridge.jsx retained + commented for Slice 2, kept unlinked.
 - Verified: unit 7/7, API 3/3 (incl. 409), manual init/409/grep, frontend compile + invariant checks (phase-only completion, no `complete` ref, PreviewBridge absent, 4 sections). Report: `/app/EXPERIENCE_COMPASS_PRESLICE2_CLEANUP.md`. Slice 2 NOT started.
+
+## Experience Compass — Chapter 3 (Welcome) + Chapter 4 (Assignment + interim Writing) (2026, DONE)
+- Ch3: WelcomeScreen.jsx before the assignment step; exact copy; header hidden on Welcome; Begin advances; restart skips Welcome. Frozen.
+- Ch4: Old SeedScreen split into AssignmentScreen (authentic assignment, display-only help, privacy line, Back→Welcome, validation ≥10 chars) + minimal interim WritingScreen (assignment read-only + response + submit). Session created only on writing submit. Restart → cleared Assignment Screen.
+- Backend narrow wrapper change: educator's assignment is authoritative (session.assignment + telos.assignment_context + notes marker "THE ASSIGNMENT THE LEARNER IS RESPONDING TO:"); target-learner framing = "intelligent high school graduate" (Grade-9/essay framing removed); PreviewStart.assignment added; neutral fallback. NO engine/instructional-object/Stage-A/coaching/reflection/experience-control changes.
+- Verified: backend curl (assignment authoritative, Grade-9 gone, hs-grad operative, fallback correct); frontend browser assertions (Welcome→Assignment→Writing, validation, help/privacy/back, assignment shown read-only on Writing). Spec synced at /app/memory/EXPERIENCE_COMPASS_SPEC.md.

@@ -1564,14 +1564,16 @@ async def create_session(payload: SessionCreate):
 
 # ---------------------------------------------------------------------------
 # Public Preview — a Telos-driven ENTRY PATH over the existing (frozen) engine.
-# The user (a teacher/evaluator) enters a short passage written as though by a
-# Grade 9 student; Compass responds developmentally. Experience wrapper only.
+# The educator responds, as a learner, to an authentic assignment they created;
+# Compass supports it at approximately the level of an intelligent high school
+# graduate and responds developmentally. Experience wrapper only.
 # ---------------------------------------------------------------------------
 PREVIEW_TEACHER_NOTES = (
-    "PUBLIC PREVIEW / DEMONSTRATION MODE. The user is a teacher or evaluator testing Compass "
-    "by entering a short passage written as though by a GRADE 9 student — an introduction, body "
-    "paragraph, transition, conclusion, or other essay component. Treat the passage as that "
-    "student's developing writing and respond exactly as you would to a Grade 9 writer. Stay in "
+    "PUBLIC PREVIEW / DEMONSTRATION MODE. The educator is testing Compass by responding, as a "
+    "learner, to an authentic assignment they created. They will write one thoughtful paragraph at "
+    "approximately the level expected of an intelligent high school graduate. Treat the response as "
+    "developing writing produced at approximately the level expected of an intelligent high school "
+    "graduate. Stay in "
     "character; never explain Compass, its method, or that this is a demo; never grade, score, or "
     "produce a long diagnostic report; do not correct every error. Do NOT assume the passage "
     "argues any particular viewpoint you are trying to elicit. Your process: (1) infer, or briefly "
@@ -1587,7 +1589,7 @@ PREVIEW_TEACHER_NOTES = (
     "it). ONE target and ONE question per turn. Keep every turn anchored to the words on the page."
 )
 PREVIEW_BOOTSTRAP = SessionCreate(
-    assignment="Develop a short passage from a Grade 9 essay (of the writer's own choosing).",
+    assignment="Respond in one thoughtful paragraph to the assignment provided, writing at approximately the level expected of an intelligent high school graduate.",
     pedagogical_purpose=(
         "Help the writer see what their passage is doing for a reader and develop it themselves."
     ),
@@ -1597,27 +1599,29 @@ PREVIEW_BOOTSTRAP = SessionCreate(
 
 
 class PreviewStart(BaseModel):
-    essay_about: Optional[str] = ""
-    passage_type: Optional[str] = ""  # Introduction | Body paragraph | Transition | Conclusion | Other | ""
+    assignment: Optional[str] = ""     # the educator's authentic assignment — the authoritative task
+    essay_about: Optional[str] = ""    # legacy (unused by Chapter 4 flow); retained for back-compat
+    passage_type: Optional[str] = ""   # legacy (unused by Chapter 4 flow); retained for back-compat
 
 
 @api_router.post("/sessions/preview", response_model=Session)
 async def create_preview_session(payload: Optional[PreviewStart] = None):
     payload = payload or PreviewStart()
     notes = PREVIEW_TEACHER_NOTES
-    if payload.essay_about and payload.essay_about.strip():
-        notes += f" ESSAY CONTEXT (provided by the user, to help you interpret the passage's purpose): {payload.essay_about.strip()}"
-    if payload.passage_type and payload.passage_type.strip() and payload.passage_type != "Let Compass infer it":
-        notes += (f" PASSAGE TYPE HINT: the user says this is a '{payload.passage_type.strip()}'. Treat this as a hint, "
-                  "not a constraint; if the writing is clearly a different component, gently note the mismatch.")
+    # The educator's authentic assignment (when provided) is the authoritative task.
+    # It is used verbatim — never evaluated, rewritten, strengthened, or reinterpreted.
+    assignment_text = (payload.assignment or "").strip()
+    if assignment_text:
+        notes += f" THE ASSIGNMENT THE LEARNER IS RESPONDING TO: {assignment_text}"
+    assignment = assignment_text or PREVIEW_BOOTSTRAP.assignment
     telos = Telos(
         governing_pedagogical_purpose=PREVIEW_BOOTSTRAP.pedagogical_purpose,
         immediate_task_purpose=PREVIEW_BOOTSTRAP.current_writing_task,
         teacher_intentions=notes,
-        assignment_context=PREVIEW_BOOTSTRAP.assignment,
+        assignment_context=assignment,
     )
     session = Session(
-        assignment=PREVIEW_BOOTSTRAP.assignment,
+        assignment=assignment,
         pedagogical_purpose=PREVIEW_BOOTSTRAP.pedagogical_purpose,
         current_writing_task=PREVIEW_BOOTSTRAP.current_writing_task,
         teacher_notes=notes,
