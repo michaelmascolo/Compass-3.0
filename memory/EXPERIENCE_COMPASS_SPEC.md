@@ -42,5 +42,8 @@ Files (Ch4): `frontend/src/components/PublicPreview.jsx` (AssignmentScreen + Wri
 - Handoff: `interact` returns immediately with a processing AI turn (background `_run_reasoning`); render moves to coaching branch showing the existing `<Thinking/>` + polling. Developmental response appears only after reasoning completes. Ch6 owns the visible thinking; unchanged here.
 - File: `frontend/src/components/PublicPreview.jsx` (WritingScreen + submitResponse). No backend change; authentic-assignment handling + intelligent-high-school-graduate target from Ch4 remain operative.
 
+## Chapter 6 — pre-noted (DO NOT implement until Ch6 spec is approved)
+- Terminology cleanup owned by Ch6: the downstream Thinking + coaching/Developmental Response surface still uses essay/"passage" language that predates the assignment→response architecture. When Ch6 is implemented, review ALL visible language there and make it consistently refer to the learner's assignment / response / first draft (not "essay" or "passage"). Known instances: "YOUR PASSAGE" label; the Thinking lines ("Reading your passage as a reader would…", etc.); the "Reading…" submit label; likely others in the coaching card / revision controls. Leave unchanged until Ch6.
+
 ## Pending
 - Chapters 6–9 not yet specified/approved. Do not implement ahead.
