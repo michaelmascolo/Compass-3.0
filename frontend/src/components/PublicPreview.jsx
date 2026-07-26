@@ -77,14 +77,15 @@ export default function PublicPreview() {
   }, [activeCoaching?.id]);
 
   // Writing Screen submit — creates the session with the educator's authentic
-  // assignment as the authoritative task, then submits their one-paragraph response.
+  // assignment as the authoritative task, then submits their EXACT response
+  // (validated on the trimmed value, but transmitted/preserved unaltered).
   const submitResponse = useCallback(async () => {
-    if (!response.trim() || starting) return;
+    if (response.trim().length < 15 || starting) return;
     setStarting(true);
     try {
       const s = await startPreview({ assignment: assignment.trim() });
-      const updated = await interact(s.id, { kind: "writing", content: response.trim() });
-      setDraft(response.trim());
+      const updated = await interact(s.id, { kind: "writing", content: response });
+      setDraft(response);
       setSession(updated);
     } catch (e) {
       /* stay on writing screen */
@@ -184,6 +185,7 @@ export default function PublicPreview() {
             response={response}
             setResponse={setResponse}
             onSubmit={submitResponse}
+            onBack={() => setWritingStarted(false)}
             submitting={starting}
           />
         ) : inReflection ? (
@@ -468,11 +470,12 @@ function AssignmentScreen({ assignment, setAssignment, onContinue, onBack }) {
   );
 }
 
-// Chapter 4 — minimal interim Writing Screen (provisional until Chapter 5).
-// Shows the educator's assignment read-only and collects their one-paragraph
-// response. Its submit is where the instructional session is created.
-function WritingScreen({ assignment, response, setResponse, onSubmit, submitting }) {
-  const empty = !response.trim();
+// Chapter 5 — Writing Screen. The educator responds, as a learner, to their
+// authentic assignment with one genuine first-draft paragraph. The assignment
+// is shown read-only; no live AI/grammar/autocomplete assistance appears; the
+// exact response is preserved. Submit hands off to the existing thinking state.
+function WritingScreen({ assignment, response, setResponse, onSubmit, onBack, submitting }) {
+  const meaningful = response.trim().length >= 15;
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -481,7 +484,15 @@ function WritingScreen({ assignment, response, setResponse, onSubmit, submitting
       className="flex-1 flex flex-col justify-center max-w-xl mx-auto w-full py-10"
       data-testid="writing-screen"
     >
-      <p className="font-mono-panel text-[11px] uppercase tracking-[0.14em] text-stone-500 mb-1.5">
+      <h1 className="font-serif-display text-3xl sm:text-4xl leading-snug text-stone-900">
+        Write your response
+      </h1>
+      <p className="text-stone-600 mt-4 text-[15px] leading-relaxed">
+        Respond to your assignment in one thoughtful paragraph. Write a genuine first draft. Do not
+        try to make it perfect before Compass sees it.
+      </p>
+
+      <p className="mt-7 font-mono-panel text-[11px] uppercase tracking-[0.14em] text-stone-500 mb-1.5">
         Your assignment
       </p>
       <div
@@ -495,36 +506,55 @@ function WritingScreen({ assignment, response, setResponse, onSubmit, submitting
         htmlFor="writing-input"
         className="mt-6 block font-mono-panel text-[11px] uppercase tracking-[0.14em] text-stone-500 mb-1.5"
       >
-        Your response
+        Your first draft
       </label>
       <textarea
         id="writing-input"
         data-testid="writing-input"
         value={response}
         onChange={(e) => setResponse(e.target.value)}
-        rows={8}
+        rows={9}
         autoFocus
-        placeholder="Write one thoughtful paragraph in response to your assignment…"
-        className="w-full bg-white border border-stone-300 rounded-sm p-5 text-[16px] leading-8 text-stone-900 placeholder:text-stone-400 outline-none focus:ring-1 focus:ring-stone-900 focus:border-stone-900 transition-colors resize-none"
+        placeholder="Write one paragraph in response to your assignment."
+        className="w-full bg-white border border-stone-300 rounded-sm p-5 text-[16px] leading-8 text-stone-900 placeholder:text-stone-400 outline-none focus:ring-1 focus:ring-stone-900 focus:border-stone-900 transition-colors resize-y min-h-[220px]"
       />
-      <button
-        onClick={onSubmit}
-        data-testid="writing-submit-button"
-        disabled={empty || submitting}
-        className="mt-5 self-start group inline-flex items-center gap-2 bg-[#8C3A2A] text-white px-7 py-3 rounded-sm font-medium tracking-wide hover:bg-[#6B2C20] enabled:hover:-translate-y-px transition-[background-color,transform] disabled:opacity-40 disabled:cursor-not-allowed"
-      >
-        {submitting ? (
-          <>
-            <Loader2 className="h-4 w-4 animate-spin" />
-            Sending…
-          </>
-        ) : (
-          <>
-            Share with Compass
-            <ArrowRight className="h-4 w-4 transition-transform group-enabled:group-hover:translate-x-0.5" />
-          </>
-        )}
-      </button>
+      <p className="mt-2 text-[13px] text-stone-500">
+        Stop when you have expressed your main idea. Compass will work with what you have written.
+      </p>
+
+      <div className="mt-7 flex items-center gap-5">
+        <button
+          onClick={onSubmit}
+          data-testid="writing-submit-button"
+          disabled={!meaningful || submitting}
+          className="group inline-flex items-center gap-2 bg-[#8C3A2A] text-white px-7 py-3 rounded-sm font-medium tracking-wide hover:bg-[#6B2C20] enabled:hover:-translate-y-px transition-[background-color,transform] disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          {submitting ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Sending…
+            </>
+          ) : (
+            <>
+              Share with Compass
+              <ArrowRight className="h-4 w-4 transition-transform group-enabled:group-hover:translate-x-0.5" />
+            </>
+          )}
+        </button>
+        <button
+          type="button"
+          onClick={onBack}
+          data-testid="writing-back-button"
+          className="text-[12px] font-mono-panel uppercase tracking-[0.14em] text-stone-400 hover:text-stone-700 transition-colors"
+        >
+          Back to assignment
+        </button>
+      </div>
+      {!meaningful && (
+        <span className="text-stone-400 text-[13px] mt-2" data-testid="writing-hint">
+          Please write enough for Compass to understand the idea you are trying to express.
+        </span>
+      )}
     </motion.div>
   );
 }

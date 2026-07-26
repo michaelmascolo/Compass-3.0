@@ -32,5 +32,15 @@ Source of truth = the user's approved chapters. This file tracks the approved sp
 
 Files (Ch4): `frontend/src/components/PublicPreview.jsx` (AssignmentScreen + WritingScreen in-file, state/handlers/gate, `beginPreview`→`submitResponse`, restart), `backend/server.py` (above).
 
+## Chapter 5 — Writing Screen — APPROVED & IMPLEMENTED
+- Copy: heading "Write your response"; intro "Respond to your assignment in one thoughtful paragraph. Write a genuine first draft. Do not try to make it perfect before Compass sees it."; label "Your assignment" + read-only exact display; response label "Your first draft"; placeholder "Write one paragraph in response to your assignment."; supporting "Stop when you have expressed your main idea. Compass will work with what you have written."; primary "Share with Compass"; Back control "Back to assignment" (subordinate).
+- Large resizable textarea (min-h 220px, resize-y); no word processor/rubric/score/timer/counter/grammar/autocomplete/live-AI.
+- Validation: submit disabled until trimmed length ≥ 15 (accidental-entry guard only; never judges adequacy/grammar/brevity/first-person/form/viewpoint). Gentle hint "Please write enough for Compass to understand the idea you are trying to express." (no red banner).
+- EXACT response preserved: validate on trimmed, but send + set draft to the EXACT untrimmed response (no change to spacing/spelling/grammar/punctuation/capitalization/wording/structure).
+- Back preserves response (parent state); editing the assignment does NOT erase/rewrite the response; revised assignment shown on return.
+- Duplicate session prevention: `starting` guard + disabled button; on success the screen unmounts. Session created ONLY on submit.
+- Handoff: `interact` returns immediately with a processing AI turn (background `_run_reasoning`); render moves to coaching branch showing the existing `<Thinking/>` + polling. Developmental response appears only after reasoning completes. Ch6 owns the visible thinking; unchanged here.
+- File: `frontend/src/components/PublicPreview.jsx` (WritingScreen + submitResponse). No backend change; authentic-assignment handling + intelligent-high-school-graduate target from Ch4 remain operative.
+
 ## Pending
-- Chapters 5–9 not yet specified/approved. Do not implement ahead. Writing Screen (Ch4) is provisional pending Ch5.
+- Chapters 6–9 not yet specified/approved. Do not implement ahead.
