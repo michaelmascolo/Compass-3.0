@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { startPreview, getSession, interact } from "@/lib/api";
 import ExperienceReflection from "@/components/ExperienceReflection";
+import WelcomeScreen from "@/components/WelcomeScreen";
 
 const PASSAGE_TYPES = ["Let Compass infer it", "Introduction", "Body paragraph", "Transition", "Conclusion", "Other"];
 
@@ -28,6 +29,9 @@ export default function PublicPreview() {
   const [openCoachingId, setOpenCoachingId] = useState(null);
   const [replyOpen, setReplyOpen] = useState(false);
   const [reply, setReply] = useState("");
+  // Chapter 3 — Welcome Screen gate. Shows before the seed screen on first entry
+  // this visit; "Try another paragraph" (restart) does NOT re-show it.
+  const [entered, setEntered] = useState(false);
 
   const isProcessing = !!session?.turns?.some((t) => t.status === "processing");
   const busy = starting || sending || isProcessing;
@@ -42,6 +46,7 @@ export default function PublicPreview() {
   // never by an AI turn count.
   const phase = session?.experience_control?.phase || "active";
   const inReflection = phase === "reflection";
+  const showWelcome = !entered && !started;
 
   // Poll while the engine is reasoning in the background.
   useEffect(() => {
@@ -151,15 +156,19 @@ export default function PublicPreview() {
 
   return (
     <div className="min-h-screen paper-grain flex flex-col items-center">
-      <header className="w-full max-w-2xl flex items-center justify-between px-6 py-5">
-        <div className="flex items-center gap-2 font-serif-display text-lg text-stone-800">
-          <Compass className="h-5 w-5 text-[#8C3A2A]" />
-          Compass
-        </div>
-      </header>
+      {!showWelcome && (
+        <header className="w-full max-w-2xl flex items-center justify-between px-6 py-5">
+          <div className="flex items-center gap-2 font-serif-display text-lg text-stone-800">
+            <Compass className="h-5 w-5 text-[#8C3A2A]" />
+            Compass
+          </div>
+        </header>
+      )}
 
       <main className="w-full max-w-2xl flex-1 flex flex-col px-6 pb-12">
-        {!started ? (
+        {showWelcome ? (
+          <WelcomeScreen onBegin={() => setEntered(true)} />
+        ) : !started ? (
           <SeedScreen
             seed={seed}
             setSeed={setSeed}
