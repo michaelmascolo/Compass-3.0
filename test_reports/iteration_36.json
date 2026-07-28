@@ -1,0 +1,22 @@
+{
+  "summary": "Frontend routing/entry-point verification for the three homepage entry cards. All five checks passed: (1) three entry cards visible with correct data-testids alongside stage-current/next/future and 'How a single Compass interaction unfolds' section and hero; (2) btn-teacher-experience navigates to ?review and TeacherReview renders ('One assignment, six students'); (3) btn-student-writing → ?preview=writing → welcome → assignment → Continue lands DIRECTLY on writing-input (organizing-thought NOT present); (4) btn-student-ot → ?preview=ot → welcome → assignment → Continue shows organizing-thought with 'The Assignment' stage active (writing-input NOT present); (5) default ?preview (no value) with clean localStorage lands on organizing-thought (default OT preserved).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Landing.jsx uses <a href=\"?preview=writing\"> which causes a full page reload rather than SPA navigation — acceptable here since App.js reads query params on mount, but worth noting for future SPA router migration.",
+    "PublicPreview OT-resume via localStorage session can 'skip' the welcome screen if a prior session exists — expected behavior but testers should clear storage between manual retests."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (skipped per request)", "frontend": "100%"},
+  "test_credentials": "None — public routes",
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Entry-point routing verified end-to-end. Homepage now shows three EntryCards (btn-teacher-experience, btn-student-writing, btn-student-ot). ?preview=writing skips OT and goes straight to writing-input; ?preview=ot and default ?preview both show organizing-thought. TeacherReview renders on ?review. Full OT progression and engine were not re-tested per instructions (iteration_35 covers OT flow, iteration_34 covers Ch6)."
+}

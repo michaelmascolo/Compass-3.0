@@ -19,6 +19,28 @@ const STAGES = [
   { status: "future", label: "Future", title: "Integrated Compass" },
 ];
 
+// The three entry points into Compass. Each routes to an EXISTING experience.
+const ENTRIES = [
+  {
+    title: "Teacher Experience",
+    description: "Explore Compass's developmental analysis and the instructional support it offers teachers.",
+    href: "?review",
+    testid: "btn-teacher-experience",
+  },
+  {
+    title: "Student Writing Experience",
+    description: "Write a first draft and develop it with Compass — the Composition workflow.",
+    href: "?preview=writing",
+    testid: "btn-student-writing",
+  },
+  {
+    title: "Student Organizing Thought Experience",
+    description: "Organize your thinking across five steps, then move into writing.",
+    href: "?preview=ot",
+    testid: "btn-student-ot",
+  },
+];
+
 export default function Landing() {
   return (
     <div className="min-h-screen paper-grain text-stone-900">
@@ -73,20 +95,15 @@ export default function Landing() {
               ))}
             </div>
 
-            <div className="mt-10 md:mt-12 pt-8 border-t border-stone-200 flex flex-col sm:flex-row sm:items-center gap-4">
-              <a
-                href="?preview"
-                data-testid="btn-experience-compass"
-                className="group inline-flex items-center gap-2 bg-[#8C3A2A] text-white px-7 py-3.5 rounded-sm font-medium tracking-wide
-                           hover:bg-[#6B2C20] hover:-translate-y-px transition-[background-color,transform] duration-200
-                           focus:ring-2 focus:ring-[#8C3A2A] focus:ring-offset-2 focus:outline-none"
-              >
-                Experience Compass
-                <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-              </a>
-              <p className="text-[14px] text-stone-500">
-                Begin the Composition experience. It takes a few minutes and asks nothing to set up.
+            <div className="mt-10 md:mt-12 pt-8 border-t border-stone-200">
+              <p className="font-mono-panel text-[11px] uppercase tracking-[0.2em] text-stone-500 mb-6">
+                Choose how you'd like to begin
               </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
+                {ENTRIES.map((e) => (
+                  <EntryCard key={e.testid} {...e} />
+                ))}
+              </div>
             </div>
           </motion.div>
         </section>
@@ -158,6 +175,25 @@ function Stage({ status, label, title }) {
       <p className={`font-serif-display text-2xl md:text-[26px] mt-3 ${dim ? "text-stone-500" : "text-stone-900"}`}>
         {title}
       </p>
+    </div>
+  );
+}
+
+function EntryCard({ title, description, href, testid }) {
+  return (
+    <div className="flex flex-col rounded-md border border-stone-200 bg-white p-5 transition-colors hover:border-stone-400">
+      <h3 className="font-serif-display text-xl text-stone-900 leading-snug">{title}</h3>
+      <p className="text-[14px] text-stone-600 leading-relaxed mt-2 flex-1">{description}</p>
+      <a
+        href={href}
+        data-testid={testid}
+        className="group mt-5 inline-flex items-center justify-center gap-2 bg-[#8C3A2A] text-white px-5 py-2.5 rounded-sm font-medium tracking-wide
+                   hover:bg-[#6B2C20] hover:-translate-y-px transition-[background-color,transform] duration-200
+                   focus:ring-2 focus:ring-[#8C3A2A] focus:ring-offset-2 focus:outline-none"
+      >
+        Begin
+        <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+      </a>
     </div>
   );
 }

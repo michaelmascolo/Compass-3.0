@@ -35,9 +35,12 @@ function App() {
   if (params.has("tests")) {
     return <TestHarness />;
   }
-  // Public Preview (?preview) — the 3-5 min in-character entry experience.
+  // Public Preview (?preview) — the in-character student entry experience.
+  //   ?preview            → Organizing Thought → Writing (default)
+  //   ?preview=ot         → Organizing Thought → Writing
+  //   ?preview=writing    → straight into the existing Writing workflow (skip OT)
   if (params.has("preview")) {
-    return <PublicPreview />;
+    return <PublicPreview mode={params.get("preview") === "writing" ? "writing" : "ot"} />;
   }
   // Teacher Review (?review) — inspect the frozen engine on precomputed cases.
   if (params.has("review")) {

@@ -17,7 +17,7 @@ import WelcomeScreen from "@/components/WelcomeScreen";
 // Experience Compass public flow: Welcome (Ch3) -> Assignment (Ch4) -> Writing
 // (Ch4 minimal interim) -> coaching -> reflection. The educator temporarily
 // becomes the learner: they create an authentic assignment, then respond to it.
-export default function PublicPreview() {
+export default function PublicPreview({ mode = "ot" }) {
   const [session, setSession] = useState(null);
   const [assignment, setAssignment] = useState("");   // Ch4 — the educator's authentic assignment (authoritative task)
   const [response, setResponse] = useState("");        // Ch4 — the one-paragraph response written on the Writing Screen
@@ -65,7 +65,7 @@ export default function PublicPreview() {
   // OT must not trigger the coaching UI.
   const hasStudentTurn = studentTurns.length > 0;
   const showWelcome = !entered && !session;
-  const showAssignment = entered && !session;
+  const showAssignment = entered && !session && !writingStarted && !otPhase;
   const showOT = otPhase && !hasStudentTurn;
   const showWriting = writingStarted && !hasStudentTurn && !otPhase;
 
@@ -143,20 +143,26 @@ export default function PublicPreview() {
     try { localStorage.removeItem("compass_ot_session"); } catch (e) { /* ignore */ }
   }, []);
 
-  // Writing Screen submit — the session already exists (created at OT entry).
-  // Submit the student's EXACT response (validated on the trimmed value, but
-  // transmitted/preserved unaltered) via the existing Writing workflow.
+  // Writing Screen submit — reuse the session when it already exists (came via
+  // Organizing Thought); otherwise (direct Writing entry) create it now with the
+  // educator's authentic assignment as the authoritative task. Submits the
+  // student's EXACT response (validated on trimmed value, transmitted unaltered).
   const submitResponse = useCallback(async () => {
-    if (response.trim().length < 15 || starting || !session) return;
+    if (response.trim().length < 15 || starting) return;
     setStarting(true);
     try {
-      const updated = await interact(session.id, { kind: "writing", content: response });
+      let s = session;
+      if (!s) {
+        s = await startPreview({ assignment: assignment.trim() });
+        setSession(s);
+      }
+      const updated = await interact(s.id, { kind: "writing", content: response });
       setDraft(response);
       setSession(updated);
       // Chapter 6 — establish the relationship first. Fire Pedagogical Noticing
       // in parallel with the frozen engine's background reasoning. If it fails
       // or times out, the generic thinking experience remains (graceful).
-      getNoticing(session.id)
+      getNoticing(s.id)
         .then((res) => {
           if (res && res.ok) setNoticing(res);
         })
@@ -166,7 +172,7 @@ export default function PublicPreview() {
     } finally {
       setStarting(false);
     }
-  }, [response, starting, session]);
+  }, [response, starting, session, assignment]);
 
   // "Try another paragraph" — return to a CLEARED Assignment Screen (never the
   // Welcome Screen during the same visit) and begin a completely fresh session.
@@ -192,6 +198,7 @@ export default function PublicPreview() {
   // objects persist in Mongo; the session id is remembered client-side so the
   // student lands back where they left off (before any writing has begun).
   useEffect(() => {
+    if (mode !== "ot") return;
     let sid;
     try { sid = localStorage.getItem("compass_ot_session"); } catch (e) { sid = null; }
     if (!sid) return;
@@ -283,7 +290,7 @@ export default function PublicPreview() {
           <AssignmentScreen
             assignment={assignment}
             setAssignment={setAssignment}
-            onContinue={enterOrganizing}
+            onContinue={mode === "ot" ? enterOrganizing : () => setWritingStarted(true)}
             onBack={() => setEntered(false)}
           />
         ) : showOT ? (
@@ -300,7 +307,7 @@ export default function PublicPreview() {
             onSubmit={submitResponse}
             onBack={() => {
               setWritingStarted(false);
-              setOtPhase(true);
+              if (mode === "ot" && session) setOtPhase(true);
             }}
             submitting={starting}
           />
