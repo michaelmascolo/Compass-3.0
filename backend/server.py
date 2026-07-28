@@ -3411,6 +3411,10 @@ import organizing_thought as _ot
 _ot.init(db, EMERGENT_LLM_KEY, now_iso)
 app.include_router(_ot.router)
 
+import feedback as _feedback
+_feedback.init(db, now_iso)
+app.include_router(_feedback.router)
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,

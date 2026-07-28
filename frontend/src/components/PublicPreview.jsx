@@ -8,13 +8,17 @@ import {
   X,
   CornerDownRight,
 } from "lucide-react";
-import { startPreview, getSession, interact, getNoticing, otStart } from "@/lib/api";
+import { startPreview, getSession, interact, getNoticing, otStart, feedbackEvent } from "@/lib/api";
 import ExperienceReflection from "@/components/ExperienceReflection";
 import TeacherReflection from "@/components/TeacherReflection";
 import OrganizingThought from "@/components/OrganizingThought";
 import OTThinkingPanel from "@/components/OTThinkingPanel";
 import StudentEntry from "@/components/StudentEntry";
 import WelcomeScreen from "@/components/WelcomeScreen";
+import WelcomeIntro from "@/components/feedback/WelcomeIntro";
+import FeedbackButton from "@/components/feedback/FeedbackButton";
+import FeedbackModal from "@/components/feedback/FeedbackModal";
+import EarlyExitModal from "@/components/feedback/EarlyExitModal";
 
 // Experience Compass public flow: Welcome (Ch3) -> Assignment (Ch4) -> Writing
 // (Ch4 minimal interim) -> coaching -> reflection. The educator temporarily
@@ -44,6 +48,9 @@ export default function PublicPreview({ mode = "ot" }) {
   // the frozen engine's developmental response, on the FIRST encounter only.
   const [noticing, setNoticing] = useState(null); // {understanding, recognition, bridge}
   const [revealStage, setRevealStage] = useState(0); // 0 none · 1 understanding · 2 +recognition · 3 +bridge
+  // Compass Developmental Feedback System.
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [earlyExitOpen, setEarlyExitOpen] = useState(false);
 
   const isProcessing = !!session?.turns?.some((t) => t.status === "processing");
   const busy = starting || sending || isProcessing;
@@ -227,6 +234,7 @@ export default function PublicPreview({ mode = "ot" }) {
         }
         const students = (s.turns || []).filter((t) => t.role === "student");
         setSession(s);
+        feedbackEvent(s.id, "resume", {});
         setAssignment(s.assignment || "");
         if (s.ot) setOtData(s.ot);
         if (students.length) {
@@ -243,6 +251,38 @@ export default function PublicPreview({ mode = "ot" }) {
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // --- Automatic developmental analytics (supplement, never replace, feedback) ---
+  useEffect(() => {
+    if (session?.id && otData?.current_stage) feedbackEvent(session.id, "stage_enter", { stage: `ot:${otData.current_stage}` });
+  }, [otData?.current_stage, session?.id]);
+  useEffect(() => {
+    if (session?.id && writingStarted) feedbackEvent(session.id, "stage_enter", { stage: "writing" });
+  }, [writingStarted, session?.id]);
+  useEffect(() => {
+    if (session?.id && inReflection) feedbackEvent(session.id, "stage_enter", { stage: "reflection" });
+  }, [inReflection, session?.id]);
+  // At the natural END of the experience, invite developmental feedback once.
+  const endPrompted = useRef(false);
+  useEffect(() => {
+    if (inReflection && !reviewingAsTeacher && !endPrompted.current) {
+      endPrompted.current = true;
+      setFeedbackOpen(true);
+    }
+  }, [inReflection, reviewingAsTeacher]);
+  // Record real tab-close / navigation as a best-effort early-exit signal.
+  useEffect(() => {
+    const onUnload = () => {
+      if (session?.id && !inReflection && (hasStudentTurn || otPhase || writingStarted)) {
+        try {
+          const url = `${process.env.REACT_APP_BACKEND_URL}/api/feedback/${session.id}/event`;
+          navigator.sendBeacon?.(url, new Blob([JSON.stringify({ event: "early_exit_unload", data: {} })], { type: "application/json" }));
+        } catch (e) { /* ignore */ }
+      }
+    };
+    window.addEventListener("beforeunload", onUnload);
+    return () => window.removeEventListener("beforeunload", onUnload);
+  }, [session?.id, inReflection, hasStudentTurn, otPhase, writingStarted]);
 
   const dirty = draft.trim() !== (studentTurns[studentTurns.length - 1]?.content || "").trim();
 
@@ -262,6 +302,7 @@ export default function PublicPreview({ mode = "ot" }) {
 
   const sendExplain = useCallback(async () => {
     if (busy || !session) return;
+    feedbackEvent(session.id, "help_requested", { where: "writing" });
     setSending(true);
     try {
       const updated = await interact(session.id, {
@@ -296,6 +337,8 @@ export default function PublicPreview({ mode = "ot" }) {
 
   const wide = showOT || (showWriting && !!(otData || session?.ot));
   const containerW = wide ? "max-w-5xl" : "max-w-2xl";
+  const experienceActive = !!(session || otPhase || writingStarted || hasStudentTurn);
+  const onEntryScreen = showStudentEntry || showAssignment;
   return (
     <div className="min-h-screen paper-grain flex flex-col items-center">
       {!showWelcome && (
@@ -304,10 +347,20 @@ export default function PublicPreview({ mode = "ot" }) {
             <Compass className="h-5 w-5 text-[#8C3A2A]" />
             Compass
           </div>
+          {isStudent && experienceActive && !inReflection && (
+            <button
+              onClick={() => setEarlyExitOpen(true)}
+              data-testid="exit-experience-button"
+              className="inline-flex items-center gap-1.5 text-[11px] font-mono-panel uppercase tracking-[0.14em] text-stone-400 hover:text-[#8C3A2A] transition-colors"
+            >
+              <X className="h-3.5 w-3.5" /> Exit
+            </button>
+          )}
         </header>
       )}
 
       <main className={`w-full ${containerW} flex-1 flex flex-col px-6 pb-12`}>
+        {onEntryScreen && <WelcomeIntro />}
         {showWelcome ? (
           <WelcomeScreen onBegin={() => setEntered(true)} />
         ) : showAssignment ? (
@@ -523,6 +576,19 @@ export default function PublicPreview({ mode = "ot" }) {
           </div>
         )}
       </main>
+
+      {experienceActive && !earlyExitOpen && (
+        <FeedbackButton onClick={() => setFeedbackOpen(true)} />
+      )}
+      {feedbackOpen && session?.id && (
+        <FeedbackModal sessionId={session.id} onClose={() => setFeedbackOpen(false)} />
+      )}
+      {earlyExitOpen && (
+        <EarlyExitModal
+          sessionId={session?.id}
+          onLeave={() => { setEarlyExitOpen(false); restart(); }}
+        />
+      )}
     </div>
   );
 }

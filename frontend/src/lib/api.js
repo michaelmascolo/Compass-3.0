@@ -142,6 +142,16 @@ export const otIdeasConstructGuidance = async (id) =>
 export const otIdeasConstruct = async (id, content) =>
   (await axios.post(`${API}/ot/${id}/ideas/construct`, { content })).data;
 
+// --- Compass Developmental Feedback System ---
+export const submitFeedback = async (id, payload) =>
+  (await axios.post(`${API}/feedback/${id}`, payload)).data;
+export const feedbackEvent = (id, event, data) => {
+  // fire-and-forget analytics; never block or throw into the UI
+  try {
+    axios.post(`${API}/feedback/${id}/event`, { event, data: data || {} }).catch(() => {});
+  } catch (e) { /* ignore */ }
+};
+
 export const interact = async (id, payload) => {
   const { data } = await axios.post(`${API}/sessions/${id}/interact`, payload);
   return data;
