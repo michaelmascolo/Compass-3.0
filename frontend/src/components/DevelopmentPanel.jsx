@@ -16,6 +16,7 @@ import {
   GraduationCap,
   Microscope,
   Download,
+  GitBranch,
 } from "lucide-react";
 
 const API_BASE = `${process.env.REACT_APP_BACKEND_URL}/api`;
@@ -602,6 +603,32 @@ export default function DevelopmentPanel({
             </div>
 
             <div className="flex-1 overflow-y-auto custom-scroll px-5 py-5">
+              {/* Dependency-First Instruction — teacher-language, shown only when a dependency is active */}
+              {["identified", "being_taught", "addressed"].includes(
+                (theory.instructional_reasoning?.dependency_status || "").trim().toLowerCase()
+              ) && (theory.instructional_reasoning?.required_dependency || "").trim() ? (
+                <div
+                  data-testid="dependency-first-block"
+                  className="mb-5 rounded-md border border-l-2 border-stone-800 border-l-amber-500 bg-amber-500/[0.06] p-4"
+                >
+                  <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.14em] text-amber-300 font-medium mb-3">
+                    <GitBranch className="h-3.5 w-3.5" />
+                    {t("Dependency-First Instruction", "Dependency-First Instruction (W-E)")}
+                  </div>
+                  <div className="space-y-2.5">
+                    <KV k="Current instructional focus" accent="text-amber-300">
+                      <Text value={theory.instructional_reasoning?.active_instructional_element} />
+                    </KV>
+                    <KV k="Dependency currently being developed" accent="text-sky-300">
+                      <Text value={theory.instructional_reasoning?.required_dependency} />
+                    </KV>
+                    <KV k="Why this comes first">
+                      <Text value={theory.instructional_reasoning?.dependency_rationale} />
+                    </KV>
+                  </div>
+                </div>
+              ) : null}
+
               {/* 0 — Governed Canonical Instruction (Instructional-Object layer) */}
               {theory.instructional_reasoning?.applies !== false ? (
                 <Accordion

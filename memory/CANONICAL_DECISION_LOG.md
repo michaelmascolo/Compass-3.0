@@ -4,6 +4,32 @@ Adopted decisions governing the instructional engine, evaluator, benchmark suite
 
 ---
 
+## ADOPTED — 2026-06 · Dependency-First Instruction (core canonical principle)
+
+**Dependency-First Instruction** is now one of Compass's core instructional principles. It governs ALL Guided Composition coaching, not only thesis development.
+
+**Principle:** Whenever Compass identifies a higher-level instructional goal, it first determines whether that goal depends on a lower-level conceptual or rhetorical element that has not yet been sufficiently developed. If so, it **teaches the dependency first, then returns to the higher-level structure.** Compass does not ask students to improve a structure before they possess the conceptual ingredients that structure requires (this is developmentally premature — the student does not yet understand *why* the structure is incomplete).
+
+**Examples (general, not thesis-specific):**
+- **Thesis** — instead of "strengthen your thesis," if the reader cannot yet understand what the central concept *means*, develop the concept first, then return to the thesis.
+- **Topic sentence** — instead of "write a better topic sentence," if the student does not yet know the central idea it should express, develop the idea first, then return to the topic sentence.
+- **Argument** — instead of "make your argument stronger," if it lacks evidence, reasoning, or conceptual clarity, teach that dependency first, then return to strengthening the argument.
+- **Transitions** — instead of "write a better transition," if the relationship between the two ideas is itself unclear, help the student articulate the relationship first, then write the transition.
+
+**Compass's core instructional principles now include:**
+- Teach one structural move at a time.
+- Make the instructional focus explicit.
+- Preserve student authorship (never coauthor / supply copyable content).
+- Strengthen emerging structures rather than replacing them.
+- **Teach the missing dependency before returning to the larger structure (Dependency-First Instruction).**
+
+**Implementation:** SYSTEM_MESSAGE refinement **W-E** in `backend/server.py` + `InstructionalReasoning` fields `required_dependency` / `dependency_status` (none|identified|being_taught|addressed) / `dependency_rationale`; reuses `continue_consolidate_release_or_shift = shift_to_prerequisite`. Coordinates with W-A (consolidate the dependency by principle), W-B (do not invent a dependency on competent work), W-C (no copyable content), and the one-target/one-invitation rules.
+
+**Teacher visibility:** the Dev Panel surfaces the reasoning in TEACHER language only — "Current instructional focus", "Dependency currently being developed", "Why this comes first" — and NEVER exposes internal field names (`required_dependency`, `dependency_status`). The goal is to make Compass's instructional *reasoning* transparent, not its internal architecture.
+
+---
+
+
 ## ADOPTED — 2026-07-20 · Expanded-suite generalization audit & beta posture
 
 1. **Benchmark suite expanded 32 → 66 cases** to test whether the instructional architecture *generalizes* across a broad range of writing situations (genres, writing elements, learner states, proficiency levels), rather than to optimize performance on the original 32.
