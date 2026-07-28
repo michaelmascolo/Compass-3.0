@@ -149,8 +149,10 @@ export default function PublicPreview({ mode = "ot" }) {
   }, [starting, mode]);
 
   // My Plan reached sufficiency → hand the student into the EXISTING Writing
-  // workflow on the same session (OT objects remain persisted for context).
-  const finishOrganizing = useCallback(() => {
+  // workflow on the same session. Capture the final OT state so the Writing
+  // context panel can display it (session.ot also covers refresh/resume).
+  const finishOrganizing = useCallback((finalOt) => {
+    if (finalOt) setOtData(finalOt);
     setOtPhase(false);
     setWritingStarted(true);
   }, []);
@@ -226,6 +228,7 @@ export default function PublicPreview({ mode = "ot" }) {
         const students = (s.turns || []).filter((t) => t.role === "student");
         setSession(s);
         setAssignment(s.assignment || "");
+        if (s.ot) setOtData(s.ot);
         if (students.length) {
           setDraft(students[students.length - 1].content || "");
         } else if (mode === "ot" && s.ot && !s.ot.handoff_ready) {
@@ -291,7 +294,7 @@ export default function PublicPreview({ mode = "ot" }) {
 
   const wordCount = draft.trim() ? draft.trim().split(/\s+/).length : 0;
 
-  const wide = showOT || (showWriting && !!session?.ot);
+  const wide = showOT || (showWriting && !!(otData || session?.ot));
   const containerW = wide ? "max-w-5xl" : "max-w-2xl";
   return (
     <div className="min-h-screen paper-grain flex flex-col items-center">
@@ -330,7 +333,7 @@ export default function PublicPreview({ mode = "ot" }) {
         ) : showWriting ? (
           <WritingScreen
             assignment={assignment}
-            ot={session?.ot}
+            ot={otData || session?.ot}
             response={response}
             setResponse={setResponse}
             onSubmit={submitResponse}

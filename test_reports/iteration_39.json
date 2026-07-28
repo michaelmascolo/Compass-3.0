@@ -1,0 +1,22 @@
+{
+  "summary": "Retest of OT persistent thinking panel + Writing-handoff after main-agent fix. All 7 scenarios from the review request now pass. (1) OT→Writing handoff renders data-testid=ot-thinking-panel with ot-panel-original (verbatim original assignment, read-only) and ot-panel-item-the_assignment, ot-panel-item-my_current_answer, ot-panel-item-my_plan containing the student's entered content; the plain ot-inline writing-assignment-display is NOT shown in the OT-handoff case. (2) Revisit-from-panel: while on My Ideas, typing text without sharing then clicking data-testid=ot-panel-revisit-the_assignment navigates to The Assignment (saved content shown); returning to My Ideas restores the previously typed draft (autosaved). (3) Dependency-review flag: after materially editing The Assignment and blurring, later stages with content (Questions I Need to Answer, My Ideas) show data-testid=ot-panel-flag-<stage> ('NEEDS REVIEW · UPDATED SINCE THIS WAS DEVELOPED'); their content is preserved. (4) Narrow viewport (~480px) on Writing screen: ot-thinking-panel stacks BELOW writing-input (panel y=809 after writing y=285+330), both remain reachable and writing-input is editable. (5) Resume mid-writing: reloading /?preview=ot after handoff lands on writing-input with the ot-thinking-panel intact (all 4 rows present); no restart at OT intro. (6) /?preview=writing direct is unchanged — shows writing-assignment-display, no ot-thinking-panel, single-column. (7) Panel is present on the first OT stage with ot-panel-original showing the exact original assignment and 5 rows.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Minor observation: while typing an unsaved draft on My Ideas and then clicking Revisit for The Assignment, the panel showed 'NEEDS REVIEW' for My Ideas (because the typed draft was autosaved on navigation). This is by-design per the spec ('auto-saved (not lost)') and the dependency-flag rule together, but worth documenting: any typing on a later stage becomes a dependent object once the student navigates away, even if they never click Share. Consider whether this is desired UX or if the review flag should be gated on a shared/committed state."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a", "frontend": "100% (7/7 review scenarios)"},
+  "test_credentials": "None — public route /?preview=ot and /?preview=writing",
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Fix confirmed working: PublicPreview.jsx now passes otData||session?.ot to WritingScreen, OrganizingThought.proceed() propagates the otHandoff-returned OT via onComplete, and the resume path hydrates otData from session.ot on refresh. All handoff/panel/revisit/flag/responsive/resume/writing-direct-regression scenarios verified. Screenshots saved at /app/test_reports/writing_with_panel.png (desktop panel), /app/test_reports/writing_narrow.png (480px stacked), /app/test_reports/dependency_flag.png (Needs Review flags on Questions + My Ideas after editing The Assignment).",
+  "rca of the issue": "Previous iteration's failure was resolved by threading OT state through the parent: OrganizingThought.proceed() now returns the handoff OT via onComplete(handoffOt), PublicPreview.finishOrganizing sets otData, and WritingScreen receives ot={otData || session?.ot}. On refresh, getSession returns session.ot and the resume effect calls setOtData(s.ot), so the persistent panel survives reloads. Verified end-to-end."
+}

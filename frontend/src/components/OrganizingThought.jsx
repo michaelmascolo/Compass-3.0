@@ -109,10 +109,11 @@ export default function OrganizingThought({ sessionId, initialOt, onComplete }) 
     if (busy) return;
     setMoving(true);
     try {
-      if (draft.trim()) await otSaveObject(sessionId, active, draft);
+      let latest = ot;
+      if (draft.trim()) latest = await otSaveObject(sessionId, active, draft);
       if (isLast) {
-        await otHandoff(sessionId);
-        onComplete();
+        const handoffOt = await otHandoff(sessionId);
+        onComplete(handoffOt || latest);
         return;
       }
       const next = STAGE_ORDER[idx + 1];
@@ -124,7 +125,7 @@ export default function OrganizingThought({ sessionId, initialOt, onComplete }) 
     } finally {
       setMoving(false);
     }
-  }, [busy, draft, sessionId, active, isLast, idx, onComplete]);
+  }, [busy, draft, sessionId, active, isLast, idx, onComplete, ot]);
 
   const canProceed = sufficient || (coach && coach.decision === "proceed");
 
