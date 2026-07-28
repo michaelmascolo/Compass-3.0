@@ -4,6 +4,7 @@ import {
   Compass, ArrowRight, ArrowLeft, Loader2, Check, MessageSquareQuote, AlertCircle,
 } from "lucide-react";
 import { otStart, otSaveObject, otInteract, otAdvance, otHandoff } from "@/lib/api";
+import OTThinkingPanel from "@/components/OTThinkingPanel";
 
 // Organizing Thought — five persistent objects the student builds BEFORE Writing.
 // Student-visible names are fixed; no technical labels, classifications, or metadata.
@@ -144,6 +145,8 @@ export default function OrganizingThought({ sessionId, initialOt, onComplete }) 
         Organizing your thinking
       </p>
 
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_20rem] gap-6 lg:gap-10">
+        <div className="min-w-0 flex flex-col">
       {/* Stage rail — revisitable */}
       <div className="flex flex-wrap gap-2 mb-6" data-testid="ot-stage-rail">
         {STAGE_ORDER.map((s, i) => {
@@ -269,6 +272,9 @@ export default function OrganizingThought({ sessionId, initialOt, onComplete }) 
           </div>
         </motion.div>
       </AnimatePresence>
+        </div>
+        <OTThinkingPanel ot={ot} active={active} onRevisit={goTo} />
+      </div>
 
       <div className="mt-8 flex items-center justify-center gap-2 text-stone-400 font-mono-panel text-[10px] uppercase tracking-[0.16em]">
         <Compass className="h-3.5 w-3.5" />

@@ -1,0 +1,33 @@
+{
+  "summary": "Frontend-only verification of the persistent OT thinking panel (route /?preview=ot). Verified: panel appears on Organizing Thought with Original Assignment (read-only, exact original text) + all 5 stage rows with 'Not started yet'; Original vs 'The Assignment' remain distinct after sharing a representation; prior objects persist across all 5 stages while advancing (Questions→My Ideas→My Current Answer→My Plan); final Continue reads 'Start writing' and lands on the Writing screen. FAILED: Writing-handoff panel is NOT rendered on the Writing screen — the required data-testid=ot-thinking-panel and its rows (ot-panel-original, ot-panel-item-the_assignment, ot-panel-item-my_current_answer, ot-panel-item-my_plan) are absent, and the plain writing layout with the inline 'Your assignment' block is shown instead. Consequently the narrow-screen (480px) check on the writing screen also has no panel to stack. Revisit + draft-preservation and dependency-review flag scenarios were not executed after the handoff bug was found (see action_items).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "Writing handoff after OT completion",
+        "issue": "OTThinkingPanel is not rendered on the Writing screen after 'Start writing'. WritingScreen receives ot={session?.ot} in PublicPreview.jsx (line 333), but session.ot is never populated on the client — otStart/otHandoff return the ot payload separately (stored only in otData), and startPreview/getSession do not embed it into the session object used here. As a result hasOt=false and the plain single-column WritingScreen with data-testid=writing-assignment-display is shown, which is the REGRESSION-mode UI meant for direct /?preview=writing entry. This violates the WRITING HANDOFF CONTEXT requirement and, cascading, the responsive-narrow requirement on the writing screen.",
+        "affected_selectors": ["ot-thinking-panel", "ot-panel-original", "ot-panel-item-the_assignment", "ot-panel-item-my_current_answer", "ot-panel-item-my_plan"]
+      }
+    ],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "In PublicPreview.jsx, pass the client-held OT state to WritingScreen instead of the (undefined) session.ot. Minimal fix: change `ot={session?.ot}` on the WritingScreen render to `ot={otData || session?.ot}`. Also propagate the ot returned by otHandoff in OrganizingThought.proceed() up to PublicPreview via onComplete(handoffOt), and store it (setOtData) before switching to writingStarted, so a refresh mid-writing still shows the panel (getSession may need to include ot as well — verify backend response, or hydrate otData from a fresh otStart on resume when handoff_ready).",
+    "After the above fix, re-run: (a) writing-handoff context panel content, (b) narrow 480px stacked layout on the writing screen, (c) revisit + draft preservation (data-testid=ot-panel-revisit-the_assignment) and (d) dependency review flag (data-testid=ot-panel-flag-<stage>). These four were not executed to completion in this run because they either follow the handoff or depend on the same panel wiring."
+  ],
+  "critical_code_review_comments": [
+    "PublicPreview.jsx line 333: WritingScreen ot prop is sourced from session.ot which is never set client-side; use otData (populated by otStart) or refetch. This is the sole cause of the missing writing-handoff panel.",
+    "OrganizingThought.jsx proceed(): otHandoff returns an ot object but the return value is discarded. Propagate it to the parent so the Writing screen has the final ot snapshot without an extra refetch.",
+    "PublicPreview.jsx resume path (lines 212-242): on refresh mid-writing (after OT handoff), otData is not rehydrated, so the writing-handoff panel would still be missing even after the primary fix unless the resume path either reads s.ot from the backend or calls otStart again."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a", "frontend": "~75% (6/8 scenarios verified; 2 blocked by handoff wiring bug)"},
+  "test_credentials": "None — public route /?preview=ot",
+  "seed_data_creation": "None",
+  "retest_needed": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "The OT-side panel works correctly on Organizing Thought: original-assignment row is read-only and verbatim; stage rows populate as the student shares; prior objects persist across stage advancement; final button reads 'Start writing'. The break is at the OT→Writing handoff: session.ot is used as the ot source for WritingScreen but is never populated client-side. Fix is a one-liner (`ot={otData || session?.ot}` in PublicPreview.jsx) plus propagating handoff ot upward for refresh resilience. After fix, re-verify writing panel rows, revisit-from-panel with unsaved draft preservation (autosave-on-blur), and needs-review flag (ot-panel-flag-<stage>) after materially editing an earlier stage.",
+  "rca of the issue": "Root cause: In /app/frontend/src/components/PublicPreview.jsx, WritingScreen is rendered with `ot={session?.ot}`. The session model returned by startPreview/getSession does not include the OT state; the OT state lives in a separate `otData` React state populated by otStart/otAdvance/otHandoff. Because hasOt in WritingScreen is `!!ot`, it evaluates false and the component falls into the single-column layout used for direct writing entry (with data-testid=writing-assignment-display), which is exactly the REGRESSION layout — so the writing-handoff requirement fails. Reproduction: /?preview=ot → begin → paste long assignment → continue → share strong content through all five stages → click 'Start writing'. Expected: writing-input visible AND ot-thinking-panel with original + the_assignment + my_current_answer + my_plan rows. Actual: writing-input visible, panel absent, writing-assignment-display present. Mitigation: pass otData (or otData || session?.ot) to WritingScreen; propagate otHandoff's returned ot upward to setOtData before flipping to writingStarted; ensure resume flow rehydrates otData when the writing screen is resumed after handoff."
+}

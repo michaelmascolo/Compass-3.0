@@ -12,6 +12,7 @@ import { startPreview, getSession, interact, getNoticing, otStart } from "@/lib/
 import ExperienceReflection from "@/components/ExperienceReflection";
 import TeacherReflection from "@/components/TeacherReflection";
 import OrganizingThought from "@/components/OrganizingThought";
+import OTThinkingPanel from "@/components/OTThinkingPanel";
 import StudentEntry from "@/components/StudentEntry";
 import WelcomeScreen from "@/components/WelcomeScreen";
 
@@ -290,10 +291,12 @@ export default function PublicPreview({ mode = "ot" }) {
 
   const wordCount = draft.trim() ? draft.trim().split(/\s+/).length : 0;
 
+  const wide = showOT || (showWriting && !!session?.ot);
+  const containerW = wide ? "max-w-5xl" : "max-w-2xl";
   return (
     <div className="min-h-screen paper-grain flex flex-col items-center">
       {!showWelcome && (
-        <header className="w-full max-w-2xl flex items-center justify-between px-6 py-5">
+        <header className={`w-full ${containerW} flex items-center justify-between px-6 py-5`}>
           <div className="flex items-center gap-2 font-serif-display text-lg text-stone-800">
             <Compass className="h-5 w-5 text-[#8C3A2A]" />
             Compass
@@ -301,7 +304,7 @@ export default function PublicPreview({ mode = "ot" }) {
         </header>
       )}
 
-      <main className="w-full max-w-2xl flex-1 flex flex-col px-6 pb-12">
+      <main className={`w-full ${containerW} flex-1 flex flex-col px-6 pb-12`}>
         {showWelcome ? (
           <WelcomeScreen onBegin={() => setEntered(true)} />
         ) : showAssignment ? (
@@ -327,6 +330,7 @@ export default function PublicPreview({ mode = "ot" }) {
         ) : showWriting ? (
           <WritingScreen
             assignment={assignment}
+            ot={session?.ot}
             response={response}
             setResponse={setResponse}
             onSubmit={submitResponse}
@@ -637,16 +641,19 @@ function AssignmentScreen({ assignment, setAssignment, onContinue, onBack }) {
 // authentic assignment with one genuine first-draft paragraph. The assignment
 // is shown read-only; no live AI/grammar/autocomplete assistance appears; the
 // exact response is preserved. Submit hands off to the existing thinking state.
-function WritingScreen({ assignment, response, setResponse, onSubmit, onBack, submitting }) {
+function WritingScreen({ assignment, ot, response, setResponse, onSubmit, onBack, submitting }) {
   const meaningful = response.trim().length >= 15;
+  const hasOt = !!ot;
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="flex-1 flex flex-col justify-center max-w-xl mx-auto w-full py-10"
+      className={`flex-1 flex flex-col w-full py-10 ${hasOt ? "max-w-5xl" : "max-w-xl mx-auto justify-center"}`}
       data-testid="writing-screen"
     >
+      <div className={hasOt ? "grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_20rem] gap-6 lg:gap-10" : ""}>
+        <div className="min-w-0 flex flex-col">
       <h1 className="font-serif-display text-3xl sm:text-4xl leading-snug text-stone-900">
         Write your response
       </h1>
@@ -655,15 +662,19 @@ function WritingScreen({ assignment, response, setResponse, onSubmit, onBack, su
         try to make it perfect before Compass sees it.
       </p>
 
-      <p className="mt-7 font-mono-panel text-[11px] uppercase tracking-[0.14em] text-stone-500 mb-1.5">
-        Your assignment
-      </p>
-      <div
-        data-testid="writing-assignment-display"
-        className="bg-[#faf9f6] border border-stone-200 rounded-sm p-4 text-[15px] leading-relaxed text-stone-800 whitespace-pre-wrap font-serif-display"
-      >
-        {assignment}
-      </div>
+      {!hasOt && (
+        <>
+          <p className="mt-7 font-mono-panel text-[11px] uppercase tracking-[0.14em] text-stone-500 mb-1.5">
+            Your assignment
+          </p>
+          <div
+            data-testid="writing-assignment-display"
+            className="bg-[#faf9f6] border border-stone-200 rounded-sm p-4 text-[15px] leading-relaxed text-stone-800 whitespace-pre-wrap font-serif-display"
+          >
+            {assignment}
+          </div>
+        </>
+      )}
 
       <label
         htmlFor="writing-input"
@@ -718,6 +729,15 @@ function WritingScreen({ assignment, response, setResponse, onSubmit, onBack, su
           Please write enough for Compass to understand the idea you are trying to express.
         </span>
       )}
+        </div>
+        {hasOt && (
+          <OTThinkingPanel
+            ot={ot}
+            only={["__original", "the_assignment", "my_current_answer", "my_plan"]}
+            title="From your planning"
+          />
+        )}
+      </div>
     </motion.div>
   );
 }
