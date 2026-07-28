@@ -5,6 +5,7 @@ import {
 } from "lucide-react";
 import { otStart, otSaveObject, otInteract, otAdvance, otHandoff } from "@/lib/api";
 import OTThinkingPanel from "@/components/OTThinkingPanel";
+import MyIdeasWorkflow from "@/components/MyIdeasWorkflow";
 
 // Organizing Thought — five persistent objects the student builds BEFORE Writing.
 // Student-visible names are fixed; no technical labels, classifications, or metadata.
@@ -57,6 +58,8 @@ export default function OrganizingThought({ sessionId, initialOt, onComplete }) 
   const meta = STAGE_META[active];
   const draft = drafts[active] || "";
   const setDraft = (v) => setDrafts((d) => ({ ...d, [active]: v }));
+  const isMyIdeas = active === "my_ideas";
+  const hasQuestions = !!((ot?.objects?.questions) || "").trim();
 
   // Autosave the student's own words so nothing is lost on leave/return.
   const saveDraft = useCallback(async () => {
@@ -104,6 +107,14 @@ export default function OrganizingThought({ sessionId, initialOt, onComplete }) 
       setMoving(false);
     }
   }, [busy, active, draft, sessionId]);
+
+  // My Ideas depends on the student's questions. If they reach it with none,
+  // send them back to build their questions first.
+  useEffect(() => {
+    if (ot && active === "my_ideas" && !((ot.objects?.questions) || "").trim() && !busy) {
+      goTo("questions");
+    }
+  }, [ot, active, busy, goTo]);
 
   const proceed = useCallback(async () => {
     if (busy) return;
@@ -197,6 +208,12 @@ export default function OrganizingThought({ sessionId, initialOt, onComplete }) 
             </div>
           )}
 
+          {isMyIdeas ? (
+            hasQuestions ? (
+              <MyIdeasWorkflow sessionId={sessionId} ot={ot} setOt={setOt} />
+            ) : null
+          ) : (
+            <>
           <textarea
             data-testid="ot-object-input"
             value={draft}
@@ -233,6 +250,8 @@ export default function OrganizingThought({ sessionId, initialOt, onComplete }) 
               <span className="text-sm italic font-serif-display">Reading what you wrote…</span>
             </div>
           )}
+            </>
+          )}
 
           {/* Actions */}
           <div className="mt-6 flex flex-wrap items-center gap-4">
@@ -250,7 +269,7 @@ export default function OrganizingThought({ sessionId, initialOt, onComplete }) 
               onClick={share}
               disabled={!draft.trim() || busy}
               data-testid="ot-share-button"
-              className="inline-flex items-center gap-2 border border-stone-300 text-stone-800 px-5 py-2.5 rounded-sm font-medium hover:border-[#8C3A2A] hover:text-[#8C3A2A] transition-colors disabled:opacity-40"
+              className={`inline-flex items-center gap-2 border border-stone-300 text-stone-800 px-5 py-2.5 rounded-sm font-medium hover:border-[#8C3A2A] hover:text-[#8C3A2A] transition-colors disabled:opacity-40 ${isMyIdeas ? "hidden" : ""}`}
             >
               {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <MessageSquareQuote className="h-4 w-4" />}
               Share with my coach
@@ -267,7 +286,9 @@ export default function OrganizingThought({ sessionId, initialOt, onComplete }) 
             </button>
             {!canProceed && !sending && (
               <span className="text-[12px] text-stone-400" data-testid="ot-continue-hint">
-                Share your work with your coach when you're ready to move on.
+                {isMyIdeas
+                  ? "Work through your questions to build your ideas, then continue."
+                  : "Share your work with your coach when you're ready to move on."}
               </span>
             )}
           </div>

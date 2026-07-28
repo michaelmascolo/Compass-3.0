@@ -120,6 +120,28 @@ export const otHandoff = async (id) => {
   return data.ot;
 };
 
+// --- My Ideas — two-pass workflow (pass1 → knowledge map → inquiry → pass2 → construct) ---
+export const otIdeasInit = async (id) =>
+  (await axios.post(`${API}/ot/${id}/ideas/init`)).data;
+export const otIdeasInteract = async (id, index, content, passNo = 1) =>
+  (await axios.post(`${API}/ot/${id}/ideas/interact`, { index, content, pass_no: passNo })).data;
+export const otIdeasAdvance = async (id, index) =>
+  (await axios.post(`${API}/ot/${id}/ideas/advance`, { index })).data;
+export const otIdeasMap = async (id) =>
+  (await axios.post(`${API}/ot/${id}/ideas/map`)).data;
+export const otIdeasConfirmMap = async (id, items, selfAssessment = "") =>
+  (await axios.post(`${API}/ot/${id}/ideas/confirm-map`, { items, self_assessment: selfAssessment })).data;
+export const otIdeasInquiryPlan = async (id) =>
+  (await axios.post(`${API}/ot/${id}/ideas/inquiry-plan`)).data;
+export const otIdeasPause = async (id, plan) =>
+  (await axios.post(`${API}/ot/${id}/ideas/pause`, plan || {})).data;
+export const otIdeasResume = async (id) =>
+  (await axios.post(`${API}/ot/${id}/ideas/resume`)).data;
+export const otIdeasConstructGuidance = async (id) =>
+  (await axios.post(`${API}/ot/${id}/ideas/construct-guidance`)).data;
+export const otIdeasConstruct = async (id, content) =>
+  (await axios.post(`${API}/ot/${id}/ideas/construct`, { content })).data;
+
 export const interact = async (id, payload) => {
   const { data } = await axios.post(`${API}/sessions/${id}/interact`, payload);
   return data;

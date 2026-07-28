@@ -281,11 +281,23 @@ async def ot_handoff(session_id: str):
 
 
 # ---------------------------------------------------------------------------
-# My Ideas — one question at a time. Structure-led scaffolding; distinguishes
-# structural vs knowledge vs expression difficulty; PAUSE for missing knowledge;
-# NEVER supplies subject-matter answers. Ends with a student-confirmed knowledge
-# review. Presentation/instruction only — frozen engine + curriculum untouched.
+# My Ideas — a two-pass workflow with a global knowledge map and ONE integrated
+# inquiry plan. The student attempts EVERY question first (one at a time) to
+# reveal their current understanding across the whole assignment; a weak or
+# incomplete first attempt NEVER blocks progress. Then Compass helps the student
+# read the whole pattern (My Understanding So Far), build ONE coherent inquiry
+# plan, pause to gather information, revise each answer, and finally CONSTRUCT
+# their own ideas. Compass teaches the STRUCTURE of knowing and directs inquiry;
+# it NEVER supplies subject-matter answers. Presentation/instruction only — the
+# frozen M1-M14 engine and the OT curriculum are untouched.
+#
+# Phases: pass1 -> knowledge_map -> inquiry_plan -> inquiry_paused -> pass2
+#         -> construct -> done
 # ---------------------------------------------------------------------------
+IDEAS_PHASES = ["pass1", "knowledge_map", "inquiry_plan", "inquiry_paused", "pass2", "construct", "done"]
+IDEAS_MODEL = ("anthropic", "claude-haiku-4-5-20251001")
+
+
 def _split_questions(text: str):
     t = (text or "").strip()
     if not t:
@@ -298,100 +310,306 @@ def _split_questions(text: str):
     return lines[:12]
 
 
+def _blank_response() -> dict:
+    return {
+        "pass1_text": "", "structure": "",
+        "recommended_status": "", "confirmed_status": "",
+        "present": "", "gap": "",
+        "pass2_text": "", "pass2_status": "in_progress",
+    }
+
+
 def _ensure_ideas(ot: dict) -> dict:
     questions = _split_questions((ot.get("objects", {}) or {}).get("questions", ""))
     ideas = ot.get("ideas")
     if not ideas or ideas.get("questions") != questions:
-        prev = (ideas or {}).get("responses", {}) if ideas else {}
+        prev_resp = (ideas or {}).get("responses", {}) if ideas else {}
         ideas = {
             "questions": questions,
+            "phase": (ideas or {}).get("phase", "pass1") if ideas else "pass1",
             "index": 0,
-            "responses": {str(i): prev.get(str(i), {"text": "", "status": "in_progress", "structure": ""}) for i in range(len(questions))},
-            "review": (ideas or {}).get("review", {}) if ideas else {},
-            "review_done": False,
+            "responses": {str(i): {**_blank_response(), **prev_resp.get(str(i), {})} for i in range(len(questions))},
+            "inquiry_plan": (ideas or {}).get("inquiry_plan") if ideas else None,
+            "self_assessment": (ideas or {}).get("self_assessment", "") if ideas else "",
+            "my_ideas_construct": (ideas or {}).get("my_ideas_construct", "") if ideas else "",
         }
+        if not ideas["inquiry_plan"]:
+            ideas["inquiry_plan"] = {"understood": [], "remaining": [], "needs": [], "sources": [], "text": ""}
         ot["ideas"] = ideas
     return ideas
 
 
 def _compose_my_ideas(ot: dict) -> str:
     ideas = ot.get("ideas") or {}
+    constructed = (ideas.get("my_ideas_construct") or "").strip()
+    if constructed:
+        return constructed
     qs = ideas.get("questions", [])
     resp = ideas.get("responses", {})
     blocks = []
     for i, q in enumerate(qs):
-        r = (resp.get(str(i), {}) or {}).get("text", "").strip()
-        if r:
-            blocks.append(f"Q: {q}\nMy thinking: {r}")
+        r = resp.get(str(i), {}) or {}
+        txt = (r.get("pass2_text") or r.get("pass1_text") or "").strip()
+        if txt:
+            blocks.append(f"Q: {q}\nMy thinking: {txt}")
     return "\n\n".join(blocks)
 
 
-_IDEAS_SYSTEM = """You are Compass, helping a student develop their OWN ideas by answering ONE question at a time. You are given ONE question and the student's response to THAT question only. Never comment on other questions.
-
-FIRST identify the intellectual STRUCTURE the question requires — e.g. Definition ("What is X?"), Comparison ("How do X and Y differ?"), Explanation or Causal explanation ("How/why does X affect/cause Y?"), Evaluation ("Which is better?"), Judgment/Argument ("What should be done?"), Description. LEAD WITH STRUCTURE: scaffold whether the response performs that operation BEFORE asking for more subject-matter content. E.g. for a definition: "This question asks for a definition — what the thing is, and the feature that distinguishes it from related things," then ask the student to inspect their own answer against that.
-
-Distinguish three difficulty types and respond in THIS ORDER (address only ONE blocking difficulty):
-1. STRUCTURAL — the response does not perform the required operation (an example instead of a definition; two descriptions with no comparison dimension; a claim with no explanation; evidence with no interpretation). Address this FIRST. Name the structure; point the student to examine their OWN response. Do NOT supply the correct answer.
-2. KNOWLEDGE — structure is adequate but relevant information is missing. Use PAUSE (or ASK the student to identify what information is needed and where to find it). State the information-seeking task concretely (e.g. "Return to your source and look for what the author says CAUSES this effect."). NEVER supply the missing facts, definitions, evidence, or what a named source/author says.
-3. EXPRESSION — the student seems to understand but hasn't communicated it clearly; address only if it blocks interpretation.
-
-Do NOT treat every weak response as merely needing 'more detail'. Do NOT supply subject-matter answers from your own knowledge, tell the student what a source says, invent evidence, or complete the content. You MAY: name the required structure and the KIND of knowledge needed; ask the student to examine their own response; ask them to consult their notes/text/source/class materials; ask what evidence supports the answer; help identify what is still uncertain; distinguish what they know from what they are guessing.
-
-Decisions:
-- PROCEED — the response adequately performs the required structure (sufficiency, not perfection).
-- TEACH — one blocking STRUCTURAL difficulty; teach that one structural move.
-- ASK — not enough evidence of the student's understanding; one focused question.
-- PAUSE — relevant KNOWLEDGE is missing; state the information-seeking task.
-Speak to the student plainly and briefly. No jargon, labels, scores, or internal reasoning.
-
-Respond with ONLY this JSON (no prose/fences):
-{"decision":"proceed|teach|ask|pause","structure":"Definition|Comparison|Explanation|Causal explanation|Evaluation|Judgment|Description|Other","difficulty":"structural|knowledge|expression|none","message":"one short student-facing message doing exactly the one move","sufficiency":"sufficient|not_yet"}"""
-
-
-async def _ideas_reason(assignment: str, question: str, response: str) -> dict:
-    prompt = (
-        f"THE ASSIGNMENT:\n{assignment}\n\n"
-        f"THE ONE QUESTION the student is answering now:\n\"\"\"{question}\"\"\"\n\n"
-        f"THE STUDENT'S RESPONSE TO THIS QUESTION:\n\"\"\"{(response or '').strip()}\"\"\"\n\n"
-        "Identify the required intellectual structure, then decide PROCEED / TEACH / ASK / PAUSE. Respond with ONLY the JSON object."
-    )
+async def _ideas_llm(system: str, prompt: str, tag: str) -> dict:
     for attempt in range(2):
         try:
-            chat = LlmChat(api_key=_llm_key, session_id="ot-ideas", system_message=_IDEAS_SYSTEM).with_model("anthropic", "claude-sonnet-4-6")
+            chat = LlmChat(api_key=_llm_key, session_id=tag, system_message=system).with_model(*IDEAS_MODEL)
             raw = await chat.send_message(UserMessage(text=prompt))
-            data = _extract_json(raw)
-            dec = (data.get("decision") or "").strip().lower()
-            if dec not in ("proceed", "teach", "ask", "pause"):
-                dec = "ask"
-            return {
-                "decision": dec,
-                "structure": (data.get("structure") or "Other").strip(),
-                "difficulty": (data.get("difficulty") or "none").strip().lower(),
-                "message": (data.get("message") or "").strip(),
-                "sufficiency": "sufficient" if (data.get("sufficiency") or "").strip().lower() == "sufficient" else "not_yet",
-            }
+            return _extract_json(raw)
         except Exception:
             if attempt == 0:
                 continue
-    return {"decision": "ask", "structure": "Other", "difficulty": "none", "message": "Tell me a little more about how you're thinking about this question.", "sufficiency": "not_yet"}
+    return {}
 
 
+_STRUCTURE_LINE = 'Definition ("What is X?"), Comparison ("How do X and Y differ?"), Explanation/Causal ("How/why does X affect/cause Y?"), Evaluation ("Which is better?"), Judgment/Argument ("What should be done?"), or Description.'
+
+_BOUNDARY = """You MUST NOT: provide the correct assignment-specific answer, give a copyable definition, tell the student what a source or author says, invent evidence, or complete/polish the student's answer. You MAY: name the required structure, note which structural part is present or missing, distinguish an example from a definition or an outcome from an explanation, ask the student to examine their own answer, and direct them toward their notes, readings, or materials. Speak to the student plainly and briefly. No jargon, labels, scores, or internal reasoning."""
+
+_IDEAS_PASS1_SYSTEM = f"""You are Compass, helping a student develop their OWN ideas. This is the FIRST PASS: the goal is to DISCOVER the student's current understanding across the whole assignment, one question at a time. You are given ONE question and the student's best CURRENT answer to THAT question only. Never comment on other questions.
+
+FIRST identify the intellectual STRUCTURE the question requires: {_STRUCTURE_LINE} LEAD WITH STRUCTURE, not assignment-specific content.
+
+Give only the MINIMUM structural guidance the student needs to make a genuine attempt. A weak or incomplete answer is NOT a reason to block progress.
+
+Choose ONE decision:
+- PROCEED (the DEFAULT): the student made an interpretable, good-faith attempt — even one with a clear knowledge gap. Acknowledge it briefly and let them continue.
+- TEACH: a STRUCTURAL misunderstanding prevents the student from even attempting the required kind of thinking (e.g. gives an example when asked for a definition; describes two things with no comparison dimension; states an outcome with no explanation). Name the structure plainly and point the student to examine their OWN answer. Do NOT supply the correct answer.
+- ASK: the response is too unclear to interpret. Ask ONE focused question.
+- PAUSE: use ONLY when the student cannot make a meaningful attempt AT ALL without first consulting an explicitly required source. Do NOT turn a weak answer into a research task.
+
+{_BOUNDARY}
+
+Respond with ONLY this JSON (no prose/fences):
+{{"decision":"proceed|teach|ask|pause","structure":"Definition|Comparison|Explanation|Causal explanation|Evaluation|Judgment|Description|Other","difficulty":"structural|knowledge|expression|none","message":"one short student-facing message doing exactly the one move","sufficiency":"sufficient|not_yet"}}"""
+
+_IDEAS_PASS2_SYSTEM = f"""You are Compass, helping a student REVISE an idea after they have had the chance to gather information. This is the SECOND PASS. You are given ONE question, the student's earlier answer, and their revised answer. Never comment on other questions.
+
+FIRST identify the intellectual STRUCTURE the question requires: {_STRUCTURE_LINE} LEAD WITH STRUCTURE.
+
+Now that the student has had a chance to gather what they needed, an answer may need to reach instructional SUFFICIENCY (not perfection) before it is settled. Still apply sufficiency, not perfection; do not require unnecessary elaboration.
+
+Choose ONE decision:
+- PROCEED: the revised answer now adequately performs the required structure (sufficiency, not perfection).
+- TEACH: one blocking STRUCTURAL difficulty remains; teach that one structural move and point the student to their OWN answer.
+- ASK: not enough evidence of the student's understanding; ask ONE focused question.
+- PAUSE: relevant knowledge is still genuinely missing and cannot be reasoned out; name the concrete information-seeking task (never supply the information).
+
+{_BOUNDARY}
+
+Respond with ONLY this JSON (no prose/fences):
+{{"decision":"proceed|teach|ask|pause","structure":"Definition|Comparison|Explanation|Causal explanation|Evaluation|Judgment|Description|Other","difficulty":"structural|knowledge|expression|none","message":"one short student-facing message doing exactly the one move","sufficiency":"sufficient|not_yet"}}"""
+
+
+async def _ideas_reason(assignment: str, question: str, response: str, pass_no: int, prior: str = "") -> dict:
+    if pass_no == 2:
+        system = _IDEAS_PASS2_SYSTEM
+        prompt = (
+            f"THE ASSIGNMENT:\n{assignment}\n\n"
+            f"THE ONE QUESTION:\n\"\"\"{question}\"\"\"\n\n"
+            f"THE STUDENT'S EARLIER ANSWER:\n\"\"\"{(prior or '').strip()}\"\"\"\n\n"
+            f"THE STUDENT'S REVISED ANSWER:\n\"\"\"{(response or '').strip()}\"\"\"\n\n"
+            "Identify the required structure, then decide PROCEED / TEACH / ASK / PAUSE. Respond with ONLY the JSON object."
+        )
+    else:
+        system = _IDEAS_PASS1_SYSTEM
+        prompt = (
+            f"THE ASSIGNMENT:\n{assignment}\n\n"
+            f"THE ONE QUESTION the student is answering now:\n\"\"\"{question}\"\"\"\n\n"
+            f"THE STUDENT'S BEST CURRENT ANSWER:\n\"\"\"{(response or '').strip()}\"\"\"\n\n"
+            "Identify the required structure, then decide PROCEED / TEACH / ASK / PAUSE. Respond with ONLY the JSON object."
+        )
+    data = await _ideas_llm(system, prompt, f"ot-ideas-p{pass_no}")
+    dec = (data.get("decision") or "").strip().lower()
+    if dec not in ("proceed", "teach", "ask", "pause"):
+        dec = "proceed" if pass_no == 1 else "ask"
+    return {
+        "decision": dec,
+        "structure": (data.get("structure") or "Other").strip(),
+        "difficulty": (data.get("difficulty") or "none").strip().lower(),
+        "message": (data.get("message") or "").strip() or ("Thanks — I can follow your thinking here. Move on to the next question when you're ready." if pass_no == 1 else "Tell me a little more so I can follow your thinking."),
+        "sufficiency": "sufficient" if (data.get("sufficiency") or "").strip().lower() == "sufficient" else "not_yet",
+    }
+
+
+_MAP_SYSTEM = """You are Compass. You are given a student's assignment and their FIRST-PASS answers to every question. For each question, judge — from the STRUCTURE of the answer, not from outside subject knowledge — how developed the student's current understanding is.
+
+For each question return a status:
+- "can_answer": the answer performs the required kind of thinking and is reasonably complete.
+- "partial": the answer performs some of the required thinking but a part is missing.
+- "need_info": the answer shows the student does not yet have the information to attempt the required thinking.
+
+Also give a VERY short "present" (what appears present, structurally) and "gap" (what may still be missing, structurally). Do NOT supply any subject-matter content, correct answers, definitions, or facts. Describe only structurally.
+
+Respond with ONLY this JSON (no prose/fences):
+{"items":[{"index":0,"status":"can_answer|partial|need_info","present":"short phrase","gap":"short phrase"}]}"""
+
+
+async def _ideas_map(assignment: str, ideas: dict) -> list:
+    qs = ideas["questions"]
+    resp = ideas["responses"]
+    lines = []
+    for i, q in enumerate(qs):
+        r = resp.get(str(i), {}) or {}
+        a = (r.get("pass1_text") or "").strip() or "(no answer yet)"
+        st = r.get("structure") or "unknown"
+        lines.append(f"[{i}] QUESTION: {q}\n    STRUCTURE REQUIRED: {st}\n    ANSWER: {a}")
+    prompt = f"THE ASSIGNMENT:\n{assignment}\n\nTHE QUESTIONS AND FIRST-PASS ANSWERS:\n" + "\n\n".join(lines) + "\n\nReturn the JSON object with one item per question."
+    data = await _ideas_llm(_MAP_SYSTEM, prompt, "ot-ideas-map")
+    items = data.get("items") if isinstance(data, dict) else None
+    out = []
+    valid = {"can_answer", "partial", "need_info"}
+    for i in range(len(qs)):
+        found = next((it for it in (items or []) if str(it.get("index")) == str(i)), None) if items else None
+        st = (found or {}).get("status", "partial")
+        if st not in valid:
+            st = "partial"
+        out.append({
+            "index": i,
+            "status": st,
+            "present": ((found or {}).get("present") or "").strip(),
+            "gap": ((found or {}).get("gap") or "").strip(),
+        })
+    return out
+
+
+_CHALLENGE_SYSTEM = """You are Compass. A student has classified how well they can answer each question (ready / partial / needs information). For each item you are given the question, the student's answer, the intellectual structure it requires, and the student's OWN classification.
+
+Identify ONLY clear MISMATCHES between the student's confidence and the STRUCTURAL evidence in their answer — e.g. they marked a definition "ready" but the answer describes what someone does rather than what the thing is; or they marked something "needs information" but the answer already performs the required thinking well. For each real mismatch, write ONE short question that points them back to the structural evidence in their OWN answer. Do NOT override their judgment; invite them to reconsider. Do NOT supply subject-matter content. If there are no clear mismatches, return an empty list.
+
+Respond with ONLY this JSON (no prose/fences):
+{"challenges":[{"index":0,"challenge":"one short question"}]}"""
+
+
+async def _ideas_challenge(assignment: str, ideas: dict) -> list:
+    qs = ideas["questions"]
+    resp = ideas["responses"]
+    label = {"can_answer": "ready", "partial": "partial", "need_info": "needs information"}
+    lines = []
+    for i, q in enumerate(qs):
+        r = resp.get(str(i), {}) or {}
+        a = (r.get("pass1_text") or "").strip() or "(no answer)"
+        cs = label.get(r.get("confirmed_status", ""), r.get("confirmed_status", ""))
+        lines.append(f"[{i}] QUESTION: {q}\n    STRUCTURE: {r.get('structure') or 'unknown'}\n    ANSWER: {a}\n    STUDENT MARKED: {cs}")
+    prompt = f"THE ASSIGNMENT:\n{assignment}\n\nITEMS:\n" + "\n\n".join(lines) + "\n\nReturn the JSON object (empty challenges list if no clear mismatch)."
+    data = await _ideas_llm(_CHALLENGE_SYSTEM, prompt, "ot-ideas-challenge")
+    ch = data.get("challenges") if isinstance(data, dict) else None
+    out = []
+    for it in (ch or []):
+        try:
+            idx = int(it.get("index"))
+        except (TypeError, ValueError):
+            continue
+        msg = (it.get("challenge") or "").strip()
+        if 0 <= idx < len(qs) and msg:
+            out.append({"index": idx, "challenge": msg})
+    return out
+
+
+_INQUIRY_SYSTEM = """You are Compass, helping a student build ONE integrated plan for the information they still need — NOT a long list of errands. You are given the assignment and, for the questions the student marked partial or needing information, the question, their answer, and the structure required.
+
+Produce ONE coherent, manageable inquiry plan:
+- "understood": a short list of what the student already appears to understand.
+- "remaining": a short list of what is still partial or unknown (grouped where related).
+- "needs": the SMALLEST set of specific information needs that would improve the whole assignment. Each need is a short phrase describing what to find out (structurally precise: e.g. "the defining feature that makes it that kind of thing"; "the dimension on which the two differ"; "what connects the cause to the outcome"). Combine related gaps into a single need.
+- "sources": general source CATEGORIES where the student might look — choose only from: assigned reading, class notes, textbook, teacher-provided source, the teacher, an approved website. NEVER invent specific titles, authors, or URLs.
+
+Do NOT supply any subject-matter content, correct answers, or facts. Keep it small and coherent.
+
+Respond with ONLY this JSON (no prose/fences):
+{"understood":["..."],"remaining":["..."],"needs":["..."],"sources":["..."]}"""
+
+
+async def _ideas_inquiry(assignment: str, ideas: dict) -> dict:
+    qs = ideas["questions"]
+    resp = ideas["responses"]
+    lines = []
+    for i, q in enumerate(qs):
+        r = resp.get(str(i), {}) or {}
+        if r.get("confirmed_status") in ("partial", "need_info"):
+            a = (r.get("pass1_text") or "").strip() or "(no answer)"
+            lines.append(f"[{i}] QUESTION: {q}\n    STRUCTURE: {r.get('structure') or 'unknown'}\n    ANSWER: {a}\n    STATUS: {r.get('confirmed_status')}")
+    block = "\n\n".join(lines) if lines else "(the student marked every question as ready)"
+    prompt = f"THE ASSIGNMENT:\n{assignment}\n\nQUESTIONS NEEDING MORE:\n{block}\n\nReturn the JSON object."
+    data = await _ideas_llm(_INQUIRY_SYSTEM, prompt, "ot-ideas-inquiry")
+
+    def _strlist(v):
+        return [str(x).strip() for x in v if str(x).strip()] if isinstance(v, list) else []
+    allowed = {"assigned reading", "class notes", "textbook", "teacher-provided source", "the teacher", "an approved website"}
+    sources = [s for s in _strlist(data.get("sources")) if s.lower() in allowed]
+    return {
+        "understood": _strlist(data.get("understood")),
+        "remaining": _strlist(data.get("remaining")),
+        "needs": _strlist(data.get("needs")),
+        "sources": sources,
+        "text": "",
+    }
+
+
+_CONSTRUCT_SYSTEM = """You are Compass, helping a student CONSTRUCT their own ideas after revising their answers. You are given the assignment and the student's revised answers to each question. Help the student SEE the ideas that have emerged: point to repeated or connected ideas across answers, help distinguish a central idea from supporting information, and note which answers relate. Do NOT write the ideas for the student, and do NOT supply any subject-matter content. Offer brief guidance and 2-4 short thinking prompts.
+
+Respond with ONLY this JSON (no prose/fences):
+{"guidance":"a short paragraph of guidance","prompts":["short prompt","short prompt"]}"""
+
+
+async def _ideas_construct(assignment: str, ideas: dict) -> dict:
+    qs = ideas["questions"]
+    resp = ideas["responses"]
+    lines = []
+    for i, q in enumerate(qs):
+        r = resp.get(str(i), {}) or {}
+        a = (r.get("pass2_text") or r.get("pass1_text") or "").strip() or "(no answer)"
+        lines.append(f"[{i}] QUESTION: {q}\n    ANSWER: {a}")
+    prompt = f"THE ASSIGNMENT:\n{assignment}\n\nTHE STUDENT'S REVISED ANSWERS:\n" + "\n\n".join(lines) + "\n\nReturn the JSON object."
+    data = await _ideas_llm(_CONSTRUCT_SYSTEM, prompt, "ot-ideas-construct")
+    prompts = data.get("prompts") if isinstance(data, dict) else None
+    return {
+        "guidance": (data.get("guidance") or "Look across your answers. Which ideas keep coming up? Which one feels most central, and which ones support it?").strip() if isinstance(data, dict) else "Look across your answers. Which ideas keep coming up?",
+        "prompts": [str(p).strip() for p in (prompts or []) if str(p).strip()][:4],
+    }
+
+
+# ---------------------------------------------------------------------------
+# My Ideas endpoints
+# ---------------------------------------------------------------------------
 class IdeasInteract(BaseModel):
     index: int
     content: str
+    pass_no: int = 1
 
 
 class IdeasAdvance(BaseModel):
     index: int
 
 
-class ReviewItem(BaseModel):
+class MapItem(BaseModel):
     index: int
-    classification: str
+    status: str
 
 
-class IdeasReview(BaseModel):
-    items: list[ReviewItem]
+class ConfirmMapBody(BaseModel):
+    items: list[MapItem]
+    self_assessment: Optional[str] = ""
+
+
+class InquiryPlanBody(BaseModel):
+    needs: Optional[list] = None
+    sources: Optional[list] = None
+    text: Optional[str] = None
+
+
+class ConstructBody(BaseModel):
+    content: str
+
+
+def _set_phase(ideas: dict, phase: str) -> None:
+    if phase in IDEAS_PHASES:
+        ideas["phase"] = phase
 
 
 @router.post("/{session_id}/ideas/init")
@@ -400,7 +618,7 @@ async def ideas_init(session_id: str):
     ot = doc.get("ot") or _blank_ot(doc.get("assignment", ""))
     ideas = _ensure_ideas(ot)
     await _save_ot(session_id, ot)
-    return {"ideas": ideas}
+    return {"ideas": ideas, "ot": ot}
 
 
 @router.post("/{session_id}/ideas/interact")
@@ -412,14 +630,28 @@ async def ideas_interact(session_id: str, body: IdeasInteract):
     if body.index < 0 or body.index >= len(qs):
         raise HTTPException(status_code=422, detail="question index out of range")
     key = str(body.index)
-    ideas["responses"][key] = {**ideas["responses"].get(key, {}), "text": body.content}
-    result = await _ideas_reason(ot.get("seed_assignment", ""), qs[body.index], body.content)
-    status = "sufficient" if (result["sufficiency"] == "sufficient" or result["decision"] == "proceed") else "in_progress"
-    ideas["responses"][key]["status"] = status
-    ideas["responses"][key]["structure"] = result["structure"]
+    r = {**_blank_response(), **ideas["responses"].get(key, {})}
+    prior = r.get("pass1_text", "")
+    if body.pass_no == 2:
+        r["pass2_text"] = body.content
+    else:
+        r["pass1_text"] = body.content
+    ideas["responses"][key] = r
+    result = await _ideas_reason(ot.get("seed_assignment", ""), qs[body.index], body.content, body.pass_no, prior=prior)
+    r["structure"] = result["structure"] or r.get("structure", "")
+    if body.pass_no == 2:
+        r["pass2_status"] = "sufficient" if (result["sufficiency"] == "sufficient" or result["decision"] == "proceed") else "in_progress"
+        returned_suff = r["pass2_status"]
+    else:
+        returned_suff = "attempted"
     ot["objects"]["my_ideas"] = _compose_my_ideas(ot)
     await _save_ot(session_id, ot)
-    return {"ideas": ideas, "decision": result["decision"], "structure": result["structure"], "difficulty": result["difficulty"], "message": result["message"], "sufficiency": status}
+    return {
+        "ideas": ideas, "ot": ot,
+        "decision": result["decision"], "structure": result["structure"],
+        "difficulty": result["difficulty"], "message": result["message"],
+        "sufficiency": returned_suff,
+    }
 
 
 @router.post("/{session_id}/ideas/advance")
@@ -427,20 +659,111 @@ async def ideas_advance(session_id: str, body: IdeasAdvance):
     doc = await _load_session(session_id)
     ot = doc.get("ot") or _blank_ot(doc.get("assignment", ""))
     ideas = _ensure_ideas(ot)
-    ideas["index"] = max(0, min(body.index, len(ideas["questions"])))
+    ideas["index"] = max(0, min(body.index, max(0, len(ideas["questions"]) - 1)))
     await _save_ot(session_id, ot)
-    return {"ideas": ideas}
+    return {"ideas": ideas, "ot": ot}
 
 
-@router.post("/{session_id}/ideas/review")
-async def ideas_review(session_id: str, body: IdeasReview):
+@router.post("/{session_id}/ideas/map")
+async def ideas_map(session_id: str):
     doc = await _load_session(session_id)
     ot = doc.get("ot") or _blank_ot(doc.get("assignment", ""))
     ideas = _ensure_ideas(ot)
+    result = await _ideas_map(ot.get("seed_assignment", ""), ideas)
+    for it in result:
+        key = str(it["index"])
+        r = {**_blank_response(), **ideas["responses"].get(key, {})}
+        r["recommended_status"] = it["status"]
+        r["present"] = it["present"]
+        r["gap"] = it["gap"]
+        if not r.get("confirmed_status"):
+            r["confirmed_status"] = it["status"]
+        ideas["responses"][key] = r
+    _set_phase(ideas, "knowledge_map")
+    await _save_ot(session_id, ot)
+    return {"ideas": ideas, "ot": ot}
+
+
+@router.post("/{session_id}/ideas/confirm-map")
+async def ideas_confirm_map(session_id: str, body: ConfirmMapBody):
+    doc = await _load_session(session_id)
+    ot = doc.get("ot") or _blank_ot(doc.get("assignment", ""))
+    ideas = _ensure_ideas(ot)
+    valid = {"can_answer", "partial", "need_info"}
     for it in body.items:
-        ideas["review"][str(it.index)] = {"classification": it.classification}
-    ideas["review_done"] = True
-    ot["objects"]["my_ideas"] = _compose_my_ideas(ot)
+        key = str(it.index)
+        if key in ideas["responses"] and it.status in valid:
+            ideas["responses"][key]["confirmed_status"] = it.status
+    if body.self_assessment is not None:
+        ideas["self_assessment"] = body.self_assessment
+    challenges = await _ideas_challenge(ot.get("seed_assignment", ""), ideas)
+    await _save_ot(session_id, ot)
+    return {"ideas": ideas, "ot": ot, "challenges": challenges}
+
+
+@router.post("/{session_id}/ideas/inquiry-plan")
+async def ideas_inquiry_plan(session_id: str):
+    doc = await _load_session(session_id)
+    ot = doc.get("ot") or _blank_ot(doc.get("assignment", ""))
+    ideas = _ensure_ideas(ot)
+    plan = await _ideas_inquiry(ot.get("seed_assignment", ""), ideas)
+    existing = ideas.get("inquiry_plan") or {}
+    if existing.get("text"):
+        plan["text"] = existing["text"]
+    ideas["inquiry_plan"] = plan
+    _set_phase(ideas, "inquiry_plan")
+    await _save_ot(session_id, ot)
+    return {"ideas": ideas, "ot": ot}
+
+
+@router.post("/{session_id}/ideas/pause")
+async def ideas_pause(session_id: str, body: InquiryPlanBody):
+    doc = await _load_session(session_id)
+    ot = doc.get("ot") or _blank_ot(doc.get("assignment", ""))
+    ideas = _ensure_ideas(ot)
+    plan = ideas.get("inquiry_plan") or {"understood": [], "remaining": [], "needs": [], "sources": [], "text": ""}
+    if body.needs is not None:
+        plan["needs"] = [str(x).strip() for x in body.needs if str(x).strip()]
+    if body.sources is not None:
+        plan["sources"] = [str(x).strip() for x in body.sources if str(x).strip()]
+    if body.text is not None:
+        plan["text"] = body.text
+    ideas["inquiry_plan"] = plan
+    _set_phase(ideas, "inquiry_paused")
+    await _save_ot(session_id, ot)
+    return {"ideas": ideas, "ot": ot}
+
+
+@router.post("/{session_id}/ideas/resume")
+async def ideas_resume(session_id: str):
+    doc = await _load_session(session_id)
+    ot = doc.get("ot") or _blank_ot(doc.get("assignment", ""))
+    ideas = _ensure_ideas(ot)
+    _set_phase(ideas, "pass2")
+    ideas["index"] = 0
+    await _save_ot(session_id, ot)
+    return {"ideas": ideas, "ot": ot}
+
+
+@router.post("/{session_id}/ideas/construct-guidance")
+async def ideas_construct_guidance(session_id: str):
+    doc = await _load_session(session_id)
+    ot = doc.get("ot") or _blank_ot(doc.get("assignment", ""))
+    ideas = _ensure_ideas(ot)
+    guidance = await _ideas_construct(ot.get("seed_assignment", ""), ideas)
+    _set_phase(ideas, "construct")
+    await _save_ot(session_id, ot)
+    return {"ideas": ideas, "ot": ot, "guidance": guidance}
+
+
+@router.post("/{session_id}/ideas/construct")
+async def ideas_construct_save(session_id: str, body: ConstructBody):
+    doc = await _load_session(session_id)
+    ot = doc.get("ot") or _blank_ot(doc.get("assignment", ""))
+    ideas = _ensure_ideas(ot)
+    ideas["my_ideas_construct"] = body.content
+    ot["objects"]["my_ideas"] = (body.content or "").strip() or _compose_my_ideas(ot)
+    _set_phase(ideas, "done")
     ot["status"]["my_ideas"] = "sufficient"
     if "my_ideas" in ot.get("needs_review", []):
         ot["needs_review"] = [s for s in ot["needs_review"] if s != "my_ideas"]
