@@ -14,22 +14,23 @@ const CONTRAST = [
   ["Most AI removes productive struggle.", "Compass turns it into learning."],
 ];
 
-// Three entry points into Compass. Each routes to an existing experience.
-const ENTRIES = [
-  {
-    title: "Try Compass",
-    kicker: "Start here",
-    description:
-      "Experience the instructional philosophy first-hand, and share feedback while Compass is still in early development.",
-    href: "?review",
-    testid: "btn-try-compass",
-    Icon: Compass,
-    dominant: true,
-  },
+// Primary experience — for educators / reviewers evaluating Compass itself.
+const PRIMARY_ENTRY = {
+  title: "Experience Compass as an Educator",
+  kicker: "Start here · for educators & reviewers",
+  description:
+    "This experience is designed for teachers, administrators, researchers, and reviewers who want to understand Compass and help us improve it.",
+  href: "?preview=teacher",
+  testid: "btn-educator-experience",
+  Icon: Compass,
+};
+
+// Secondary experiences — individual student demonstrations of single components.
+const STUDENT_ENTRIES = [
   {
     title: "Student Writing Experience",
     kicker: "Composition",
-    description: "See how Compass coaches a student through a blank page — teaching, never rewriting.",
+    description: "A demonstration of how Compass coaches a student through a blank page — teaching, never rewriting.",
     href: "?preview=writing",
     testid: "btn-student-writing",
     Icon: PenTool,
@@ -37,7 +38,7 @@ const ENTRIES = [
   {
     title: "Organizing Thought Experience",
     kicker: "Pre-writing",
-    description: "See how Compass helps a student turn chaotic ideas into a structured argument.",
+    description: "A demonstration of how Compass helps a student turn chaotic ideas into a structured argument.",
     href: "?preview=ot",
     testid: "btn-student-ot",
     Icon: BookOpen,
@@ -62,11 +63,11 @@ export default function Landing() {
             </span>
           </a>
           <a
-            href="?review"
+            href="?preview=teacher"
             data-testid="nav-try-compass"
             className="group inline-flex items-center gap-2 border border-stone-900 px-4 sm:px-5 py-2 font-mono-panel text-[11px] uppercase tracking-[0.18em] text-stone-900 transition-colors duration-200 hover:bg-stone-900 hover:text-stone-50"
           >
-            Try Compass
+            Experience Compass
             <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
           </a>
         </div>
@@ -86,8 +87,8 @@ export default function Landing() {
               initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.06, ease: EASE }}
               className="font-serif-display text-5xl sm:text-6xl lg:text-7xl tracking-tight leading-[1.02] text-stone-900"
             >
-              AI that develops thinking.
-              <span className="block text-[#8C3A2A]">Not replaces it.</span>
+              AI for developing thinking —
+              <span className="block text-[#8C3A2A]">not replacing it.</span>
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.16, ease: EASE }}
@@ -100,20 +101,35 @@ export default function Landing() {
         </section>
       </main>
 
-      {/* Entry points — Experience Compass immediately after the hero */}
-      <section className="max-w-7xl mx-auto px-6 sm:px-8 md:px-16 pb-20 md:pb-28" data-testid="entry-section">
-        <div className="max-w-2xl mb-14">
+      {/* Primary experience — the educator / reviewer pathway (obvious starting point) */}
+      <section className="max-w-7xl mx-auto px-6 sm:px-8 md:px-16 pb-16 md:pb-20" data-testid="entry-section">
+        <div className="max-w-2xl mb-12">
           <p className="font-mono-panel text-xs uppercase tracking-[0.22em] text-[#8C3A2A] font-semibold mb-5">
-            Step inside
+            The main experience
           </p>
           <h2 className="font-serif-display text-3xl sm:text-4xl tracking-tight leading-tight text-stone-900">
-            Three ways to experience Compass
+            Experience Compass as an educator
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 md:gap-6">
-          {ENTRIES.map((e) => (
-            <EntryCard key={e.testid} {...e} />
+        <PrimaryCard {...PRIMARY_ENTRY} />
+      </section>
+
+      {/* Secondary experiences — individual student demonstrations */}
+      <section className="max-w-7xl mx-auto px-6 sm:px-8 md:px-16 pb-20 md:pb-28" data-testid="student-entry-section">
+        <div className="max-w-2xl mb-8 pt-4 border-t border-stone-200">
+          <h3 className="font-serif-display text-2xl sm:text-3xl tracking-tight leading-tight text-stone-900 mt-8">
+            Explore individual student experiences
+          </h3>
+          <p className="text-base text-stone-600 leading-relaxed mt-4">
+            Optional. These are focused demonstrations of two individual parts of Compass — not the
+            complete educator experience above.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
+          {STUDENT_ENTRIES.map((e) => (
+            <StudentCard key={e.testid} {...e} />
           ))}
         </div>
       </section>
@@ -171,11 +187,11 @@ export default function Landing() {
             See what it feels like to be taught, not corrected.
           </h2>
           <a
-            href="?review"
+            href="?preview=teacher"
             data-testid="cta-try-compass"
             className="group mt-10 inline-flex items-center gap-3 bg-[#8C3A2A] text-stone-50 px-7 py-4 font-mono-panel text-xs uppercase tracking-[0.2em] transition-colors duration-200 hover:bg-[#a34635]"
           >
-            Try Compass
+            Experience Compass
             <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
           </a>
         </div>
@@ -194,36 +210,37 @@ export default function Landing() {
   );
 }
 
-function EntryCard({ title, kicker, description, href, testid, Icon, dominant }) {
-  if (dominant) {
-    return (
-      <a
-        href={href}
-        data-testid={testid}
-        className="group lg:col-span-3 flex flex-col justify-between bg-[#8C3A2A] text-stone-50 p-8 md:p-10 min-h-[240px]
-                   transition-colors duration-200 hover:bg-[#7a3123]
-                   focus:outline-none focus:ring-2 focus:ring-[#8C3A2A] focus:ring-offset-2"
-      >
-        <div>
-          <div className="flex items-center gap-2 font-mono-panel text-[11px] uppercase tracking-[0.2em] text-stone-50/70">
-            <Icon className="h-4 w-4" strokeWidth={1.5} />
-            {kicker}
-          </div>
-          <h3 className="font-serif-display text-3xl md:text-4xl mt-6 leading-tight">{title}</h3>
-          <p className="text-stone-50/85 leading-relaxed mt-4 max-w-md">{description}</p>
-        </div>
-        <span className="mt-8 inline-flex items-center gap-2 font-mono-panel text-xs uppercase tracking-[0.18em]">
-          Begin
-          <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-        </span>
-      </a>
-    );
-  }
+function PrimaryCard({ title, kicker, description, href, testid, Icon }) {
   return (
     <a
       href={href}
       data-testid={testid}
-      className="group lg:col-span-1 flex flex-col justify-between border border-stone-300 bg-white p-6 md:p-7 min-h-[240px]
+      className="group flex flex-col justify-between bg-[#8C3A2A] text-stone-50 p-8 md:p-12 min-h-[240px]
+                 transition-colors duration-200 hover:bg-[#7a3123]
+                 focus:outline-none focus:ring-2 focus:ring-[#8C3A2A] focus:ring-offset-2"
+    >
+      <div>
+        <div className="flex items-center gap-2 font-mono-panel text-[11px] uppercase tracking-[0.2em] text-stone-50/70">
+          <Icon className="h-4 w-4" strokeWidth={1.5} />
+          {kicker}
+        </div>
+        <h3 className="font-serif-display text-3xl md:text-4xl mt-6 leading-tight max-w-2xl">{title}</h3>
+        <p className="text-stone-50/85 leading-relaxed mt-4 max-w-2xl text-lg">{description}</p>
+      </div>
+      <span className="mt-8 inline-flex items-center gap-2 font-mono-panel text-xs uppercase tracking-[0.18em]">
+        Begin the educator experience
+        <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+      </span>
+    </a>
+  );
+}
+
+function StudentCard({ title, kicker, description, href, testid, Icon }) {
+  return (
+    <a
+      href={href}
+      data-testid={testid}
+      className="group flex flex-col justify-between border border-stone-300 bg-white p-6 md:p-7 min-h-[220px]
                  transition-colors duration-200 hover:border-stone-900
                  focus:outline-none focus:ring-2 focus:ring-[#8C3A2A] focus:ring-offset-2"
     >
@@ -236,7 +253,7 @@ function EntryCard({ title, kicker, description, href, testid, Icon, dominant })
         <p className="text-[14px] text-stone-600 leading-relaxed mt-3">{description}</p>
       </div>
       <span className="mt-6 inline-flex items-center gap-2 font-mono-panel text-[11px] uppercase tracking-[0.18em] text-stone-900">
-        Begin
+        View demonstration
         <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-1" />
       </span>
     </a>
