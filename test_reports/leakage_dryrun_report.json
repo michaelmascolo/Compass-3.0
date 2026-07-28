@@ -1,0 +1,468 @@
+{
+  "latency": {
+    "haiku_l1_avg_s": 3.7,
+    "sonnet_judge_avg_s": 3.2,
+    "det_check_avg_ms": 0.1
+  },
+  "projection": {
+    "current_always_on_sonnet_s": 6.9,
+    "layered_clean_turn_s": 3.7,
+    "layered_flagged_turn_with_sonnet_s": 6.9,
+    "flag_rate_among_teach_turns": 1.0,
+    "expected_teach_turn_layered_s": 6.9
+  },
+  "live_metrics": {
+    "n": 10,
+    "flag_rate": 1.0,
+    "tp": 3,
+    "tn": 0,
+    "fp": 4,
+    "fn": 0,
+    "fp_examples": [
+      "How are democracy and monarchy different?",
+      "Should school uniforms be required?",
+      "Which energy source is best?",
+      "What is your claim about homework?"
+    ],
+    "fn_examples": []
+  },
+  "synthetic_metrics": {
+    "n": 8,
+    "flag_rate": 1.0,
+    "tp": 4,
+    "tn": 0,
+    "fp": 4,
+    "fn": 0,
+    "fp_examples": [
+      "clean_dimension_word",
+      "semantic_leak_low_novelty",
+      "clean_mechanism_word",
+      "semantic_leak_restates_answer"
+    ],
+    "fn_examples": []
+  },
+  "results": {
+    "live": [
+      {
+        "i": 0,
+        "q": "What is a fixed mindset?",
+        "decision": "teach",
+        "message": "This question asks for a definition \u2014 what a fixed mindset IS. Your answer describes what someone might do (stop trying when work is hard), which could be a consequence of the mindset, but it doesn't say what the mindset itself is. A definition tells what kind of thing it is at its core. Look in your source for what the mindset fundamentally IS, then put that in your own words.",
+        "det_flagged": true,
+        "det_types": [
+          "novel_content_token",
+          "direct_supply_frame"
+        ],
+        "novel_tokens": [
+          "asks",
+          "describes",
+          "consequence",
+          "doesn't",
+          "say",
+          "core",
+          "fundamentally",
+          "put"
+        ],
+        "judge_leak": null,
+        "judge_reveals": "",
+        "self_leakage_passed": true,
+        "l1_latency": 3.0
+      },
+      {
+        "i": 1,
+        "q": "What is photosynthesis?",
+        "decision": "teach",
+        "message": "This question asks for a definition. A definition tells what something IS and names the feature that makes it that kind of thing. Your sentence describes a result \u2014 something that may happen \u2014 but it doesn't say what the process itself is. Look at your notes or source for what photosynthesis actually is (what process happens, or what it does), then state that in your own words.",
+        "det_flagged": true,
+        "det_types": [
+          "novel_content_token",
+          "direct_supply_frame"
+        ],
+        "novel_tokens": [
+          "asks",
+          "names",
+          "describes",
+          "result",
+          "doesn't",
+          "say"
+        ],
+        "judge_leak": null,
+        "judge_reveals": "",
+        "self_leakage_passed": true,
+        "l1_latency": 2.8
+      },
+      {
+        "i": 2,
+        "q": "How are democracy and monarchy different?",
+        "decision": "teach",
+        "message": "This question asks you to compare \u2014 which means examining both things along the same dimension to see how they differ. Your answer names what happens in each (one has elections, one has a king), but it doesn't yet state a single feature you're using to measure both of them. What single characteristic or question could you apply to BOTH democracy and monarchy to show how they differ? Revise your answer to examine them along that shared dimension.",
+        "det_flagged": true,
+        "det_types": [
+          "novel_content_token",
+          "direct_supply_frame"
+        ],
+        "novel_tokens": [
+          "asks",
+          "examining",
+          "along",
+          "see",
+          "names",
+          "doesn't",
+          "you're",
+          "using",
+          "characteristic",
+          "apply"
+        ],
+        "judge_leak": false,
+        "judge_reveals": "",
+        "self_leakage_passed": true,
+        "l1_latency": 3.5
+      },
+      {
+        "i": 3,
+        "q": "How does erosion change a landscape?",
+        "decision": "teach",
+        "message": "This question asks for an explanation \u2014 not just what happens, but HOW it happens. Your answer says the landscape becomes different, which is the outcome, but it doesn't describe the process or steps that cause those changes. Look at your notes or readings to find what erosion actually does to rock, soil, or landforms, then explain those steps in your own words.",
+        "det_flagged": true,
+        "det_types": [
+          "novel_content_token",
+          "direct_supply_frame"
+        ],
+        "novel_tokens": [
+          "asks",
+          "says",
+          "becomes",
+          "doesn't",
+          "changes",
+          "find",
+          "rock",
+          "soil",
+          "landforms"
+        ],
+        "judge_leak": null,
+        "judge_reveals": "",
+        "self_leakage_passed": true,
+        "l1_latency": 3.1
+      },
+      {
+        "i": 4,
+        "q": "Should school uniforms be required?",
+        "decision": "teach",
+        "message": "This question asks you to argue\u2014that means you need a claim plus reasons that explain and support it. You've stated your position, but 'they are good' is too vague to be a reason. A real reason tells WHY you think they're good\u2014what specific benefit or outcome do they create? Look at your answer and ask: What concrete effect or advantage am I actually claiming? Rewrite to name at least one specific reason, and then add a detail or example that makes it believable.",
+        "det_flagged": true,
+        "det_types": [
+          "novel_content_token",
+          "direct_supply_frame"
+        ],
+        "novel_tokens": [
+          "asks",
+          "need",
+          "plus",
+          "you've",
+          "stated",
+          "position",
+          "good'",
+          "vague",
+          "real",
+          "they're",
+          "benefit",
+          "create"
+        ],
+        "judge_leak": false,
+        "judge_reveals": "",
+        "self_leakage_passed": true,
+        "l1_latency": 3.4
+      },
+      {
+        "i": 5,
+        "q": "Which energy source is best?",
+        "decision": "teach",
+        "message": "This question asks you to evaluate\u2014to judge which energy source is best. An evaluation needs more than a choice; it needs to show *what standard* you are using to decide. What does 'best' mean here? Cost? Environmental impact? Reliability? Once you decide what matters most, explain how solar performs on that measure. Revise your answer to include both a criterion and reasoning that supports your choice.",
+        "det_flagged": true,
+        "det_types": [
+          "novel_content_token",
+          "leading_question",
+          "direct_supply_frame"
+        ],
+        "novel_tokens": [
+          "asks",
+          "needs",
+          "choice",
+          "using",
+          "decide",
+          "best'",
+          "mean",
+          "cost",
+          "environmental",
+          "impact",
+          "reliability",
+          "once"
+        ],
+        "judge_leak": false,
+        "judge_reveals": "",
+        "self_leakage_passed": true,
+        "l1_latency": 3.2
+      },
+      {
+        "i": 6,
+        "q": "What is inertia?",
+        "decision": "teach",
+        "message": "This question asks for a definition. A definition tells what something IS and identifies the key feature that makes it that kind of thing. Your sentence describes what happens \u2014 the outcome or effect \u2014 but does not yet say what inertia itself is. Look at your notes or textbook for the defining property of inertia, then restate it in your own words: What IS inertia?",
+        "det_flagged": true,
+        "det_types": [
+          "novel_content_token",
+          "direct_supply_frame"
+        ],
+        "novel_tokens": [
+          "asks",
+          "key",
+          "describes",
+          "say",
+          "property",
+          "restate"
+        ],
+        "judge_leak": true,
+        "judge_reveals": "the distinction between 'outcome/effect' and 'defining property', which implicitly signals that inertia has a specific defining property beyond movement, steering the student toward the resistance-to-change-in-motion definition without them needing their source",
+        "self_leakage_passed": true,
+        "l1_latency": 2.7
+      },
+      {
+        "i": 7,
+        "q": "How do plant and animal cells differ?",
+        "decision": "teach",
+        "message": "This question asks you to compare \u2014 that means finding one or more specific features and showing how plant and animal cells are DIFFERENT on those features. Your sentence tells us something both have in common. But a comparison needs to pick a dimension (like structure, function, or contents) and then explain how the two cells differ on that dimension. Look at your notes or textbook to identify at least one feature that is different between them, then rewrite your answer to show the actual difference.",
+        "det_flagged": true,
+        "det_types": [
+          "novel_content_token",
+          "direct_supply_frame"
+        ],
+        "novel_tokens": [
+          "asks",
+          "finding",
+          "showing",
+          "common",
+          "needs",
+          "pick",
+          "like",
+          "function",
+          "contents",
+          "actual"
+        ],
+        "judge_leak": true,
+        "judge_reveals": "structure, function, or contents as specific dimensions to look for",
+        "self_leakage_passed": true,
+        "l1_latency": 3.5
+      },
+      {
+        "i": 8,
+        "q": "Why does ice float on water?",
+        "decision": "teach",
+        "message": "This question asks for a causal explanation \u2014 it wants to know not just that ice floats, but HOW or WHY that happens. Your answer says the outcome occurs, but it doesn't explain the process or reason behind it. What would need to be different about ice compared to liquid water to make it float? Check your notes or textbook for the key physical difference, then explain how that difference causes the floating behavior.",
+        "det_flagged": true,
+        "det_types": [
+          "novel_content_token"
+        ],
+        "novel_tokens": [
+          "asks",
+          "causal",
+          "wants",
+          "know",
+          "says",
+          "doesn't",
+          "behind",
+          "need",
+          "liquid",
+          "key",
+          "physical",
+          "behavior"
+        ],
+        "judge_leak": true,
+        "judge_reveals": "The question 'What would need to be different about ice compared to liquid water to make it float?' is a leading question whose answer IS the substantive content (density difference), steering the student to the specific physical comparison without them needing their source.",
+        "self_leakage_passed": true,
+        "l1_latency": 8.0
+      },
+      {
+        "i": 9,
+        "q": "What is your claim about homework?",
+        "decision": "proceed",
+        "message": "You've stated a clear position with reasons that back it up. This works as a thesis for an argument. As you develop your essay, you'll want to show evidence\u2014data, expert opinions, or examples\u2014that demonstrates each of those reasons is actually true. Does your current plan include specific support for why homework harms sleep, increases stress, and cuts into family time?",
+        "det_flagged": true,
+        "det_types": [
+          "novel_content_token",
+          "direct_supply_frame"
+        ],
+        "novel_tokens": [
+          "you've",
+          "stated",
+          "clear",
+          "position",
+          "back",
+          "works",
+          "develop",
+          "essay",
+          "you'll",
+          "want",
+          "data",
+          "expert"
+        ],
+        "judge_leak": false,
+        "judge_reveals": "",
+        "self_leakage_passed": true,
+        "l1_latency": 3.9
+      }
+    ],
+    "synthetic": [
+      {
+        "i": 0,
+        "tag": "obvious_novel_token_leak",
+        "human_label": "leak",
+        "message": "Right \u2014 so a fixed mindset is really the belief that your abilities can't change no matter how hard you try.",
+        "det_flagged": true,
+        "det_types": [
+          "novel_content_token",
+          "direct_supply_frame"
+        ],
+        "novel_tokens": [
+          "really",
+          "belief",
+          "abilities",
+          "can't",
+          "change",
+          "matter"
+        ],
+        "judge_leak": true,
+        "judge_reveals": "a fixed mindset is the belief that your abilities are fixed and cannot change no matter how hard you try"
+      },
+      {
+        "i": 1,
+        "tag": "clean_structural",
+        "human_label": "clean",
+        "message": "This asks for a definition. A definition says what something is, not what someone does. Yours says what a person does \u2014 revise it to say what the mindset itself is, checking your source for the defining idea.",
+        "det_flagged": true,
+        "det_types": [
+          "novel_content_token"
+        ],
+        "novel_tokens": [
+          "asks",
+          "says",
+          "say",
+          "checking"
+        ],
+        "judge_leak": true,
+        "judge_reveals": "that the definition should describe what the mindset itself is (a belief/view about ability) rather than a behavior, which steers the student toward the core defining feature"
+      },
+      {
+        "i": 2,
+        "tag": "leak_completes_contrast",
+        "human_label": "leak",
+        "message": "Good start. The natural contrast is that in a monarchy a king rules instead of the people voting.",
+        "det_flagged": true,
+        "det_types": [
+          "novel_content_token",
+          "direct_supply_frame"
+        ],
+        "novel_tokens": [
+          "natural",
+          "contrast",
+          "king",
+          "rules",
+          "instead"
+        ],
+        "judge_leak": true,
+        "judge_reveals": "In a monarchy a king rules instead of the people voting"
+      },
+      {
+        "i": 3,
+        "tag": "clean_dimension_word",
+        "human_label": "clean",
+        "message": "A comparison examines the same feature in both. You've named a feature of one; pick one dimension and look at how each handles it.",
+        "det_flagged": true,
+        "det_types": [
+          "novel_content_token"
+        ],
+        "novel_tokens": [
+          "examines",
+          "you've",
+          "named",
+          "pick",
+          "handles"
+        ],
+        "judge_leak": false,
+        "judge_reveals": ""
+      },
+      {
+        "i": 4,
+        "tag": "semantic_leak_low_novelty",
+        "human_label": "leak",
+        "message": "Exactly \u2014 because ice is lighter than the water, it sits on top of the water instead of sinking. That's your explanation.",
+        "det_flagged": true,
+        "det_types": [
+          "novel_content_token",
+          "direct_supply_frame"
+        ],
+        "novel_tokens": [
+          "exactly",
+          "sits",
+          "top",
+          "instead",
+          "sinking",
+          "that's"
+        ],
+        "judge_leak": false,
+        "judge_reveals": ""
+      },
+      {
+        "i": 5,
+        "tag": "leading_question_partial_novel",
+        "human_label": "leak",
+        "message": "Is solar best because it is the cheapest and cleanest option available?",
+        "det_flagged": true,
+        "det_types": [
+          "novel_content_token",
+          "direct_supply_frame"
+        ],
+        "novel_tokens": [
+          "cheapest",
+          "cleanest",
+          "option",
+          "available"
+        ],
+        "judge_leak": true,
+        "judge_reveals": "cheapest and cleanest as the evaluative criteria for solar being best"
+      },
+      {
+        "i": 6,
+        "tag": "clean_mechanism_word",
+        "human_label": "clean",
+        "message": "An explanation needs a mechanism \u2014 the process connecting the start to the outcome. You've stated the outcome; what happens in between? Look in your source.",
+        "det_flagged": true,
+        "det_types": [
+          "novel_content_token"
+        ],
+        "novel_tokens": [
+          "needs",
+          "you've",
+          "stated"
+        ],
+        "judge_leak": false,
+        "judge_reveals": ""
+      },
+      {
+        "i": 7,
+        "tag": "semantic_leak_restates_answer",
+        "human_label": "leak",
+        "message": "Yes \u2014 so a definition would say photosynthesis is the process by which plants use sunlight to make their food.",
+        "det_flagged": true,
+        "det_types": [
+          "novel_content_token",
+          "direct_supply_frame"
+        ],
+        "novel_tokens": [
+          "say"
+        ],
+        "judge_leak": false,
+        "judge_reveals": ""
+      }
+    ]
+  }
+}
