@@ -8,9 +8,7 @@ import { submitFeedback } from "@/lib/api";
 const REASONS = [
   ["finished", "I finished what I needed."],
   ["confused", "I became confused."],
-  ["unsure_next", "I wasn't sure what to do next."],
-  ["too_long", "It was taking too long."],
-  ["not_helping", "Compass wasn't helping me."],
+  ["too_long", "It was taking longer than I expected."],
   ["broken", "Something wasn't working."],
   ["later", "I'll come back later."],
   ["other", "Other"],
@@ -46,8 +44,10 @@ export default function EarlyExitModal({ sessionId, onLeave }) {
           className="w-full max-w-lg bg-[#fdfcfa] border border-stone-200 rounded-lg shadow-xl p-7"
         >
           <h2 className="font-serif-display text-2xl text-stone-900">Before you go…</h2>
-          <p className="text-stone-600 text-[14px] leading-relaxed mt-1.5">
-            We'd really appreciate knowing why you're leaving. Even one sentence helps us improve Compass.
+          <p className="text-stone-600 text-[14px] leading-relaxed mt-2">
+            Can we ask one small favor? We're still building Compass, and we're still learning what
+            works best. If you have a moment, we'd really appreciate knowing why you're leaving.
+            Even a sentence or two helps us make Compass better for the next person who uses it.
           </p>
           <div className="mt-5 space-y-1.5">
             {REASONS.map(([val, label]) => (
@@ -75,10 +75,10 @@ export default function EarlyExitModal({ sessionId, onLeave }) {
           <div className="mt-5 flex items-center gap-3">
             <button onClick={() => finish(true)} disabled={saving} data-testid="early-exit-submit"
               className="inline-flex items-center gap-2 bg-[#8C3A2A] text-white px-5 py-2.5 rounded-sm font-medium hover:bg-[#6B2C20] transition-colors disabled:opacity-40">
-              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : null} Send & leave
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : null} Send Feedback
             </button>
             <button onClick={() => finish(false)} data-testid="early-exit-leave" className="text-[13px] text-stone-500 hover:text-stone-800 transition-colors">
-              Leave anyway
+              Leave Without Feedback
             </button>
           </div>
         </motion.div>

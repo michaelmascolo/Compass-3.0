@@ -7,13 +7,9 @@ import { submitFeedback } from "@/lib/api";
 // (did Compass help thinking? too much / too little scaffolding? the "aha"
 // moment?) and usability signal — treated as equally important.
 const QUESTIONS = [
-  ["helped_most", "What part of Compass helped your thinking the most?"],
-  ["confusing", "What part was confusing or frustrating?"],
-  ["stuck", "Was there a point where you became stuck? If so, where?"],
-  ["too_much", "Did Compass ever do too much of the thinking for you?"],
-  ["too_little", "Did Compass ever expect you to do something without enough guidance?"],
-  ["aha", "Was there a moment when you suddenly understood what you were supposed to do? If so, what happened?"],
-  ["improve_one", "If you could improve one part of Compass, what would it be?"],
+  ["helped_most", "What helped you most?"],
+  ["confusing", "What was confusing, frustrating, or unhelpful?"],
+  ["improve_one", "If you could change one thing about Compass, what would it be?"],
 ];
 const USE_AGAIN = ["Definitely", "Probably", "Probably not", "No"];
 
@@ -61,12 +57,20 @@ export default function FeedbackModal({ sessionId, onClose }) {
           <div className="flex items-start justify-between gap-4">
             <div>
               <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.18em] text-[#8C3A2A] font-mono-panel mb-2">
-                <MessageSquareHeart className="h-3.5 w-3.5" /> Help improve Compass
+                <MessageSquareHeart className="h-3.5 w-3.5" /> Can we ask a favor?
               </div>
-              <h2 className="font-serif-display text-2xl text-stone-900">Thank you for using Compass.</h2>
-              <p className="text-stone-600 text-[14px] leading-relaxed mt-1.5">
-                We'd really appreciate hearing about your experience. Your comments will help us
-                improve the way Compass supports learning.
+              <h2 className="font-serif-display text-2xl text-stone-900">Can We Ask a Favor?</h2>
+              <p className="text-stone-600 text-[14px] leading-relaxed mt-2">
+                We're building Compass—and we'd love your help. Compass is still evolving, and we're
+                still learning, too. Your experience can help shape what Compass becomes.
+              </p>
+              <p className="text-stone-600 text-[14px] leading-relaxed mt-2">
+                We'd really like to hear what worked, what didn't, and what you think we should
+                change. Every suggestion, criticism, and new idea helps us build a better Compass for
+                future learners. Even a few words can make a real difference.
+              </p>
+              <p className="text-stone-600 text-[14px] leading-relaxed mt-2">
+                Thank you for helping us build Compass.
               </p>
             </div>
             <button onClick={onClose} data-testid="feedback-close" className="shrink-0 text-stone-400 hover:text-stone-700 transition-colors">
@@ -97,7 +101,7 @@ export default function FeedbackModal({ sessionId, onClose }) {
                 </div>
               ))}
               <div>
-                <label className="block text-[14px] text-stone-800 font-medium mb-2">8. Would you use Compass again?</label>
+                <label className="block text-[14px] text-stone-800 font-medium mb-2">4. Would you use Compass again?</label>
                 <div className="flex flex-wrap gap-2">
                   {USE_AGAIN.map((opt) => (
                     <button
@@ -114,7 +118,7 @@ export default function FeedbackModal({ sessionId, onClose }) {
                 </div>
               </div>
               <div>
-                <label className="block text-[14px] text-stone-800 font-medium mb-1.5">Additional comments</label>
+                <label className="block text-[14px] text-stone-800 font-medium mb-1.5">Anything else you'd like to tell us? <span className="text-stone-400 font-normal">(optional)</span></label>
                 <textarea
                   data-testid="feedback-comments"
                   value={comments}
@@ -126,10 +130,10 @@ export default function FeedbackModal({ sessionId, onClose }) {
               <div className="flex items-center gap-3 pt-1">
                 <button onClick={submit} disabled={saving} data-testid="feedback-submit"
                   className="inline-flex items-center gap-2 bg-[#8C3A2A] text-white px-6 py-2.5 rounded-sm font-medium hover:bg-[#6B2C20] transition-colors disabled:opacity-40">
-                  {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />} Send feedback
+                  {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />} Send Feedback
                 </button>
                 <button onClick={onClose} className="text-[13px] text-stone-400 hover:text-stone-700 transition-colors">
-                  Maybe later
+                  Maybe Later
                 </button>
               </div>
             </div>
