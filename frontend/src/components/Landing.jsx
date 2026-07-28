@@ -7,11 +7,11 @@ import { Compass, ArrowRight, BookOpen, PenTool } from "lucide-react";
 
 const EASE = [0.22, 1, 0.36, 1];
 
-// The philosophy contrast — the heart of the page.
+// The philosophy contrast — short, slogan-like.
 const CONTRAST = [
-  ["Most AI answers the question.", "Compass develops the thinking behind the question."],
-  ["Most AI generates the writing.", "Compass builds the thinking that makes writing possible."],
-  ["Most AI removes the struggle.", "Compass coaches you through it."],
+  ["Most AI gives answers.", "Compass develops thinkers."],
+  ["Most AI writes for students.", "Compass teaches students to write."],
+  ["Most AI removes productive struggle.", "Compass turns it into learning."],
 ];
 
 // Three entry points into Compass. Each routes to an existing experience.
@@ -44,20 +44,9 @@ const ENTRIES = [
   },
 ];
 
-// The developmental order in which Compass itself is being built.
-const ROADMAP = [
-  { label: "Now", title: "Composition", status: "current" },
-  { label: "Next", title: "Organizing Ideas", status: "next" },
-  { label: "Future", title: "Integrated Compass", status: "future" },
-];
-
-// How a single Compass interaction unfolds.
-const STEPS = [
-  ["Understanding", "Compass first reads the writing as a reader would, to grasp what the student is actually trying to say."],
-  ["Recognition", "It names what the student has already done well — the productive move they have begun to make."],
-  ["Developmental invitation", "It chooses one instructional focus and invites the student to take the next thinking step themselves."],
-  ["Teaching", "It scaffolds that one move — never rewriting the work or supplying the ideas."],
-];
+// Roadmap + 4-step method content was removed from the homepage during the IA
+// refinement (2026-06). Preserved for a future About/How-Compass-Works page in
+// /app/memory/homepage_removed_content_for_about_page.md
 
 export default function Landing() {
   return (
@@ -111,7 +100,25 @@ export default function Landing() {
         </section>
       </main>
 
-      {/* Philosophy — bold high-contrast split */}
+      {/* Entry points — Experience Compass immediately after the hero */}
+      <section className="max-w-7xl mx-auto px-6 sm:px-8 md:px-16 pb-20 md:pb-28" data-testid="entry-section">
+        <div className="max-w-2xl mb-14">
+          <p className="font-mono-panel text-xs uppercase tracking-[0.22em] text-[#8C3A2A] font-semibold mb-5">
+            Step inside
+          </p>
+          <h2 className="font-serif-display text-3xl sm:text-4xl tracking-tight leading-tight text-stone-900">
+            Three ways to experience Compass
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 md:gap-6">
+          {ENTRIES.map((e) => (
+            <EntryCard key={e.testid} {...e} />
+          ))}
+        </div>
+      </section>
+
+      {/* Philosophy — What makes Compass different */}
       <section className="border-y border-stone-200 bg-[#f2f0ed]" data-testid="philosophy-section">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 md:px-16 py-20 md:py-28">
           <p className="font-mono-panel text-xs uppercase tracking-[0.22em] text-stone-500 mb-12">
@@ -138,89 +145,23 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Entry points */}
-      <section className="max-w-7xl mx-auto px-6 sm:px-8 md:px-16 py-20 md:py-28" data-testid="entry-section">
-        <div className="max-w-2xl mb-14">
-          <p className="font-mono-panel text-xs uppercase tracking-[0.22em] text-[#8C3A2A] font-semibold mb-5">
-            Step inside
+      {/* Human statement — why Compass exists */}
+      <section className="max-w-7xl mx-auto px-6 sm:px-8 md:px-16 py-20 md:py-28" data-testid="human-statement-section">
+        <motion.div
+          initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }} transition={{ duration: 0.6, ease: EASE }}
+          className="max-w-3xl"
+        >
+          <p className="font-mono-panel text-xs uppercase tracking-[0.22em] text-[#8C3A2A] font-semibold mb-6">
+            Why we built this
           </p>
-          <h2 className="font-serif-display text-3xl sm:text-4xl tracking-tight leading-tight text-stone-900">
-            Three ways to experience Compass
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 md:gap-6">
-          {ENTRIES.map((e) => (
-            <EntryCard key={e.testid} {...e} />
-          ))}
-        </div>
-      </section>
-
-      {/* Roadmap */}
-      <section className="border-t border-stone-200 bg-[#f2f0ed]" data-testid="roadmap-section">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 md:px-16 py-20 md:py-24">
-          <p className="font-mono-panel text-xs uppercase tracking-[0.22em] text-stone-500 mb-14">
-            Where Compass is going
+          <p className="font-serif-display text-2xl sm:text-3xl leading-snug text-stone-800">
+            We built Compass because we believe AI should strengthen learning, not replace the
+            thinking that makes it real. This is early, experimental work — and it isn't finished.
+            If you try it, we'd love your honest reactions. Your feedback helps shape what Compass
+            becomes.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 border-t border-stone-300">
-            {ROADMAP.map((r, i) => (
-              <motion.div
-                key={r.title}
-                initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.08, ease: EASE }}
-                className="relative pt-8 pb-2 md:pr-10 border-t border-stone-300 md:border-t-0 first:border-t-0"
-                data-testid={`roadmap-${r.status}`}
-              >
-                <span
-                  className={`absolute -top-[6px] left-0 h-[11px] w-[11px] rounded-full border-2 ${
-                    r.status === "current" ? "border-[#8C3A2A] bg-[#8C3A2A]" : "border-stone-400 bg-[#f2f0ed]"
-                  }`}
-                />
-                <div className="font-mono-panel text-[11px] uppercase tracking-[0.2em] text-[#8C3A2A]">
-                  {r.label}
-                </div>
-                <p className={`font-serif-display text-2xl md:text-[28px] mt-3 ${r.status === "current" ? "text-stone-900" : "text-stone-500"}`}>
-                  {r.title}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Explainer — how a Compass interaction unfolds */}
-      <section className="max-w-7xl mx-auto px-6 sm:px-8 md:px-16 py-20 md:py-28" data-testid="explainer-section">
-        <div className="max-w-2xl mb-16">
-          <p className="font-mono-panel text-xs uppercase tracking-[0.22em] text-[#8C3A2A] font-semibold mb-5">
-            The method
-          </p>
-          <h2 className="font-serif-display text-3xl sm:text-4xl tracking-tight leading-tight text-stone-900">
-            How a single Compass interaction unfolds
-          </h2>
-          <p className="text-lg text-stone-700 leading-relaxed mt-6">
-            Compass supports the relationship between a teacher and a learner. It teaches, rather than
-            edits — the student always remains the author of their work.
-          </p>
-        </div>
-        <ol className="max-w-3xl">
-          {STEPS.map(([title, body], i) => (
-            <motion.li
-              key={title}
-              initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.06, ease: EASE }}
-              className="flex gap-6 md:gap-10 py-8 border-b border-stone-200"
-              data-testid={`explainer-step-${i}`}
-            >
-              <span className="font-serif-display text-4xl md:text-5xl text-stone-300 leading-none w-12 shrink-0">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <div>
-                <h3 className="font-serif-display text-xl md:text-2xl text-stone-900">{title}</h3>
-                <p className="text-stone-700 leading-relaxed mt-2">{body}</p>
-              </div>
-            </motion.li>
-          ))}
-        </ol>
+        </motion.div>
       </section>
 
       {/* Closing CTA */}
