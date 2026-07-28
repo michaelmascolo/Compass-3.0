@@ -1,0 +1,78 @@
+[
+  {
+    "note": "enumerated-choice leak: answer words all appear in the question",
+    "det_flagged": false,
+    "types": [],
+    "novel": [],
+    "judge_leak": true,
+    "reveals": "Plants make their food using sunlight, not soil."
+  },
+  {
+    "note": "enumerated-choice leak (+ 'pulls/down' minor)",
+    "det_flagged": true,
+    "types": [
+      "novel_content_token"
+    ],
+    "novel": [
+      "it's",
+      "that's",
+      "pulls"
+    ],
+    "judge_leak": true,
+    "reveals": "Objects fall because of gravity, which pulls them down"
+  },
+  {
+    "note": "corrects the student toward the enumerated answer, no new nouns",
+    "det_flagged": true,
+    "types": [
+      "novel_content_token"
+    ],
+    "novel": [
+      "it's"
+    ],
+    "judge_leak": true,
+    "reveals": "The moon causes the tides"
+  },
+  {
+    "note": "recombines question words into the full comparison",
+    "det_flagged": true,
+    "types": [
+      "novel_content_token"
+    ],
+    "novel": [
+      "ruler"
+    ],
+    "judge_leak": true,
+    "reveals": "In a democracy the people hold power, while in a monarchy one ruler holds power."
+  },
+  {
+    "note": "enumerated-choice leak using only question tokens",
+    "det_flagged": true,
+    "types": [
+      "novel_content_token"
+    ],
+    "novel": [
+      "condenses",
+      "doesn't"
+    ],
+    "judge_leak": true,
+    "reveals": "After evaporation, water condenses (not freezes) to form clouds"
+  },
+  {
+    "note": "CLEAN control \u2014 teaches how to answer a choice question, reveals nothing",
+    "det_flagged": true,
+    "types": [
+      "novel_content_token"
+    ],
+    "novel": [
+      "gives",
+      "options",
+      "asks",
+      "pick",
+      "say",
+      "choose"
+    ],
+    "judge_leak": false,
+    "reveals": ""
+  }
+]

@@ -87,8 +87,40 @@ is only ~3 s.
 4. **Offline audit, not runtime gate.** Run the Sonnet pedagogical judge as a nightly sample audit
    over shipped teach messages (zero user latency) to catch drift, instead of gating every turn.
 
+## CONCEPTUAL FRAME (adopted): Layer 2 IMPLEMENTS the boundary, it does not DEFINE it
+The governing principle is pedagogical: *could the student now infer the substantive answer from
+only the assignment + their own response + Compass's message, without their own knowledge or
+source?* The novel-token screen is a fast PROXY for that principle, not the principle itself.
+Ground truth in this dry run is the Sonnet pedagogical judge applying exactly that test.
+
+## ADDENDUM — no-new-token semantic leaks (the class you asked to stress)
+Targeted adversarial set (backend/tests/leakage_adversarial.py, results in
+test_reports/leakage_adversarial_addendum.json): leaks that recombine ONLY words already present
+in the question or the student's answer — e.g. enumerated-choice questions.
+- **Decisive FALSE NEGATIVE:** Q "Do plants make their food using sunlight or soil?" · A "I'm not
+  sure." · Msg "Plants make their food using sunlight, not soil." → lexical screen: **0 novel
+  tokens → NOT flagged**; pedagogical judge: **LEAK (reveals the answer)**. The leaked content
+  lives in the QUESTION's own words, so the novel-token screen is structurally blind to it.
+- **FALSE POSITIVE (control):** a genuinely CLEAN "how to answer a choice question" message was
+  flagged on structural words (gives, options, asks, pick, choose) while the judge said clean.
+- The other enumerated leaks (gravity/tides/democracy/water-cycle) were flagged only INCIDENTALLY
+  (on contractions like "it's/doesn't" or one spillover noun), i.e. for the wrong reason — a
+  contraction-free rephrase would slip through.
+- Addendum tally: tp=4, fp=1, **FN=1** — and that one FN is the pure demonstration that a lexical
+  screen cannot be the arbiter of a pedagogical boundary.
+
+## IMPLICATION FOR THE ARCHITECTURE
+Because the boundary is functional, not lexical: the deterministic Layer 2 can only ever be a
+FAST-PATH PROXY, never the sole judge. It should be used to (a) cheaply CLEAR the obvious-clean
+majority and (b) ESCALATE anything suspicious — but the enumerated/recombination class means we
+cannot treat "0 novel tokens" as proof of safety. Practical consequence: keep an LLM in the loop
+for the final pedagogical check on at least a sampled/uncertain slice (runtime confirmer or nightly
+audit), and treat the deterministic layer as a latency optimization over a still-pedagogical
+backstop — not a replacement for it.
+
 ## Artifacts
 - backend/tests/leakage_dryrun.py (harness) · backend/tests/leakage_recheck.py (offline re-eval)
-- test_reports/leakage_dryrun_report.json (all messages + judge labels + latencies)
+  · backend/tests/leakage_adversarial.py (no-new-token addendum)
+- test_reports/leakage_dryrun_report.json · test_reports/leakage_adversarial_addendum.json
 - test_reports/leakage_dryrun.log (run trace)
 No production files were modified.
