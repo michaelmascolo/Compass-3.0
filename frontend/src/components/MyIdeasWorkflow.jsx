@@ -230,7 +230,13 @@ export default function MyIdeasWorkflow({ sessionId, ot, setOt }) {
   }
 
   const answered = (r) => ((r.pass2_text || r.pass1_text || "").trim());
-  const allPass2Answered = questions.every((_, i) => (ideas.responses[String(i)]?.pass2_text || "").trim());
+  const allPass2Answered = questions.every((_, i) => {
+    const persisted = (ideas.responses[String(i)]?.pass2_text || "").trim();
+    // The current question's freshly typed answer counts too — toConstruct
+    // persists it before advancing, so we should not gate on stale state.
+    if (inPass && passNo === 2 && i === idx) return persisted || answer.trim();
+    return persisted;
+  });
 
   return (
     <div data-testid="my-ideas-workflow" className="mt-5">
