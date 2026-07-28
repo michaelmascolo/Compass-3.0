@@ -2682,6 +2682,234 @@ async def _select_relevant_domains(session: Session, req: InteractRequest) -> tu
     return [{"domain_name": n, "sections": []} for n in fallback], []
 
 
+# ---------------------------------------------------------------------------
+# STAGE C — Student Coaching Renderer. A small, focused generation stage whose
+# ONLY job is to turn the completed Stage-B instructional plan into the final
+# student-facing coaching. It never re-diagnoses, re-targets, or teaches
+# subject matter. A deterministic validator then confirms the coaching is bound
+# to the diagnosed structural target; on failure Stage C is regenerated ONCE.
+# (Default exhaustive composition path only.)
+# ---------------------------------------------------------------------------
+
+# Controlled synonym map: canonical structural element -> student-facing synonyms.
+COACHING_SYNONYMS = {
+    "thesis": ["thesis", "controlling idea", "central claim", "main point", "main idea", "main argument", "central idea"],
+    "definition": ["definition", "define", "defining", "meaning of the term", "what the term means", "what it means", "what it is"],
+    "evidence": ["evidence", "example", "supporting information", "support", "proof", "back up", "backing up"],
+    "explanation": ["explanation", "explain", "show how", "reasoning", "connect", "connection to your claim", "why this matters"],
+    "transition": ["transition", "connection between ideas", "bridge", "link between", "how these ideas connect", "moving from one idea"],
+    "synthesis": ["synthesis", "bring the ideas together", "bring together", "tie together", "tie the ideas", "integrate"],
+    "controlling_idea": ["controlling idea", "central idea of this paragraph", "main point of the paragraph", "thesis"],
+    "paragraph_purpose": ["job of this paragraph", "what this paragraph does", "purpose of this paragraph", "this paragraph's role"],
+    "communicative_purpose": ["purpose", "what you're trying to accomplish", "goal of your writing", "what you want your reader"],
+    "overall_organization": ["organization", "order of your ideas", "how your essay is organized", "how the essay is structured", "structure of your essay"],
+    "example": ["example", "illustrate", "for instance", "concrete case"],
+    "closure": ["conclusion", "closure", "wrap up", "ending", "closing"],
+    "introduction": ["introduction", "opening", "orient your reader", "set up your essay"],
+    "reader_guidance": ["keep your reader oriented", "reader can follow", "clear reference", "who or what you mean"],
+}
+
+
+def _element_key_for(text: str) -> Optional[str]:
+    """Infer the canonical element category a free-text target/dependency names."""
+    t = (text or "").lower()
+    # order matters a little: check the more specific/structural terms first
+    best = None
+    for key, syns in COACHING_SYNONYMS.items():
+        for s in syns:
+            if s in t:
+                return key
+    return best
+
+
+def _coaching_names_element(text: str, element_key: str) -> bool:
+    t = (text or "").lower()
+    for s in COACHING_SYNONYMS.get(element_key, []):
+        if s in t:
+            return True
+    return False
+
+
+_ACTION_CUES = [
+    "?", "in your own words", "how would you", "what do you", "which ", "try ",
+    "write ", "explain ", "describe ", "add ", "ask yourself", "see if you",
+    "look at", "tell ", "rewrite", "revise", "put into words", "state ",
+    "name the", "identify ", "decide ", "choose ",
+]
+
+# a suggestion phrase followed by a quoted clause looks like ready-made text
+_READYMADE_RE = re.compile(
+    r"(you could (?:write|say|put it)|you might (?:write|say)|for example,?\s*you could|try (?:writing|saying)|such as[:,]?)\s*[\"“][^\"”]{20,}[\"”]",
+    re.IGNORECASE,
+)
+_QUOTED_RE = re.compile(r"[\"“]([^\"”]{24,})[\"”]")
+
+
+def _norm(s: str) -> str:
+    return re.sub(r"[^a-z0-9 ]", " ", (s or "").lower())
+
+
+def _salient_nouns(text: str, drop: set) -> list:
+    return [w for w in re.findall(r"[a-zA-Z]{5,}", text or "") if w.lower() not in drop]
+
+
+def _validate_coaching(text: str, primary_target: str, required_dependency: str,
+                       dependency_active: bool, student_excerpt: str = "") -> tuple:
+    """Deterministic guardrail. Returns (ok, issues, target_key, dep_key)."""
+    issues = []
+    body = text or ""
+    target_key = _element_key_for(primary_target)
+    dep_key = _element_key_for(required_dependency) if dependency_active else None
+
+    # 1. names the primary target (or an approved synonym)
+    if target_key:
+        if not _coaching_names_element(body, target_key):
+            issues.append(
+                f"does not explicitly name the instructional target '{primary_target}' "
+                f"(use one of: {', '.join(COACHING_SYNONYMS[target_key][:4])})"
+            )
+    else:
+        toks = _salient_nouns(primary_target, {"dependency", "target"})
+        if toks and not any(w.lower() in body.lower() for w in toks):
+            issues.append(f"does not reference the instructional target '{primary_target}'")
+
+    # 2. when a dependency is active, the coaching must name it — satisfied by the
+    #    element synonym OR any salient noun from the dependency description
+    if dependency_active and required_dependency:
+        dep_nouns = _salient_nouns(required_dependency, {"working", "understanding", "absent", "paragraph"})
+        names_syn = bool(dep_key) and _coaching_names_element(body, dep_key)
+        names_noun = any(w.lower() in body.lower() for w in dep_nouns[:5])
+        if not (names_syn or names_noun):
+            hint = ", ".join(COACHING_SYNONYMS.get(dep_key, dep_nouns)[:4]) if (dep_key or dep_nouns) else required_dependency
+            issues.append(f"a dependency is active but the coaching does not name it (mention: {hint})")
+
+    # 3. exactly one learner-performed operation (at least one clear cue)
+    if not any(cue in body.lower() for cue in _ACTION_CUES):
+        issues.append("contains no clear actionable learner operation (a question or an invited writing move)")
+
+    # 4. must not hand the student a ready-made sentence to submit. Quoting the
+    #    student's OWN wording for recognition is fine; only flag suggestion-framed
+    #    quotes, or a long quote that is NOT drawn from the student's own text.
+    flagged_readymade = bool(_READYMADE_RE.search(body))
+    if not flagged_readymade:
+        stu = _norm(student_excerpt)
+        for q in _QUOTED_RE.findall(body):
+            qn = _norm(q)
+            # if the quote is largely the student's own words, it's recognition — allow
+            if qn and qn not in stu:
+                words = qn.split()
+                overlap = sum(1 for w in words if w in stu) / max(1, len(words))
+                if overlap < 0.6:
+                    flagged_readymade = True
+                    break
+    if flagged_readymade:
+        issues.append("appears to supply a ready-made sentence the student could submit verbatim")
+
+    return (len(issues) == 0, issues, target_key, dep_key)
+
+
+COACHING_RENDERER_SYSTEM = """You are Compass's Student Coaching Renderer. Stage B has ALREADY completed the instructional diagnosis and plan for this turn. Your ONLY job is to write the short, warm, student-facing coaching message that carries out that plan. You are a writing teacher speaking directly to one student.
+
+You MUST NOT: re-diagnose the writing; choose a different instructional target; introduce a new dependency; change the exit criterion; teach the assignment's subject matter or supply the student's ideas; give any sentence/phrase the student could copy and submit; summarize the whole composition; or mention any internal system field, JSON, or reasoning terminology.
+
+The coaching message MUST perform these functions, IN THIS ORDER, in natural student language:
+1. NAME THE WRITING ELEMENT EXPLICITLY as the opening move — tell the student, in plain words, what writing structure you are working on (e.g. "We're working on your controlling idea.", "The next step is to strengthen the definition your thesis depends on.", "This paragraph now needs a clearer transition."). Natural variation is fine; the exact phrase "Today we're working on…" is NOT required, but the structural element MUST be named up front, before any discussion of the topic/content.
+2. RECOGNIZE WHAT IS ALREADY EMERGING, pointing to concrete wording from the student's own writing.
+3. EXPLAIN THE STRUCTURAL NEED — why this element (or dependency) matters for the larger piece of writing.
+4. INVITE EXACTLY ONE learner-performed cognitive operation — ask the student to do the next writing move themselves; do NOT do it for them or supply the answer.
+5. IF A DEPENDENCY IS BEING TAUGHT, state the RETURN PATH — that once the dependency is usable, you'll return to the larger target (e.g. "Once your definition is clear, we'll come back and sharpen your thesis.").
+
+If the plan marks the current element as already SUFFICIENT, acknowledge the achievement plainly and name the next element you're advancing to (the next developmental step), then invite the first operation on it.
+
+Write only the coaching message (2–5 short sentences). No preamble, no labels, no lists, no quotation of a model answer."""
+
+
+def _coaching_plan_prompt(session: Session, req: InteractRequest, plan: dict,
+                          correction: str = "") -> str:
+    excerpt = (req.content or "").strip()
+    if len(excerpt) > 900:
+        excerpt = excerpt[:900] + " …"
+    dep_line = (
+        f"- Required dependency (the immediate focus to develop FIRST): {plan['required_dependency']}\n"
+        f"- Larger target we will return to afterward: {plan['primary_target']}\n"
+        if plan["dependency_active"]
+        else f"- No active dependency; the primary target IS the immediate focus.\n"
+    )
+    suff = plan.get("sufficiency_for_next_step") or "not_yet"
+    return (
+        f"ASSIGNMENT CONTEXT:\n\"\"\"{(session.assignment or '').strip()[:600]}\"\"\"\n\n"
+        f"STUDENT'S RELEVANT WRITING (the material to teach through — do NOT rewrite it):\n\"\"\"{excerpt}\"\"\"\n\n"
+        "COMPLETED INSTRUCTIONAL PLAN (from Stage B — render this faithfully; do not change it):\n"
+        f"- BINDING primary instructional target (the writing element this turn MUST teach): {plan['primary_target']}\n"
+        f"{dep_line}"
+        f"- Developmental sufficiency of the current focus: {suff} "
+        f"({'already sufficient — acknowledge and advance to the next step' if suff.lower()=='sufficient' else 'not yet — teach/scaffold it this turn'})\n"
+        f"- Active exit criterion (what must become TRUE for the student to move on — do NOT quote this verbatim, teach toward it): {plan.get('active_exit_criterion') or '(n/a)'}\n"
+        f"- Next developmental step (where we go once sufficient): {plan.get('next_developmental_step') or '(n/a)'}\n"
+        f"- Candidate scaffolding move Stage B considered (a seed you may refine, not a script): {plan.get('candidate_move') or '(none)'}\n\n"
+        f"{('CORRECTION — your previous attempt failed validation: ' + correction + ' Regenerate the coaching so it fixes this while following all rules.') if correction else ''}"
+        "\nWrite the student-facing coaching message now."
+    )
+
+
+async def _render_coaching(session: Session, req: InteractRequest, plan: dict) -> Optional[str]:
+    """STAGE C. Returns the validated student-facing coaching, or None on failure
+    (caller falls back to the Stage-B invitation)."""
+    async def _generate(correction: str = "") -> str:
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=f"coach-{session.id}-{uuid.uuid4().hex[:8]}",
+            system_message=COACHING_RENDERER_SYSTEM,
+        ).with_model("anthropic", "claude-sonnet-4-6")
+        raw = await chat.send_message(UserMessage(text=_coaching_plan_prompt(session, req, plan, correction)))
+        return (raw or "").strip()
+
+    try:
+        text = await _generate()
+        ok, issues, _tk, _dk = _validate_coaching(
+            text, plan["primary_target"], plan["required_dependency"], plan["dependency_active"],
+            student_excerpt=req.content or "",
+        )
+        if ok:
+            plan["_validator"] = {"passed": True, "issues": [], "regenerated": False}
+            return text
+        logger.info(f"[stage_c] validation failed (regenerating once): {issues}")
+        text2 = await _generate("; ".join(issues))
+        ok2, issues2, _tk2, _dk2 = _validate_coaching(
+            text2, plan["primary_target"], plan["required_dependency"], plan["dependency_active"],
+            student_excerpt=req.content or "",
+        )
+        plan["_validator"] = {"passed": ok2, "issues": issues2, "regenerated": True}
+        # even if the 2nd attempt still trips a soft check, prefer it over the free Stage-B text
+        return text2 or text
+    except Exception as e:  # noqa: BLE001
+        logger.warning(f"[stage_c] coaching renderer failed: {e}")
+        return None
+
+
+def _build_coaching_plan(parsed: dict) -> dict:
+    """Extract the minimal plan Stage C needs from the Stage-B parse."""
+    theory = parsed["theory"]
+    ir = theory.instructional_reasoning
+    sr = theory.structural_reasoning
+    sc = theory.scaffolding_control
+    dep_status = (ir.dependency_status or "").strip().lower()
+    dependency_active = bool(
+        (ir.required_dependency or "").strip()
+        and dep_status in ("identified", "being_taught")
+    )
+    return {
+        "primary_target": (sc.primary_target or "").strip(),
+        "required_dependency": (ir.required_dependency or "").strip(),
+        "dependency_active": dependency_active,
+        "sufficiency_for_next_step": (ir.sufficiency_for_next_step or "").strip(),
+        "next_developmental_step": (ir.next_developmental_step or "").strip(),
+        "active_exit_criterion": (sr.active_exit_criterion or "").strip(),
+        "candidate_move": parsed.get("invitation", ""),
+    }
+
+
+
 async def _run_engine(session: Session, req: InteractRequest, preview_output: Optional[bool] = None) -> dict:
     """Run STAGE A (domain selection) + STAGE B (developmental reasoning) with one
     retry on transient/unreadable failure. Pure logic — no client connection.
@@ -2730,9 +2958,23 @@ async def _run_engine(session: Session, req: InteractRequest, preview_output: Op
             _meta["t_stage_b_reasoner_s"] = round(_t_b, 2)
             _meta["reasoner_output_bytes"] = len(raw)
             _parsed["_meta"] = _meta
+            # STAGE C — render the final student coaching from the completed plan,
+            # bound to the diagnosed structural target (default composition path).
+            if (_parsed["theory"].scaffolding_control.primary_target or "").strip():
+                _t_c0 = time.perf_counter()
+                _plan = _build_coaching_plan(_parsed)
+                _coaching = await _render_coaching(session, req, _plan)
+                _meta["t_stage_c_renderer_s"] = round(time.perf_counter() - _t_c0, 2)
+                _meta["stage_c_validator"] = _plan.get("_validator", {})
+                if _coaching:
+                    _parsed["_stage_b_invitation"] = _parsed["invitation"]
+                    _parsed["invitation"] = _coaching
+                    if _parsed.get("selected") is not None:
+                        _parsed["selected"].invitation = _coaching
             logger.info(
                 f"[latency] stage_a_selector={_meta['t_stage_a_selector_s']}s "
                 f"prompt_build={_meta['t_prompt_build_s']}s stage_b_reasoner={round(_t_b,2)}s "
+                f"stage_c_renderer={_meta.get('t_stage_c_renderer_s')}s "
                 f"reasoner_prompt_bytes={_meta['reasoner_prompt_bytes']}"
             )
             return _parsed
