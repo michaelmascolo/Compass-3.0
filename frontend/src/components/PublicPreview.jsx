@@ -114,8 +114,8 @@ export default function PublicPreview({ mode = "ot" }) {
   }, [activeCoaching?.id]);
 
   // Reveal the interim observations as a paced, grounded sequence. The FIRST
-  // observation is held until ~3.5s after the learner submitted (so it reads as
-  // a genuine reading of their writing, never an instant placating message); a
+  // observation is held until ~6.5s (5–8s window) after the learner submitted (so
+  // it reads as a genuine reading of their writing, never an instant message); a
   // SECOND grounded observation, if present, follows ~3s later. They never delay
   // the full coaching response, which replaces them when reasoning completes.
   useEffect(() => {
@@ -124,7 +124,7 @@ export default function PublicPreview({ mode = "ot" }) {
       return;
     }
     const elapsed = Date.now() - (submitAtRef.current || 0);
-    const firstDelay = Math.max(0, 3500 - elapsed); // ensure ~3.5s before first observation
+    const firstDelay = Math.max(0, 6500 - elapsed); // ~5-8s before the first observation
     const t1 = setTimeout(() => setRevealStage((s) => (s < 1 ? 1 : s)), firstDelay);
     const t2 = setTimeout(() => setRevealStage((s) => (s < 2 ? 2 : s)), firstDelay + 3000);
     return () => {
