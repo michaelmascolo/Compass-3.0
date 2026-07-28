@@ -369,7 +369,28 @@ async def _ideas_llm(system: str, prompt: str, tag: str) -> dict:
 
 _STRUCTURE_LINE = 'Definition ("What is X?"), Comparison ("How do X and Y differ?"), Explanation/Causal ("How/why does X affect/cause Y?"), Evaluation ("Which is better?"), Judgment/Argument ("What should be done?"), or Description.'
 
-_BOUNDARY = """You MUST NOT: provide the correct assignment-specific answer, give a copyable definition, tell the student what a source or author says, invent evidence, or complete/polish the student's answer. You MAY: name the required structure, note which structural part is present or missing, distinguish an example from a definition or an outcome from an explanation, ask the student to examine their own answer, and direct them toward their notes, readings, or materials. Speak to the student plainly and briefly. No jargon, labels, scores, or internal reasoning."""
+_BOUNDARY = """You MUST NOT: provide the correct assignment-specific answer; give a copyable definition; NAME the specific belief, feature, property, category, dimension, mechanism, cause, step, criterion, reason, evidence, or conclusion the answer needs; tell the student what a source or author says; invent evidence; or complete/polish the student's answer. You MAY: name the required structure, teach its GENERAL form, note which structural part is present or missing, distinguish (e.g.) an example from a definition or an outcome from an explanation, ask the student to inspect or revise their OWN answer against the general structure, and direct them to their notes/readings/source WITHOUT naming what they will find. Speak plainly and briefly. No jargon, labels, scores, or internal reasoning."""
+
+_RESPONSE_PATTERN = """CORE DISTINCTION (the boundary you must not cross): you may name the TYPE of element an answer is missing; you may NOT name the assignment-specific CONTENT that belongs in that element. Naming a structure ("this needs a defining feature") is allowed; naming or cueing the actual content ("what does the person believe about their intelligence?", "does it view intelligence as fixed?") is a LEAK and is forbidden — even as a question.
+
+When a response does NOT perform the required structure, compose the student-facing message in THIS order, woven into 2-4 plain sentences (do NOT print the numbers):
+1. NAME the required structure — e.g. "This question asks for a definition."
+2. EXPLAIN the structure in GENERAL terms — e.g. "A definition tells what something is and identifies the feature that makes it that kind of thing."
+3. IDENTIFY what the student CURRENTLY provided, structurally — e.g. "Your sentence describes what a person may do."
+4. IDENTIFY the structural GAP WITHOUT supplying content — e.g. "It does not yet say what the thing itself is."
+5. ASK the student to INSPECT or REVISE using the general structure — e.g. "Does your answer say what it IS, or only what may happen because of it? Revise it to state what kind of thing it is." If the needed content is genuinely missing, direct them to their SOURCE without saying what they will find — e.g. "Check your source for the defining idea, then state it in your own words."
+
+STRUCTURE-SPECIFIC TEACHING — teach ONLY the general form; NEVER the assignment-specific content:
+- Definition: says what something IS and gives its distinguishing feature; a behavior, consequence, example, or use is not itself a definition. FORBIDDEN: naming the actual defining feature/belief/category/property, or a sentence frame containing it.
+- Comparison: examines two+ things along the SAME dimension. You may ask "what single feature could you examine in both?" FORBIDDEN: naming the actual dimension unless it already appears in the student's own answer or teacher-supplied material.
+- Explanation/Causal: states not just WHAT happens but HOW or WHY — the process or relationship connecting a starting condition to an outcome. FORBIDDEN: naming the actual mechanism, steps, causes, or intermediate process.
+- Evaluation: judges against explicit CRITERIA. FORBIDDEN: naming the correct judgment or the criteria to use.
+- Judgment/Argument: needs a claim plus reasons, with evidence interpreted. FORBIDDEN: naming the substantive reasons, evidence, or conclusion.
+- Description: gives specific observable detail. FORBIDDEN: supplying the specific details.
+
+ANTI-LEAKAGE SELF-CHECK — run this silently BEFORE answering: (a) Could the student infer or reconstruct the assignment-specific answer from your message alone, without using their own knowledge or their source? (b) Does your message teach the STRUCTURE of the intellectual act rather than covertly teaching the answer? Your message is valid ONLY if (a) is NO and (b) is YES. If it is not valid, rewrite it more generally before returning. Set "leakage_check_passed" true only when it genuinely passes."""
+
+_IDEAS_JSON = '{{"decision":"proceed|teach|ask|pause","structure":"Definition|Comparison|Explanation|Causal explanation|Evaluation|Judgment|Description|Other","difficulty":"structural|knowledge|expression|none","required_structure":"the structure this question requires","student_supplied":"what the answer provides, structurally (no content)","structural_gap":"the structural element still missing (no content)","knowledge_gap_present":true,"source_lookup_needed":true,"leakage_check_passed":true,"message":"one short student-facing message following the 5-step pattern — general structure only, no assignment-specific content","sufficiency":"sufficient|not_yet"}}'
 
 _IDEAS_PASS1_SYSTEM = f"""You are Compass, helping a student develop their OWN ideas. This is the FIRST PASS: the goal is to DISCOVER the student's current understanding across the whole assignment, one question at a time. You are given ONE question and the student's best CURRENT answer to THAT question only. Never comment on other questions.
 
@@ -385,8 +406,10 @@ Choose ONE decision:
 
 {_BOUNDARY}
 
-Respond with ONLY this JSON (no prose/fences):
-{{"decision":"proceed|teach|ask|pause","structure":"Definition|Comparison|Explanation|Causal explanation|Evaluation|Judgment|Description|Other","difficulty":"structural|knowledge|expression|none","message":"one short student-facing message doing exactly the one move","sufficiency":"sufficient|not_yet"}}"""
+{_RESPONSE_PATTERN}
+
+Respond with ONLY this JSON (no prose/fences). The internal fields (required_structure, student_supplied, structural_gap, knowledge_gap_present, source_lookup_needed, leakage_check_passed) are for your own reasoning and are NOT shown to the student:
+{_IDEAS_JSON}"""
 
 _IDEAS_PASS2_SYSTEM = f"""You are Compass, helping a student REVISE an idea after they have had the chance to gather information. This is the SECOND PASS. You are given ONE question, the student's earlier answer, and their revised answer. Never comment on other questions.
 
@@ -402,14 +425,57 @@ Choose ONE decision:
 
 {_BOUNDARY}
 
+{_RESPONSE_PATTERN}
+
+Respond with ONLY this JSON (no prose/fences). The internal fields (required_structure, student_supplied, structural_gap, knowledge_gap_present, source_lookup_needed, leakage_check_passed) are for your own reasoning and are NOT shown to the student:
+{_IDEAS_JSON}"""
+
+
+_LEAKAGE_CRITIC_SYSTEM = """You are a strict content-boundary reviewer for a writing coach named Compass. Compass helps students by teaching the STRUCTURE of thinking and must NEVER supply or cue the assignment-specific CONTENT of an answer.
+
+You are given: the QUESTION the student must answer, the STRUCTURE it requires, and a DRAFT coach message. Decide whether the draft names or CUES the assignment-specific content — the actual defining feature/belief/property/category, the actual comparison dimension, the actual mechanism/cause/process/step, the actual criterion, the actual reason/evidence/conclusion. A leading QUESTION whose answer IS the missing content ("what does the person believe about their intelligence?"), or a "for example" that names the real dimension or mechanism ("like how leaders are chosen", "the process or mechanism", "the core belief"), COUNTS AS A LEAK. Naming the general category of the missing element in a way that reveals it (e.g. calling a definition's missing piece a "belief") is also a leak.
+
+CLEAN messages teach only the general form and point back to the student's OWN answer or their source generically:
+- Definition CLEAN: "A definition says what something IS and gives the feature that makes it that kind of thing. Your sentence says what someone may do; it does not yet say what the thing itself is. Does it name what it is, or only what may happen because of it? Check your source for the defining idea and put it in your own words."
+- Comparison CLEAN: "A comparison examines the same feature in both things. You have described each separately; you have not yet examined one shared feature across both. What single feature could you look at in both?"
+- Explanation CLEAN: "An explanation shows not just what happens but how or why. You have named the outcome; you have not yet shown the process that connects the start to that outcome. What happens in between? Look in your source for the steps that connect them."
+
+If the draft is CLEAN, return it unchanged. If it LEAKS, rewrite it so it keeps the same structure teaching (name the structure, explain its general form, identify what the student gave, identify the structural gap, ask them to inspect/revise their own answer or consult their source) but removes EVERY content cue: never name the specific belief, feature, dimension, mechanism, criterion, reason, or evidence, and never ask a question whose answer is the missing content. Use only generic phrases like "the defining idea", "the feature that distinguishes it", "a single feature you could examine in both", "the process in between".
+
 Respond with ONLY this JSON (no prose/fences):
-{{"decision":"proceed|teach|ask|pause","structure":"Definition|Comparison|Explanation|Causal explanation|Evaluation|Judgment|Description|Other","difficulty":"structural|knowledge|expression|none","message":"one short student-facing message doing exactly the one move","sufficiency":"sufficient|not_yet"}}"""
+{"leaked": true, "message": "the clean student-facing message"}"""
+
+
+async def _leakage_sanitize(question: str, structure: str, message: str) -> str:
+    if not message:
+        return message
+    prompt = (
+        f"QUESTION:\n\"\"\"{question}\"\"\"\n\n"
+        f"STRUCTURE REQUIRED: {structure}\n\n"
+        f"DRAFT COACH MESSAGE:\n\"\"\"{message}\"\"\"\n\n"
+        "Return the JSON object. If it leaks assignment-specific content, rewrite the message to remove every content cue."
+    )
+    for attempt in range(2):
+        try:
+            chat = LlmChat(
+                api_key=_llm_key, session_id="ot-ideas-critic", system_message=_LEAKAGE_CRITIC_SYSTEM,
+            ).with_model("anthropic", "claude-sonnet-4-6")
+            raw = await chat.send_message(UserMessage(text=prompt))
+            d = _extract_json(raw)
+            m = (d.get("message") or "").strip()
+            if m:
+                return m
+            return message
+        except Exception:
+            if attempt == 0:
+                continue
+    return message
 
 
 async def _ideas_reason(assignment: str, question: str, response: str, pass_no: int, prior: str = "") -> dict:
     if pass_no == 2:
         system = _IDEAS_PASS2_SYSTEM
-        prompt = (
+        base_prompt = (
             f"THE ASSIGNMENT:\n{assignment}\n\n"
             f"THE ONE QUESTION:\n\"\"\"{question}\"\"\"\n\n"
             f"THE STUDENT'S EARLIER ANSWER:\n\"\"\"{(prior or '').strip()}\"\"\"\n\n"
@@ -418,21 +484,41 @@ async def _ideas_reason(assignment: str, question: str, response: str, pass_no: 
         )
     else:
         system = _IDEAS_PASS1_SYSTEM
-        prompt = (
+        base_prompt = (
             f"THE ASSIGNMENT:\n{assignment}\n\n"
             f"THE ONE QUESTION the student is answering now:\n\"\"\"{question}\"\"\"\n\n"
             f"THE STUDENT'S BEST CURRENT ANSWER:\n\"\"\"{(response or '').strip()}\"\"\"\n\n"
             "Identify the required structure, then decide PROCEED / TEACH / ASK / PAUSE. Respond with ONLY the JSON object."
         )
-    data = await _ideas_llm(system, prompt, f"ot-ideas-p{pass_no}")
+    # Leakage-aware retry: if the model reports its own anti-leakage check
+    # failed, ask it once more to rewrite the message more generally.
+    data = {}
+    prompt = base_prompt
+    for attempt in range(2):
+        d = await _ideas_llm(system, prompt, f"ot-ideas-p{pass_no}-{attempt}")
+        if d:
+            data = d
+            if d.get("leakage_check_passed", True) is not False:
+                break
+        prompt = base_prompt + (
+            "\n\nYOUR PREVIOUS ATTEMPT LEAKED ASSIGNMENT-SPECIFIC CONTENT. Rewrite the message so it teaches ONLY the "
+            "general structure and asks the student to inspect/revise their own answer or consult their source — NEVER "
+            "naming or cueing the specific belief, feature, dimension, mechanism, cause, criterion, reason, or evidence."
+        )
     dec = (data.get("decision") or "").strip().lower()
     if dec not in ("proceed", "teach", "ask", "pause"):
         dec = "proceed" if pass_no == 1 else "ask"
+    structure = (data.get("structure") or "Other").strip()
+    message = (data.get("message") or "").strip() or ("Thanks — I can follow your thinking here. Move on to the next question when you're ready." if pass_no == 1 else "Tell me a little more so I can follow your thinking.")
+    # Adversarial leakage guard: for any teaching/asking/pausing move, a separate
+    # reviewer strips assignment-specific content the drafting model may have cued.
+    if dec in ("teach", "ask", "pause"):
+        message = await _leakage_sanitize(question, structure, message)
     return {
         "decision": dec,
-        "structure": (data.get("structure") or "Other").strip(),
+        "structure": structure,
         "difficulty": (data.get("difficulty") or "none").strip().lower(),
-        "message": (data.get("message") or "").strip() or ("Thanks — I can follow your thinking here. Move on to the next question when you're ready." if pass_no == 1 else "Tell me a little more so I can follow your thinking."),
+        "message": message,
         "sufficiency": "sufficient" if (data.get("sufficiency") or "").strip().lower() == "sufficient" else "not_yet",
     }
 
