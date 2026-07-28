@@ -642,6 +642,18 @@ export default function DevelopmentPanel({
                     <KV k="Why start here" accent="text-sky-300">
                       <Text value={theory.structural_reasoning?.hierarchical_triage_rationale} />
                     </KV>
+                    {(theory.structural_reasoning?.active_exit_criterion || "").trim() ? (
+                      <KV k="Ready to move on when" accent="text-emerald-300">
+                        <Text value={theory.structural_reasoning?.active_exit_criterion} />
+                        {(theory.instructional_reasoning?.sufficiency_for_next_step || "")
+                          .trim()
+                          .toLowerCase() === "sufficient" ? (
+                          <span className="ml-2 text-[10px] uppercase tracking-[0.12em] text-emerald-400 font-mono-panel">
+                            ✓ achieved — moving on
+                          </span>
+                        ) : null}
+                      </KV>
+                    ) : null}
                   </div>
                 </div>
               ) : null}
