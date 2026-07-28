@@ -42,6 +42,7 @@ function CoachNote({ coach }) {
 export default function MyIdeasWorkflow({ sessionId, ot, setOt }) {
   const ideas = ot?.ideas || null;
   const questions = ideas?.questions || [];
+  const researchList = ideas?.research_list || [];
   const phase = ideas?.phase || "pass1";
 
   const [idx, setIdx] = useState(0);
@@ -266,7 +267,13 @@ export default function MyIdeasWorkflow({ sessionId, ot, setOt }) {
             <div className="mt-3 bg-[#faf9f6] border border-stone-200 rounded-sm p-3" data-testid="mi-original-answer">
               <span className="font-mono-panel text-[9px] uppercase tracking-[0.14em] text-stone-400">Your earlier answer</span>
               <p className="mt-1 text-[14px] text-stone-600 whitespace-pre-wrap font-serif-display">{resp.pass1_text}</p>
-              <p className="mt-2 text-[12px] text-stone-500">What did you find or now understand? Revise your answer in your own words.</p>
+              {(resp.research_need || "").trim() && (
+                <div data-testid="mi-pass2-research-need" className="mt-2 pt-2 border-t border-stone-200">
+                  <span className="font-mono-panel text-[9px] uppercase tracking-[0.14em] text-[#8C3A2A]">What you set out to learn</span>
+                  <p className="mt-0.5 text-[13px] text-stone-700 font-serif-display">{resp.research_need}</p>
+                </div>
+              )}
+              <p className="mt-2 text-[12px] text-stone-500">What did you find or now understand? Update your answer with your new knowledge — you're strengthening it, not starting over.</p>
             </div>
           )}
 
@@ -315,8 +322,29 @@ export default function MyIdeasWorkflow({ sessionId, ot, setOt }) {
               </button>
             )}
           </div>
+          {passNo === 1 && resp.pass1_state === "knowledge_limit" && (
+            <div data-testid="mi-knowledge-limit" className="mt-3 flex items-start gap-2 text-[13px] text-[#8C3A2A] bg-[#8C3A2A]/[0.05] border border-[#8C3A2A]/20 rounded-sm p-2.5">
+              <Search className="h-4 w-4 mt-0.5 shrink-0" />
+              <span>You've developed this as far as your current understanding allows — I've added what's left to find out to your research list below.</span>
+            </div>
+          )}
           {passNo === 1 && (
             <p className="mt-2 text-[12px] text-stone-400">A weak or unfinished answer is fine here — a genuine attempt is enough to move on.</p>
+          )}
+          {passNo === 1 && (researchList.length > 0) && (
+            <div data-testid="mi-research-list" className="mt-5 bg-[#faf9f6] border border-stone-200 rounded-sm p-4">
+              <div className="flex items-center gap-1.5 font-mono-panel text-[10px] uppercase tracking-[0.16em] text-stone-500 mb-2">
+                <Search className="h-3.5 w-3.5 text-[#8C3A2A]" /> Things to find out
+              </div>
+              <p className="text-[12px] text-stone-400 mb-2">Your research agenda — what to look up later. You'll come back and strengthen these answers once you've gathered them.</p>
+              <ul className="space-y-1.5">
+                {researchList.map((it, i) => (
+                  <li key={i} data-testid={`mi-research-item-${it.index}`} className="text-[13px] text-stone-700 font-serif-display">
+                    <span className="text-stone-400">Q{it.index + 1}:</span> {it.need}
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
         </div>
       )}

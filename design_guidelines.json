@@ -1,81 +1,148 @@
 {
+  "theme": "light",
   "typography": {
-    "fonts": {
-      "headings": "Cormorant Garamond (use `.font-serif-display` class)",
-      "body": "IBM Plex Sans (default sans-serif)",
-      "labels": "IBM Plex Mono (use `.font-mono-panel` class)"
+    "primary_font": "Cormorant Garamond",
+    "secondary_font": "Outfit",
+    "mono_font": "IBM Plex Mono",
+    "headings": {
+      "h1": "font-serif text-5xl sm:text-6xl+ tracking-tight leading-none text-stone-900",
+      "h2": "font-serif text-3xl sm:text-4xl tracking-tight leading-tight text-stone-900",
+      "h3": "font-serif text-2xl sm:text-3xl tracking-tight leading-snug text-stone-900",
+      "h4": "font-sans text-lg sm:text-xl font-medium tracking-wide text-stone-800"
     },
-    "scale": {
-      "h1": "text-5xl md:text-6xl font-serif-display tracking-tight text-stone-900",
-      "h2": "text-3xl md:text-4xl font-serif-display tracking-tight text-stone-900",
-      "h3": "text-xl md:text-2xl font-serif-display text-stone-800",
-      "body": "text-lg md:text-xl text-stone-700 leading-relaxed",
-      "label": "text-xs md:text-sm font-mono-panel uppercase tracking-[0.2em] text-stone-500"
-    },
-    "rules": "Never center headings by default. Use left-alignment for a strong editorial feel. Maintain strict hierarchy. Avoid generic bold weights for headings; rely on the serif's natural elegance."
+    "body": "font-sans text-base sm:text-lg leading-relaxed text-stone-700",
+    "eyebrow": "font-mono text-xs sm:text-sm uppercase tracking-[0.2em] text-terracotta-700 font-semibold"
   },
   "colors": {
-    "background": "#faf9f6 (warm stone/off-white, use `.paper-grain` class for texture)",
-    "foreground": "text-stone-900 (ink/charcoal)",
-    "accent": "#8C3A2A (terracotta)",
-    "surface": "#ffffff or slightly darker stone #f5f4f0",
-    "borders": "border-stone-200 or border-stone-300",
-    "rules": "No gradients, no glassmorphism, no neon. Rely on organic, earthy tones. Keep contrast high enough for readability. The terracotta accent should be used sparingly for primary interactions (buttons, links) to draw attention without shouting."
+    "background": {
+      "primary": "#F9F8F6",
+      "secondary": "#F2F0ED",
+      "tertiary": "#EBE8E4"
+    },
+    "text": {
+      "primary": "#1C1917",
+      "secondary": "#44403C",
+      "muted": "#78716C"
+    },
+    "accent": {
+      "terracotta": {
+        "100": "#F5E6E3",
+        "500": "#A95041",
+        "700": "#8C3A2A",
+        "900": "#5E251A"
+      }
+    },
+    "border": {
+      "light": "#E7E5E4",
+      "medium": "#D6D3D1"
+    }
   },
-  "visual enhancers": {
-    "texture": "MANDATORY: Wrap the main layout in a div with the `.paper-grain` class to provide the warm, tactile feel.",
-    "borders": "Use delicate 1px solid borders (`border-stone-200`) to separate sections or outline cards, giving a print/editorial grid feel.",
-    "shadows": "Keep shadows minimal and ambient. Use `shadow-sm` for cards to make them feel like paper resting on a desk.",
-    "shapes": "Avoid aggressive rounded corners. Use `rounded-md` or `rounded-none` to fit the academic/editorial tone."
-  },
-  "component name": "Landing",
-  "component_path": "/app/frontend/src/components/Landing.js",
-  "grids": {
-    "entry_points": "Use a strictly equal 2-column grid (`grid-cols-1 md:grid-cols-2`) with a wide gap (`gap-8 md:gap-12`) for the 'Teacher Review' and 'Student Experience' cards to ensure they hold identical visual weight.",
-    "general": "Rely on generous padding (`py-24`, `px-8 md:px-16`) to create breathing room. Avoid full-width edge-to-edge content; constrain max width using `max-w-7xl mx-auto`."
+  "visual_enhancers": {
+    "textures": [
+      "Subtle SVG noise overlay with 2-3% opacity for a true paper feel across the main body.",
+      "Never use full-screen gradients. Use solid colors or grainy texture."
+    ],
+    "borders": [
+      "Thin borders (1px) using stone-200 or stone-300 to separate sections, creating an editorial grid structure.",
+      "Card borders should be subtle: border border-stone-200."
+    ],
+    "shadows": [
+      "Minimal to none. Rely on borders and background color contrast for depth.",
+      "Hover states can have a subtle lift: shadow-[0_4px_20px_-4px_rgba(28,25,23,0.08)]."
+    ],
+    "radius": "rounded-none or minimal rounded-sm (2px-4px) to maintain a classic editorial, non-SaaS look."
   },
   "layouts": {
-    "hero": "Left-aligned or carefully balanced text block. Include the label 'Compass by Common Ground Institute', the main H1 headline, and a slightly smaller subheadline for the positioning text.",
-    "entry_section": "Side-by-side cards. Each card must contain a mono label, a serif title, a short description, and a clear call-to-action button.",
-    "how_it_teaches": "A sequential layout (perhaps a vertical timeline or staggered text blocks) explaining 'understanding → recognition → developmental invitation → teaching'.",
-    "footer": "Quiet, minimal footer with the nonprofit's identity and basic links. Wide padding (`py-16`)."
+    "page_structure": "Left-aligned asymmetric layout. High use of negative space (p-12, py-24). Avoid centered standard SaaS templates.",
+    "sections": {
+      "hero": {
+        "structure": "Single primary hero, left-aligned. Wide left column (8 cols) for text, narrow right column for negative space or abstract paper texture.",
+        "content": "Eyebrow: 'THE COMPASS PHILOSOPHY'. Headline: 'AI that develops thinking. Not replaces it.' Subtext: 'An experimental educational system designed to coach students through the messy, beautiful process of thought.'",
+        "spacing": "py-32 md:py-48"
+      },
+      "philosophy": {
+        "structure": "A bold, high-contrast text section. Split into two clear sides (Bento/Grid).",
+        "content": "Left Side (Muted): 'Most AI systems answer questions.\\nMost AI systems generate writing.\\nMost AI systems replace the struggle.' Right Side (Terracotta/Bold): 'Compass develops thinking.\\nCompass builds the thinking that makes writing possible.\\nCompass coaches the struggle.'",
+        "styling": "Background: stone-100 or a slightly darker paper hue. Huge serif text for the statements."
+      },
+      "entry_points": {
+        "structure": "3 asymmetric cards or staggered grid items. Not standard SaaS cards—think editorial sidebars or index cards.",
+        "cards": [
+          {
+            "title": "Experience Compass",
+            "description": "Experience our instructional philosophy and provide feedback while Compass is still in early development.",
+            "href": "?review",
+            "style": "Dominant card, terracotta background, stone-50 text."
+          },
+          {
+            "title": "Student Writing Experience",
+            "description": "Explore how Compass coaches a student through a blank page.",
+            "href": "?preview=writing",
+            "style": "Secondary card, paper background, stone-200 border."
+          },
+          {
+            "title": "Student Organizing Thought Experience",
+            "description": "See how Compass helps structure chaotic ideas into logical arguments.",
+            "href": "?preview=ot",
+            "style": "Secondary card, paper background, stone-200 border."
+          }
+        ]
+      },
+      "roadmap": {
+        "structure": "Horizontal timeline or stepping-stone layout.",
+        "content": "Composition (Now) -> Organizing Ideas (Next) -> Integrated Compass (Future).",
+        "styling": "Use thin connecting lines (border-t border-stone-300). Monospace labels for the timeline steps."
+      },
+      "explainer": {
+        "structure": "4-step vertical list with large inset numbers.",
+        "steps": [
+          "Understanding: Grasping the student's current cognitive state.",
+          "Recognition: Identifying the precise block or gap.",
+          "Developmental Invitation: Prompting the student to take the next step.",
+          "Teaching: Guiding the execution of the new thought."
+        ],
+        "styling": "Border-b on each step. Large serif numerals (text-4xl text-stone-300) juxtaposed with dark text."
+      }
+    }
   },
   "motion": {
-    "entrance": "Use `.animate-fade-slide-up` for staggered entry of the hero text and cards.",
-    "interactions": "Cards should have a gentle hover effect: slightly darken the border (`hover:border-stone-400`), maybe a subtle translateY (`-translate-y-1`), and a transition on the button. Ensure reduced motion is respected."
+    "framer_motion": {
+      "entrance": "Staggered fade-up. initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}",
+      "hover": "Subtle border color change or background darkening. No heavy scaling.",
+      "scroll": "Use whileInView for the philosophy and explainer sections to trigger staggered fades."
+    }
   },
   "accessibility": {
-    "contrast": "Ensure all text, especially the terracotta accent, meets WCAG AA contrast against the paper background.",
-    "focus": "Clear focus rings (e.g., `focus:ring-2 focus:ring-[#8C3A2A] focus:outline-none`).",
-    "test_ids": "Include `data-testid` on all buttons and key links (e.g., `data-testid=\"btn-teacher-review\"`)."
+    "contrast": "Ensure terracotta text (#8C3A2A) on paper (#F9F8F6) passes WCAG AA for normal text. (It has ~5.5:1 ratio).",
+    "focus": "focus:ring-2 focus:ring-terracotta-500 focus:ring-offset-2 focus:ring-offset-stone-50",
+    "reduced_motion": "Respect prefers-reduced-motion media query for framer-motion setups."
   },
   "media": {
-    "rules": "No imagery is requested or required. The design relies entirely on typography, spacing, and the paper-grain texture. Do not insert stock photos."
+    "image_urls": {
+      "paper_texture": {
+        "url": "https://images.unsplash.com/photo-1616410731303-6affae095a0a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMjd8MHwxfHNlYXJjaHwyfHxtaW5pbWFsaXN0JTIwcGFwZXIlMjB0ZXh0dXJlJTIwd2FybXxlbnwwfHx8fDE3ODUyNTg3Njd8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Warm plain beige paper texture, can be used as a very subtle background layer or hero accent."
+      },
+      "student_thinking": {
+        "url": "https://images.unsplash.com/photo-1560543685-824b3c5e82ad?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzOTB8MHwxfHNlYXJjaHwzfHxzdHVkZW50JTIwdGhpbmtpbmclMjBzdHVkeWluZyUyMHdhcm18ZW58MHx8fHwxNzg1MjU4NzYxfDA&ixlib=rb-4.1.0&q=85",
+        "description": "Student thoughtfully looking at a book. Excellent for the 'See Compass in Action' or Philosophy section."
+      }
+    },
+    "icons": "lucide-react. Use thin stroke widths (strokeWidth={1.5}). Key icon: Compass, BookOpen, PenTool, GitCommit."
   },
-  "3d libraries": {
-    "rules": "None. Keep the site 2D, focused on reading and comprehension."
+  "component_instructions": {
+    "buttons": "Do NOT use generic pill buttons. Use sharp, rectangular editorial buttons. border border-stone-900 px-6 py-3 font-sans text-sm uppercase tracking-wider hover:bg-stone-900 hover:text-stone-50 transition-colors.",
+    "cards": "Avoid standard drop-shadow cards. Use 'flat' cards with 1px border-stone-200 and a background color that slightly contrasts with the page (e.g., bg-white or bg-stone-100 on a stone-50 body).",
+    "navigation": "Classic editorial top nav. Left aligned logo/wordmark in Serif. Right aligned clean links. Sticky with a backdrop-blur and thin bottom border."
   },
-  "image urls": {},
-  "instructions_to_main_agent": [
-    "You are tasked with redesigning the Landing page in `Landing.js` for Compass.",
-    "The audience is teachers, researchers, and administrators, not students.",
-    "Implement a warm, editorial, 'paper' feel. Use the existing CSS classes: `.paper-grain`, `.font-serif-display`, and `.font-mono-panel` from `index.css`.",
-    "Hero Headline: 'AI that teaches students to think—not AI that thinks for them.'",
-    "Positioning: State clearly that Compass is an instructional system, not an essay generator.",
-    "Create two EQUALLY PROMINENT entry points as side-by-side cards.",
-    "Card 1 (Teacher Review): Title 'Teacher Review', Description 'See exactly how Compass analyzes student writing, selects an instructional focus, and scaffolds revision.', Button 'Open Teacher Review' (links to ?app or a teacher view).",
-    "Card 2 (Student Experience): Title 'Student Experience', Description 'Experience Compass from the student\\'s point of view.', Button 'Launch Student Experience' (links to ?preview).",
-    "Add a 'What is Compass' section below the hero/cards detailing the teaching sequence: understanding → recognition → developmental invitation → teaching.",
-    "Add a quiet footer for the Common Ground Institute (a nonprofit).",
-    "DO NOT add pricing, subscriptions, testimonials, or account signup gates.",
-    "Maintain strict typographic hierarchy and generous spacing. Do NOT center align everything; favor left alignment for readability."
-  ],
   "UNIVERSAL GUIDELINES FOR MAIN AGENT": [
-    "Avoid generic 'AI slop' aesthetics. Do not use centered layouts, simplistic gradients, or default corporate SaaS styles.",
+    "You tend to converge toward generic, 'on distribution' outputs. Avoid this: make creative, distinctive frontends that surprise and delight.",
+    "Do NOT use complete transparent background in header, overlays, or any surface that has content under it.",
+    "Never apply universal transition (transition: all). Add transitions for specific interactive elements like button, input excluding transforms.",
+    "You MUST NOT center align the app container. Do not add .App { text-align: center; } in the css file.",
     "Use 2-3x more spacing than feels comfortable. Cramped designs look cheap.",
-    "Do not use dark colors as gradients.",
-    "Never apply `transition: all`. Use specific transitions like `transition: transform 0.2s ease, opacity 0.2s ease`.",
-    "Ensure all interactive elements have `data-testid` attributes.",
-    "Prioritize optical alignment over geometric alignment."
+    "All interactive and key informational elements MUST include a data-testid attribute.",
+    "For this specific project: Maintain the warm paper-grain background, terracotta accent (#8C3A2A), serif display headings, and mono uppercase tracked eyebrows. DO NOT INVENT a generic purple/blue SaaS identity.",
+    "Provide design rules specifically for React JS (.js files), not TSX."
   ]
 }

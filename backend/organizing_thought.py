@@ -313,6 +313,7 @@ def _split_questions(text: str):
 def _blank_response() -> dict:
     return {
         "pass1_text": "", "structure": "",
+        "pass1_state": "developing", "research_need": "",
         "recommended_status": "", "confirmed_status": "",
         "present": "", "gap": "",
         "pass2_text": "", "pass2_status": "in_progress",
@@ -329,6 +330,7 @@ def _ensure_ideas(ot: dict) -> dict:
             "phase": (ideas or {}).get("phase", "pass1") if ideas else "pass1",
             "index": 0,
             "responses": {str(i): {**_blank_response(), **prev_resp.get(str(i), {})} for i in range(len(questions))},
+            "research_list": (ideas or {}).get("research_list", []) if ideas else [],
             "inquiry_plan": (ideas or {}).get("inquiry_plan") if ideas else None,
             "self_assessment": (ideas or {}).get("self_assessment", "") if ideas else "",
             "my_ideas_construct": (ideas or {}).get("my_ideas_construct", "") if ideas else "",
@@ -392,6 +394,8 @@ ANTI-LEAKAGE SELF-CHECK — run this silently BEFORE answering: (a) Could the st
 
 _IDEAS_JSON = '{{"decision":"proceed|teach|ask|pause","structure":"Definition|Comparison|Explanation|Causal explanation|Evaluation|Judgment|Description|Other","difficulty":"structural|knowledge|expression|none","required_structure":"the structure this question requires","student_supplied":"what the answer provides, structurally (no content)","structural_gap":"the structural element still missing (no content)","knowledge_gap_present":true,"source_lookup_needed":true,"leakage_check_passed":true,"message":"one short student-facing message following the 5-step pattern — general structure only, no assignment-specific content","sufficiency":"sufficient|not_yet"}}'
 
+_IDEAS_PASS1_JSON = '{{"decision":"proceed|ask|knowledge_limit","structure":"Definition|Comparison|Explanation|Causal explanation|Evaluation|Judgment|Description|Other","pass1_state":"developing|developed|knowledge_limit","research_need":"empty unless knowledge_limit; then ONE short QUESTION naming the KIND of information the student must go find out to complete the structure (e.g. \'What belief defines a fixed mindset?\', \'On what dimension do these two differ?\', \'What process connects the cause to the outcome?\') — the QUESTION only, NEVER the answer","message":"one short warm student-facing message","sufficiency":"sufficient|not_yet"}}'
+
 _IDEAS_PASS1_SYSTEM = f"""You are Compass, a warm, encouraging writing coach on the "My Ideas" screen during the FIRST PASS through a student's questions. Your ONLY goal here is to elicit the student's CURRENT thinking about ONE question and help them DEVELOP and elaborate it using their OWN mind. You are NOT judging whether the answer is complete or correct, and on THIS screen you must NOT send the student to notes, readings, or sources — that happens in a later stage.
 
 You are given ONE question and the student's current answer to THAT question only. Never comment on other questions.
@@ -416,14 +420,17 @@ The point of this screen: recognize partial success and help the student complet
 Bridge examples by structure (adapt to the NEXT needed component): Definition → "try to tell your reader what a fixed mindset IS, and then what makes it different from other ways of thinking." Comparison → "pick one feature and say how each one handles it." Explanation → "show the steps in between the cause and the result." Evaluation → "decide what would make one better, then judge them against that."
 
 HARD BOUNDARIES on THIS screen:
-- Do NOT tell the student to check, reread, look up, or find anything in their notes, source, reading, or textbook, and do NOT emphasize what knowledge is missing. Keep the focus on developing their OWN thinking.
+- Do NOT tell the student to check, reread, look up, or find anything in their notes, source, reading, or textbook while they can still develop the idea, and do NOT emphasize what is missing while progress is still possible. Keep the focus on developing their OWN thinking.
 - Do NOT supply the assignment-specific answer, definition, comparison dimension, mechanism, cause, criterion, reason, or evidence. You MAY restate the TASK using the concept named in the question ("tell what a fixed mindset IS", "what do you think a fixed mindset IS?") — that is the required bridge and is NOT a leak. A leak is naming the actual CONTENT of the answer (e.g. "the belief that abilities can't change"). If a student could infer the substantive answer from your message, rewrite it more generally — but keep the explicit bridge.
 - Speak plainly and warmly. No jargon, labels, scores, or internal reasoning.
 
-Use "decision" = "proceed" for a genuine attempt (the default), "ask" only if the response is too unclear to interpret at all. Never use a decision that blocks the student from continuing.
+RECOGNIZING THE LIMIT OF CURRENT KNOWLEDGE — do NOT ask elaboration questions forever. Pass 1 ends for a question in one of two ways:
+- DEVELOPED: the student has developed the idea about as far as their current understanding reasonably allows and the structure is essentially built. Set pass1_state="developed", decision="proceed"; affirm the completed thinking; research_need = empty.
+- KNOWLEDGE_LIMIT: further progress on the next component genuinely requires information the student does not yet have and cannot reason out from what they know (e.g. they have named the KIND of thing but cannot state the defining feature because they don't yet know it). Then: (1) acknowledge how far they've come ("Good work — you've developed this as far as your current understanding allows."); (2) explicitly name what still needs to be LEARNED as a research QUESTION — you MAY name the KIND of information to find ("to complete this you'll need to find out what belief defines a fixed mindset"), but MUST NOT supply the answer itself; (3) set pass1_state="knowledge_limit", decision="knowledge_limit", and put that research question in "research_need". Do NOT send them to a source right now — that happens in a later stage; you are only identifying WHAT they need to learn.
+Otherwise the student is still DEVELOPING: use decision="proceed", pass1_state="developing", and coach the next component as above (research_need empty). Use "ask" only if the response is too unclear to interpret. Never block the student from continuing.
 
-Respond with ONLY this JSON (no prose/fences). Internal fields are for your own reasoning and are NOT shown to the student:
-{_IDEAS_JSON}"""
+Respond with ONLY this JSON (no prose/fences):
+{_IDEAS_PASS1_JSON}"""
 
 _IDEAS_PASS2_SYSTEM = f"""You are Compass, helping a student REVISE an idea after they have had the chance to gather information. This is the SECOND PASS. You are given ONE question, the student's earlier answer, and their revised answer. Never comment on other questions.
 
@@ -539,16 +546,26 @@ async def _ideas_reason(assignment: str, question: str, response: str, pass_no: 
             "naming or cueing the specific belief, feature, dimension, mechanism, cause, criterion, reason, or evidence."
         )
     dec = (data.get("decision") or "").strip().lower()
-    if dec not in ("proceed", "teach", "ask", "pause"):
-        dec = "proceed" if pass_no == 1 else "ask"
+    if pass_no == 1:
+        if dec not in ("proceed", "ask", "knowledge_limit"):
+            dec = "proceed"
+    elif dec not in ("proceed", "teach", "ask", "pause"):
+        dec = "ask"
     structure = (data.get("structure") or "Other").strip()
     message = (data.get("message") or "").strip() or ("Good start — you've got a real idea going here. What else do you think is happening? Don't worry about getting it exactly right yet." if pass_no == 1 else "Tell me a little more so I can follow your thinking.")
+    pass1_state = (data.get("pass1_state") or "").strip().lower()
+    research_need = (data.get("research_need") or "").strip()
     if pass_no == 1:
-        # First pass on My Ideas: warm elaboration coaching. The pass-1 reviewer
-        # runs on EVERY turn to guarantee (a) no assignment-specific content is
-        # named/cued (even inside an inviting question) and (b) no source-direction
-        # on this screen — while preserving open invitations to elaborate.
-        message = await _leakage_sanitize(question, structure, message, pass_no=1)
+        if pass1_state not in ("developing", "developed", "knowledge_limit"):
+            pass1_state = "knowledge_limit" if dec == "knowledge_limit" else "developing"
+        if pass1_state != "knowledge_limit":
+            research_need = ""
+        # The pass-1 reviewer runs on DEVELOPING/DEVELOPED turns to guarantee no
+        # content leak or premature source-direction. On a KNOWLEDGE_LIMIT turn the
+        # coach legitimately names the KIND of information still to be learned
+        # (the research question), so skip the source/elaboration critic there.
+        if pass1_state != "knowledge_limit":
+            message = await _leakage_sanitize(question, structure, message, pass_no=1)
     elif dec in ("teach", "ask", "pause"):
         # Later passes: strip any assignment-specific content the drafter cued.
         message = await _leakage_sanitize(question, structure, message, pass_no=2)
@@ -557,6 +574,8 @@ async def _ideas_reason(assignment: str, question: str, response: str, pass_no: 
         "structure": structure,
         "difficulty": (data.get("difficulty") or "none").strip().lower(),
         "message": message,
+        "pass1_state": pass1_state,
+        "research_need": research_need,
         "sufficiency": "sufficient" if (data.get("sufficiency") or "").strip().lower() == "sufficient" else "not_yet",
     }
 
@@ -666,10 +685,22 @@ async def _ideas_inquiry(assignment: str, ideas: dict) -> dict:
         return [str(x).strip() for x in v if str(x).strip()] if isinstance(v, list) else []
     allowed = {"assigned reading", "class notes", "textbook", "teacher-provided source", "the teacher", "an approved website"}
     sources = [s for s in _strlist(data.get("sources")) if s.lower() in allowed]
+    # Seed the plan's needs with the research list the student already built up
+    # during Pass 1 (the accumulated "what I still need to learn"), then add any
+    # further needs the generator surfaced.
+    research_needs = [str(it.get("need")).strip() for it in (ideas.get("research_list") or []) if str(it.get("need") or "").strip()]
+    gen_needs = _strlist(data.get("needs"))
+    seen = set()
+    needs = []
+    for n in research_needs + gen_needs:
+        k = n.lower()
+        if k not in seen:
+            seen.add(k)
+            needs.append(n)
     return {
         "understood": _strlist(data.get("understood")),
         "remaining": _strlist(data.get("remaining")),
-        "needs": _strlist(data.get("needs")),
+        "needs": needs,
         "sources": sources,
         "text": "",
     }
@@ -767,6 +798,20 @@ async def ideas_interact(session_id: str, body: IdeasInteract):
         r["pass2_status"] = "sufficient" if (result["sufficiency"] == "sufficient" or result["decision"] == "proceed") else "in_progress"
         returned_suff = r["pass2_status"]
     else:
+        # First pass: track how developed the idea is and accumulate a research
+        # list of what the student still needs to LEARN (never the answer).
+        r["pass1_state"] = result.get("pass1_state") or "developing"
+        need = (result.get("research_need") or "").strip()
+        r["research_need"] = need if r["pass1_state"] == "knowledge_limit" else ""
+        rl = ideas.setdefault("research_list", [])
+        existing = next((it for it in rl if it.get("index") == body.index), None)
+        if r["research_need"]:
+            if existing:
+                existing["need"] = r["research_need"]
+            else:
+                rl.append({"index": body.index, "question": qs[body.index], "need": r["research_need"], "at": _now_iso()})
+        elif existing:
+            rl.remove(existing)
         returned_suff = "attempted"
     ot["objects"]["my_ideas"] = _compose_my_ideas(ot)
     await _save_ot(session_id, ot)
@@ -774,6 +819,7 @@ async def ideas_interact(session_id: str, body: IdeasInteract):
         "ideas": ideas, "ot": ot,
         "decision": result["decision"], "structure": result["structure"],
         "difficulty": result["difficulty"], "message": result["message"],
+        "pass1_state": result.get("pass1_state", ""), "research_need": result.get("research_need", ""),
         "sufficiency": returned_suff,
     }
 
