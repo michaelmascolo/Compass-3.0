@@ -1,0 +1,30 @@
+{
+  "summary": "Frontend-only smoke test of the redesigned Landing homepage and its three entry routes. All landing sections and data-testids render, hero headline matches, CGI logos load, no console/page errors. All three CTA/nav variants of 'Try Compass' successfully navigate to ?review and the TeacherReview screen renders. ?preview=writing and ?preview=ot both navigate and render the Compass Welcome/StudentEntry flow without crashing. One discrepancy: the expected data-testid 'preview-seed-screen' does NOT exist anywhere in the codebase — the actual rendered seed screens use testids 'student-entry' (writing) and 'student-ot-intro' (ot).",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "PublicPreview / StudentEntry",
+        "issue": "Review request expected data-testid='preview-seed-screen' to render on ?preview=writing, but no element with that testid exists in the code. Actual seed screens use data-testid='student-entry' (writing mode) and 'student-ot-intro' (ot mode). Route still renders without crashing, but this testid contract needs to be reconciled — either add 'preview-seed-screen' to the seed screen(s) or update the spec/tests.",
+        "selector": "[data-testid=\"preview-seed-screen\"]",
+        "priority": "MEDIUM"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "Reconcile the 'preview-seed-screen' testid: either add data-testid='preview-seed-screen' to the StudentEntry/WelcomeIntro root shown by ?preview=writing (and ?preview=ot) or update the acceptance spec to use the existing testids ('student-entry', 'student-ot-intro'). Everything else on the homepage redesign is passing."
+  ],
+  "critical_code_review_comments": [
+    "Landing.jsx is clean, self-contained, all requested data-testids present, no hardcoded backend URLs, images use static /cgi-logo.png (loaded OK).",
+    "App.js routing correctly maps ?review, ?preview=writing, ?preview=ot to their components."
+  ],
+  "updated_files": [],
+  "success_rate": { "backend": "N/A (skipped per request)", "frontend": "95% (15/15 landing checks pass; 3/3 Try Compass routes work; 2/2 preview routes render but 'preview-seed-screen' testid missing)" },
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Landing.jsx redesign is fully working. The only open item is a mismatched data-testid contract on the preview seed screens. All console/page errors are clean. Backend tests were intentionally skipped per this review request."
+}
