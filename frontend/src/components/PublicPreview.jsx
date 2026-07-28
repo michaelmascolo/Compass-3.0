@@ -294,6 +294,20 @@ export default function PublicPreview({ mode = "ot" }) {
 
   const dirty = draft.trim() !== (studentTurns[studentTurns.length - 1]?.content || "").trim();
 
+  // Fire the interim-observations side channel for the CURRENT wait (every turn,
+  // not just the first). Resets pacing so the grounded observations appear ~3.5s
+  // and ~7s into the wait while the deeper reasoning completes.
+  const fireNoticing = useCallback((sid) => {
+    submitAtRef.current = Date.now();
+    setNoticing(null);
+    setRevealStage(0);
+    getNoticing(sid)
+      .then((res) => {
+        if (res && res.ok) setNoticing(res);
+      })
+      .catch(() => {});
+  }, []);
+
   const sendRevision = useCallback(async () => {
     if (!draft.trim() || busy || !session || !dirty) return;
     setSending(true);
@@ -301,12 +315,13 @@ export default function PublicPreview({ mode = "ot" }) {
       const updated = await interact(session.id, { kind: "revise", content: draft.trim() });
       setSession(updated);
       setOpenCoachingId(null);
+      fireNoticing(session.id);
     } catch (e) {
       /* polling / retry */
     } finally {
       setSending(false);
     }
-  }, [draft, busy, session, dirty]);
+  }, [draft, busy, session, dirty, fireNoticing]);
 
   const sendExplain = useCallback(async () => {
     if (busy || !session) return;
@@ -318,12 +333,13 @@ export default function PublicPreview({ mode = "ot" }) {
         content: "Can you say a little more about what you mean?",
       });
       setSession(updated);
+      fireNoticing(session.id);
     } catch (e) {
       /* ignore */
     } finally {
       setSending(false);
     }
-  }, [busy, session]);
+  }, [busy, session, fireNoticing]);
 
   const sendReply = useCallback(async () => {
     if (!reply.trim() || busy || !session) return;
@@ -334,12 +350,13 @@ export default function PublicPreview({ mode = "ot" }) {
     try {
       const updated = await interact(session.id, { kind: "answer", content });
       setSession(updated);
+      fireNoticing(session.id);
     } catch (e) {
       /* ignore */
     } finally {
       setSending(false);
     }
-  }, [reply, busy, session]);
+  }, [reply, busy, session, fireNoticing]);
 
   const wordCount = draft.trim() ? draft.trim().split(/\s+/).length : 0;
 
@@ -462,13 +479,15 @@ export default function PublicPreview({ mode = "ot" }) {
 
             {/* Chapter 6 — Pedagogical Noticing beats: "I understand you" before
                 any teaching. First encounter only; continuous with the response. */}
-            {isFirstMoment && noticing && (
+            {/* Interim observations: grounded "reading" of the student's latest
+                writing, shown during the reasoning wait on EVERY turn. */}
+            {noticing && (noticing.observations || []).length > 0 && (
               <NoticingBeats noticing={noticing} revealStage={revealStage} />
             )}
 
             {busy && (
               <div data-testid="preview-thinking" className="mt-4">
-                {isFirstMoment && noticing ? <ThinkingWith /> : <Thinking />}
+                {noticing && (noticing.observations || []).length > 0 ? <ThinkingWith /> : <Thinking />}
               </div>
             )}
 

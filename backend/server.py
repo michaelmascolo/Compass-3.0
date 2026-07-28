@@ -1939,13 +1939,10 @@ async def pedagogical_noticing(session_id: str):
     if not doc:
         raise HTTPException(status_code=404, detail="Session not found")
     turns = doc.get("turns", []) or []
-    # use the MOST RECENT student turn (writing or revision) so observations reflect
-    # what the learner just submitted, at any entry point in the writing process
+    # use the MOST RECENT student turn (writing / revision / answer) so the interim
+    # observations reflect what the learner just submitted, on EVERY turn
     student_turns = [t for t in turns if t.get("role") == "student"]
-    writing = next(
-        (t for t in reversed(student_turns) if t.get("kind") == "writing"),
-        None,
-    ) or (student_turns[-1] if student_turns else None)
+    writing = student_turns[-1] if student_turns else None
     response = (writing.get("content") if writing else "") or ""
     if not response.strip():
         return {"ok": False}
@@ -2814,18 +2811,20 @@ OUTPUT DISCIPLINE (critical): Output ONLY the coaching message the student reads
 
 You MUST NOT: re-diagnose the writing; choose a different instructional target; introduce a new dependency; change the exit criterion; teach the assignment's subject matter or supply the student's ideas; give any sentence/phrase the student could copy and submit; summarize the whole composition.
 
-The coaching message MUST perform these functions, IN THIS ORDER, in natural student language:
-1. NAME THE WRITING ELEMENT EXPLICITLY as the opening move — tell the student, in plain words, what writing structure you are working on (e.g. "We're working on your controlling idea.", "The next step is to strengthen the definition your thesis depends on.", "This paragraph now needs a clearer transition."). Natural variation is fine; the exact phrase "Today we're working on…" is NOT required, but the structural element MUST be named up front, before any discussion of the topic/content.
-2. RECOGNIZE WHAT IS ALREADY EMERGING, pointing to concrete wording from the student's own writing.
-3. EXPLAIN THE STRUCTURAL NEED — why this element (or dependency) matters for the larger piece of writing.
-4. INVITE EXACTLY ONE learner-performed cognitive operation — ask the student to do the next writing move themselves; do NOT do it for them or supply the answer.
-5. IF A DEPENDENCY IS BEING TAUGHT, state the RETURN PATH — that once the dependency is usable, you'll return to the larger target (e.g. "Once your definition is clear, we'll come back and sharpen your thesis.").
+The coaching message MUST perform these functions, IN THIS ORDER, in natural student language. Do NOT number them or use labels — weave them into 3–6 short, warm sentences:
+1. ORIENT TO THE LARGER GOAL FIRST. Before naming today's local target, situate the student in the larger developmental structure: name the higher-level structural goal the writing is working toward (usually the thesis/controlling idea, or another higher element) and briefly TEACH what it is and why writers use it (e.g. "Your essay is working toward a thesis — a sentence that tells your reader the main idea you want them to understand."). The student must understand WHERE they are going before you introduce the local step.
+2. RECOGNIZE WHAT IS ALREADY EMERGING, in the student's own words, showing their writing is already moving toward that larger goal.
+3. IF THERE IS A DEPENDENCY, MOTIVATE IT BEFORE MAKING IT THE FOCUS. Explain why the reader/essay needs the dependency before the larger goal can be strengthened (e.g. "Before we can sharpen your thesis, your reader needs to understand what 'growth mindset' means — that's why we'll build the definition first."). Then briefly TEACH the dependency element too (what it is and why writers use it, e.g. "A definition tells the reader what something IS."). Keep the LARGER GOAL VISIBLE — the dependency is never the goal; the thesis is. The student should think "we're building a thesis, and a definition makes that thesis possible," never "why are we suddenly talking about definitions?".
+4. INVITE EXACTLY ONE learner-performed WRITING operation — the student does the next writing move themselves; never supply the answer. Frame it as a WRITING act, not a content/topic quiz.
+5. STATE THE RETURN PATH when a dependency is being taught — once the dependency is usable you'll return to the larger goal (e.g. "Once your definition is clear, we'll come back and use it to sharpen your thesis.").
 
-WRITING BEFORE CONTENT (important): You teach WRITING, not the subject. When the element is a DEFINITION (or any concept the argument rests on), keep the emphasis on building a WORKING definition the essay can USE — invite the student to state, in one sentence and in their own words, the definition their argument will rely on. Do NOT quiz the student on the subject-matter theory, its mechanism, or its psychology for its own sake (e.g. do NOT ask "what does someone with this mindset believe/feel/do?"). The definition is a writing move in service of the thesis/paragraph, not a lesson in the topic.
+TEACH THE ELEMENT, DON'T JUST NAME IT: whenever you introduce any structural element (thesis, definition, evidence, explanation, transition, controlling idea, …), briefly say what it is and why writers use it, in one short student-accessible clause. You are gradually teaching students the architecture of writing, not just structural vocabulary.
 
-If the plan marks the current element as already SUFFICIENT, acknowledge the achievement plainly and name the next element you're advancing to (the next developmental step), then invite the first operation on it.
+WRITING BEFORE CONTENT (critical — the instructional object is always WRITING, content is only the medium): Do NOT teach the subject/topic. Do NOT quiz the student on the topic's ideas, mechanism, or psychology (NEVER ask things like "what does someone with this mindset believe / feel / do?"). Stay on the writing operation. For a definition, use the does/is contrast and ask for a writing move: "Right now your sentence tells the reader what a growth mindset DOES. A definition tells the reader what it IS. Can you write one sentence that defines 'growth mindset' for a reader?" The student constructs the content; you only develop the writing.
 
-Write only the coaching message (2–5 short sentences). No preamble, no labels, no lists, no quotation of a model answer."""
+If the plan marks the current element as already SUFFICIENT, acknowledge the achievement plainly, restate the larger goal, name the next element you're advancing to (the next developmental step), and invite the first writing operation on it.
+
+Write only the coaching message (3–6 short sentences). No preamble, no labels, no lists, no quotation of a model answer."""
 
 
 def _coaching_plan_prompt(session: Session, req: InteractRequest, plan: dict) -> str:

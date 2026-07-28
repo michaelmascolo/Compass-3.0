@@ -18,6 +18,7 @@ import {
   Download,
   GitBranch,
   Layers,
+  ClipboardList,
 } from "lucide-react";
 
 const API_BASE = `${process.env.REACT_APP_BACKEND_URL}/api`;
@@ -604,6 +605,72 @@ export default function DevelopmentPanel({
             </div>
 
             <div className="flex-1 overflow-y-auto custom-scroll px-5 py-5">
+              {/* Instructional Rationale — concise professional teacher summary */}
+              {(theory.scaffolding_control?.primary_target || "").trim() ? (() => {
+                const sc = theory.scaffolding_control || {};
+                const ir = theory.instructional_reasoning || {};
+                const sr = theory.structural_reasoning || {};
+                const depActive =
+                  (ir.required_dependency || "").trim() &&
+                  ["identified", "being_taught"].includes((ir.dependency_status || "").trim().toLowerCase());
+                const focus = depActive
+                  ? `Developing ${ir.required_dependency} — the prerequisite for ${sc.primary_target}`
+                  : sc.primary_target;
+                const evidenceParts = [
+                  ...(sr.elements_emerging || []),
+                  ...(sr.elements_present || []),
+                ].filter(Boolean).slice(0, 3);
+                const suff = (ir.sufficiency_for_next_step || "").trim().toLowerCase();
+                const judgment =
+                  suff === "sufficient"
+                    ? "Sufficiently developed to proceed."
+                    : suff === "not_yet"
+                    ? "Not yet sufficient to carry the next step."
+                    : "";
+                const judgmentWhy = ir.dependency_rationale || sr.hierarchical_triage_rationale || "";
+                const decMap = {
+                  shift_to_prerequisite: `Teach the prerequisite first, then return to the ${sc.primary_target}.`,
+                  release: "The element is sufficient — advance to the next step.",
+                  consolidate: "Consolidate this gain as a reusable principle.",
+                  continue: `Continue developing the ${sc.primary_target}.`,
+                };
+                const decision = decMap[(ir.continue_consolidate_release_or_shift || "").trim()] || "";
+                return (
+                  <div
+                    data-testid="instructional-rationale-block"
+                    className="mb-5 rounded-md border border-stone-700 bg-stone-900/40 p-4"
+                  >
+                    <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.14em] text-stone-300 font-medium mb-3">
+                      <ClipboardList className="h-3.5 w-3.5" />
+                      Instructional Rationale
+                    </div>
+                    <div className="space-y-2.5">
+                      <KV k="Instructional focus" accent="text-[#e8a87c]"><Text value={focus} /></KV>
+                      {evidenceParts.length ? (
+                        <KV k="Evidence in the writing"><List items={evidenceParts} /></KV>
+                      ) : null}
+                      {judgment ? (
+                        <KV k="Developmental judgment">
+                          <Text value={judgmentWhy ? `${judgment} ${judgmentWhy}` : judgment} />
+                        </KV>
+                      ) : null}
+                      {decision ? (
+                        <KV k="Instructional decision" accent="text-sky-300"><Text value={decision} /></KV>
+                      ) : null}
+                      {(sr.active_exit_criterion || "").trim() ? (
+                        <KV k="Exit criterion" accent="text-emerald-300">
+                          <Text value={sr.active_exit_criterion} />
+                        </KV>
+                      ) : null}
+                      {(ir.next_developmental_step || "").trim() ? (
+                        <KV k="Next developmental step"><Text value={ir.next_developmental_step} /></KV>
+                      ) : null}
+                    </div>
+                  </div>
+                );
+              })() : null}
+
+
               {/* Where this fits — Unified Structural Reasoning (teacher-language) */}
               {theory.structural_reasoning?.applies !== false &&
               (theory.structural_reasoning?.structure_identified || "").trim() ? (
