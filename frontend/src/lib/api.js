@@ -94,6 +94,32 @@ export const getNoticing = async (id) => {
   return data;
 };
 
+// --- Organizing Thought (OT) — five persistent objects before Writing ---
+export const otStart = async (id) => {
+  const { data } = await axios.post(`${API}/ot/${id}/start`);
+  return data.ot;
+};
+
+export const otSaveObject = async (id, stage, content) => {
+  const { data } = await axios.post(`${API}/ot/${id}/object`, { stage, content });
+  return data.ot;
+};
+
+export const otInteract = async (id, stage, content) => {
+  const { data } = await axios.post(`${API}/ot/${id}/interact`, { stage, content });
+  return data; // { ot, decision, message, sufficiency }
+};
+
+export const otAdvance = async (id, toStage) => {
+  const { data } = await axios.post(`${API}/ot/${id}/advance`, { to_stage: toStage });
+  return data.ot;
+};
+
+export const otHandoff = async (id) => {
+  const { data } = await axios.post(`${API}/ot/${id}/handoff`);
+  return data.ot;
+};
+
 export const interact = async (id, payload) => {
   const { data } = await axios.post(`${API}/sessions/${id}/interact`, payload);
   return data;

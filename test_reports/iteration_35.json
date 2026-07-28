@@ -1,0 +1,33 @@
+{
+  "summary": "Frontend-only regression test of the new Organizing Thought (OT) 5-object prewriting flow inserted before the existing Writing workflow at /?preview. Verified all 8 requested scenarios end-to-end: homepage regression, OT entry, weak-input coach (TEACH), strong-input PROCEED + advance through all 5 stages, 'Start writing' handoff to Writing screen, Writing submission + Pedagogical Noticing beats + thinking-with cue, revisit-earlier-stage with preserved content, material-change amber review flag on dependent stages (content NOT erased), and RESUME-on-refresh mid-OT. Everything works as specified.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_scenarios_verified": [
+    "Homepage /: experience-compass-panel + stage-current/next/future + btn-experience-compass with href='?preview' ✓",
+    "OT entry at /?preview after welcome+assignment: organizing-thought view visible with 5-stage rail; stage name = 'The Assignment' ✓",
+    "Weak input 'libraries good' → coach bubble appeared (~3s) with TEACH message ('You've pointed at a topic — libraries — but an assignment always has two parts…'); ot-continue-button disabled; ot-continue-hint visible ✓",
+    "Strong input at each of 5 stages → PROCEED / sufficient → ot-continue-button enabled; advancing through 'The Assignment' → 'Questions I Need to Answer' → 'My Ideas' → 'My Current Answer' → 'My Plan' worked; button text became 'Start writing' at final stage ✓",
+    "Note on TEACH sensitivity: a plan phrased as 'first/next/finally' (position-only) was TEACH'd on first attempt (the coach asked for purpose per part). Re-share of a purpose-oriented plan hit PROCEED/sufficient and enabled Start writing. Consistent with the design intent (coach must not do cognitive work).",
+    "Handoff: 'Start writing' click transitioned to Writing screen (writing-input visible). Writing submission → preview-noticing appeared within ~6s with preview-noticing-understanding + preview-thinking-with cue (frozen engine still polling in background) ✓",
+    "Revisit earlier stage: clicking ot-stage-the_assignment while on My Plan preserved the previously entered content (len=257) ✓",
+    "Material-change review flag: materially changed The Assignment (blur triggered autosave) → visiting My Plan showed ot-review-note (amber) and rail flags ot-flag-questions, ot-flag-my_ideas, ot-flag-my_current_answer, ot-flag-my_plan; content on all dependent stages was NOT erased (my_plan draft preserved at len=666) ✓",
+    "Resume on refresh mid-OT: page.reload() after entering OT and sharing at 'The Assignment' → app resumed directly into organizing-thought at 'The Assignment', with the previously entered 257-char draft intact; did NOT restart at Welcome ✓"
+  ],
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "OT re-share is required after a material change: even though flagged stages retain their text, ot.status becomes 'draft' until the student re-shares. The 'Start writing' CTA will disable until my_plan is re-shared and reaches sufficiency. This is intended behavior (student must re-engage the coach on flagged stages) — worth documenting in the educator preview notes so testers do not mistake it for a bug.",
+    "OrganizingThought.jsx imports `useMemo` but never uses it — minor cleanup only.",
+    "Coach TEACH/PROCEED depends heavily on wording quality — a plausible-but-position-only plan ('first/next/finally') is TEACH'd. This is by design but means automated tests must use purpose-oriented language to reliably reach handoff."
+  ],
+  "updated_files": [],
+  "success_rate": { "backend": "n/a (frontend-only run)", "frontend": "100% (8/8 scenarios pass)" },
+  "seed_data_creation": "None. Preview flow uses ephemeral session created via startPreview.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "OT is fully wired at /?preview: Welcome → Assignment → OT (5 stages: the_assignment, questions, my_ideas, my_current_answer, my_plan) → Writing → Noticing → coaching. Persistence via localStorage 'compass_ot_session' + backend /api/ot/{id}. Chapter 6 Pedagogical Noticing works after handoff. To reach 'Start writing' consistently in automation, share purpose-oriented content at My Plan (frame parts by 'what they do for the reader', not by position). Material-change flow: change earlier object → blur → dependent stages flag amber + review note; re-share to clear."
+}

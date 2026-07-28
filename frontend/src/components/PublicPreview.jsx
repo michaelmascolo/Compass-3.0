@@ -8,9 +8,10 @@ import {
   X,
   CornerDownRight,
 } from "lucide-react";
-import { startPreview, getSession, interact, getNoticing } from "@/lib/api";
+import { startPreview, getSession, interact, getNoticing, otStart } from "@/lib/api";
 import ExperienceReflection from "@/components/ExperienceReflection";
 import TeacherReflection from "@/components/TeacherReflection";
+import OrganizingThought from "@/components/OrganizingThought";
 import WelcomeScreen from "@/components/WelcomeScreen";
 
 // Experience Compass public flow: Welcome (Ch3) -> Assignment (Ch4) -> Writing
@@ -32,6 +33,9 @@ export default function PublicPreview() {
   const [entered, setEntered] = useState(false);
   // Chapter 4 — once the educator confirms the assignment, advance to the Writing screen.
   const [writingStarted, setWritingStarted] = useState(false);
+  // Organizing Thought (Phase 2) — the five-object prewriting flow, before Writing.
+  const [otPhase, setOtPhase] = useState(false);
+  const [otData, setOtData] = useState(null);
   // Post-experience: the teacher chooses to review their own experience.
   const [reviewingAsTeacher, setReviewingAsTeacher] = useState(false);
   // Chapter 6 — Pedagogical Noticing: the "I understand you" beats shown before
@@ -56,9 +60,14 @@ export default function PublicPreview() {
   // never by an AI turn count.
   const phase = session?.experience_control?.phase || "active";
   const inReflection = phase === "reflection";
-  const showWelcome = !entered && !started;
-  const showAssignment = entered && !writingStarted && !started;
-  const showWriting = entered && writingStarted && !started;
+  // A student turn (writing) marks entry into the Writing/coaching experience.
+  // OT persists a session but produces NO turns, so the session existing during
+  // OT must not trigger the coaching UI.
+  const hasStudentTurn = studentTurns.length > 0;
+  const showWelcome = !entered && !session;
+  const showAssignment = entered && !session;
+  const showOT = otPhase && !hasStudentTurn;
+  const showWriting = writingStarted && !hasStudentTurn && !otPhase;
 
   // Poll while the engine is reasoning in the background.
   useEffect(() => {
@@ -106,21 +115,48 @@ export default function PublicPreview() {
     };
   }, [noticing]);
 
-  // Writing Screen submit — creates the session with the educator's authentic
-  // assignment as the authoritative task, then submits their EXACT response
-  // (validated on the trimmed value, but transmitted/preserved unaltered).
-  const submitResponse = useCallback(async () => {
-    if (response.trim().length < 15 || starting) return;
+  // Assignment → Organizing Thought. Create the preview session now (with the
+  // educator's authentic assignment as the authoritative task) so OT can persist
+  // to it; the SAME session then carries into Writing. No parallel session model.
+  const enterOrganizing = useCallback(async () => {
+    if (starting || !assignment.trim()) return;
     setStarting(true);
     try {
       const s = await startPreview({ assignment: assignment.trim() });
-      const updated = await interact(s.id, { kind: "writing", content: response });
+      const ot = await otStart(s.id);
+      setSession(s);
+      setOtData(ot);
+      setOtPhase(true);
+      try { localStorage.setItem("compass_ot_session", s.id); } catch (e) { /* ignore */ }
+    } catch (e) {
+      /* stay on assignment screen */
+    } finally {
+      setStarting(false);
+    }
+  }, [assignment, starting]);
+
+  // My Plan reached sufficiency → hand the student into the EXISTING Writing
+  // workflow on the same session (OT objects remain persisted for context).
+  const finishOrganizing = useCallback(() => {
+    setOtPhase(false);
+    setWritingStarted(true);
+    try { localStorage.removeItem("compass_ot_session"); } catch (e) { /* ignore */ }
+  }, []);
+
+  // Writing Screen submit — the session already exists (created at OT entry).
+  // Submit the student's EXACT response (validated on the trimmed value, but
+  // transmitted/preserved unaltered) via the existing Writing workflow.
+  const submitResponse = useCallback(async () => {
+    if (response.trim().length < 15 || starting || !session) return;
+    setStarting(true);
+    try {
+      const updated = await interact(session.id, { kind: "writing", content: response });
       setDraft(response);
       setSession(updated);
       // Chapter 6 — establish the relationship first. Fire Pedagogical Noticing
       // in parallel with the frozen engine's background reasoning. If it fails
       // or times out, the generic thinking experience remains (graceful).
-      getNoticing(s.id)
+      getNoticing(session.id)
         .then((res) => {
           if (res && res.ok) setNoticing(res);
         })
@@ -130,7 +166,7 @@ export default function PublicPreview() {
     } finally {
       setStarting(false);
     }
-  }, [response, starting, assignment]);
+  }, [response, starting, session]);
 
   // "Try another paragraph" — return to a CLEARED Assignment Screen (never the
   // Welcome Screen during the same visit) and begin a completely fresh session.
@@ -140,6 +176,8 @@ export default function PublicPreview() {
     setResponse("");
     setDraft("");
     setWritingStarted(false);
+    setOtPhase(false);
+    setOtData(null);
     setCardOpen(false);
     setOpenCoachingId(null);
     setReplyOpen(false);
@@ -147,6 +185,34 @@ export default function PublicPreview() {
     setReviewingAsTeacher(false);
     setNoticing(null);
     setRevealStage(0);
+    try { localStorage.removeItem("compass_ot_session"); } catch (e) { /* ignore */ }
+  }, []);
+
+  // Resume an in-progress Organizing Thought session on refresh/return: the OT
+  // objects persist in Mongo; the session id is remembered client-side so the
+  // student lands back where they left off (before any writing has begun).
+  useEffect(() => {
+    let sid;
+    try { sid = localStorage.getItem("compass_ot_session"); } catch (e) { sid = null; }
+    if (!sid) return;
+    getSession(sid)
+      .then((s) => {
+        const ot = s?.ot;
+        const hasWriting = (s?.turns || []).some((t) => t.role === "student");
+        if (ot && !hasWriting && !ot.handoff_ready) {
+          setSession(s);
+          setOtData(ot);
+          setAssignment(s.assignment || "");
+          setEntered(true);
+          setOtPhase(true);
+        } else {
+          try { localStorage.removeItem("compass_ot_session"); } catch (e) { /* ignore */ }
+        }
+      })
+      .catch(() => {
+        try { localStorage.removeItem("compass_ot_session"); } catch (e) { /* ignore */ }
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const dirty = draft.trim() !== (studentTurns[studentTurns.length - 1]?.content || "").trim();
@@ -217,8 +283,14 @@ export default function PublicPreview() {
           <AssignmentScreen
             assignment={assignment}
             setAssignment={setAssignment}
-            onContinue={() => setWritingStarted(true)}
+            onContinue={enterOrganizing}
             onBack={() => setEntered(false)}
+          />
+        ) : showOT ? (
+          <OrganizingThought
+            sessionId={session?.id}
+            initialOt={otData}
+            onComplete={finishOrganizing}
           />
         ) : showWriting ? (
           <WritingScreen
@@ -226,7 +298,10 @@ export default function PublicPreview() {
             response={response}
             setResponse={setResponse}
             onSubmit={submitResponse}
-            onBack={() => setWritingStarted(false)}
+            onBack={() => {
+              setWritingStarted(false);
+              setOtPhase(true);
+            }}
             submitting={starting}
           />
         ) : inReflection ? (

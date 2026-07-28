@@ -525,6 +525,7 @@ class Session(BaseModel):
     teacher_edits: List[dict] = Field(default_factory=list)
     is_preview: bool = False
     preview_analytics: dict = Field(default_factory=dict)
+    ot: Optional[dict] = None  # Organizing Thought (OT) state — set only when the student enters OT before Writing
     experience_control: Optional[ExperienceControl] = None  # Experience Compass — set ONLY on preview sessions
     reasoning_mode: str = "exhaustive"  # exhaustive | triage_experimental (per-session; exhaustive is default, unchanged frozen path)
     # Teacher-product linkage (teacher -> assignment(config) -> student session).
@@ -3405,6 +3406,10 @@ app.include_router(api_router)
 import assignment_representation as _asgrep
 _asgrep.init(db, EMERGENT_LLM_KEY, now_iso)
 app.include_router(_asgrep.router)
+
+import organizing_thought as _ot
+_ot.init(db, EMERGENT_LLM_KEY, now_iso)
+app.include_router(_ot.router)
 
 app.add_middleware(
     CORSMiddleware,
