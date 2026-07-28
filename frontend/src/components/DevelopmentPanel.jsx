@@ -17,6 +17,7 @@ import {
   Microscope,
   Download,
   GitBranch,
+  Layers,
 } from "lucide-react";
 
 const API_BASE = `${process.env.REACT_APP_BACKEND_URL}/api`;
@@ -603,6 +604,48 @@ export default function DevelopmentPanel({
             </div>
 
             <div className="flex-1 overflow-y-auto custom-scroll px-5 py-5">
+              {/* Where this fits — Unified Structural Reasoning (teacher-language) */}
+              {theory.structural_reasoning?.applies !== false &&
+              (theory.structural_reasoning?.structure_identified || "").trim() ? (
+                <div
+                  data-testid="structural-reasoning-block"
+                  className="mb-5 rounded-md border border-l-2 border-stone-800 border-l-indigo-400 bg-indigo-400/[0.06] p-4"
+                >
+                  <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.14em] text-indigo-300 font-medium mb-3">
+                    <Layers className="h-3.5 w-3.5" />
+                    {t("Where this fits in the writing", "Structural Reasoning")}
+                  </div>
+                  <div className="space-y-2.5">
+                    <KV k="What Compass is reading" accent="text-indigo-300">
+                      <Text value={theory.structural_reasoning?.structure_identified} />
+                    </KV>
+                    {(theory.structural_reasoning?.elements_present || []).length ? (
+                      <KV k="Already in place">
+                        <List items={theory.structural_reasoning?.elements_present} />
+                      </KV>
+                    ) : null}
+                    {(theory.structural_reasoning?.elements_emerging || []).length ? (
+                      <KV k="Beginning to emerge" accent="text-emerald-300">
+                        <List items={theory.structural_reasoning?.elements_emerging} />
+                      </KV>
+                    ) : null}
+                    {(theory.structural_reasoning?.elements_absent || []).length ? (
+                      <KV k="Not yet present" accent="text-amber-300">
+                        <List items={theory.structural_reasoning?.elements_absent} />
+                      </KV>
+                    ) : null}
+                    {(theory.structural_reasoning?.element_relationships || []).length ? (
+                      <KV k="How the parts relate">
+                        <List items={theory.structural_reasoning?.element_relationships} />
+                      </KV>
+                    ) : null}
+                    <KV k="Why start here" accent="text-sky-300">
+                      <Text value={theory.structural_reasoning?.hierarchical_triage_rationale} />
+                    </KV>
+                  </div>
+                </div>
+              ) : null}
+
               {/* Dependency-First Instruction — teacher-language, shown only when a dependency is active */}
               {["identified", "being_taught", "addressed"].includes(
                 (theory.instructional_reasoning?.dependency_status || "").trim().toLowerCase()

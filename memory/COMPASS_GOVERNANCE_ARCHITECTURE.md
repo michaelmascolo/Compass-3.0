@@ -87,6 +87,21 @@ These six principles are constitutional: they define the enduring instructional 
 
 ---
 
+## Unified Structural Reasoning (one reasoner, two entry points) — adopted 2026-06
+Compass has ONE canonical instructional reasoner operating over ONE nested structural hierarchy. The Composition Process and the live Teacher Review (`?preview=teacher`) are NOT separate instructional systems — they are two ENTRY POINTS into the same hierarchy, differing only in where the available writing enters it. This lives at Layers 2–3 (policy + diagnosis) under the Constitution (Layer 1); it does not add a layer.
+
+**Canonical structural hierarchy** (each level constrains interpretation of the levels beneath it): Whole Composition → Major Parts (introduction, body, conclusion, …) → Paragraph → Structural Elements → Relationships among Elements → Sentences → Words.
+- **Structures** = organizational wholes (composition, introduction, body, conclusion, paragraph), composed of parts.
+- **Elements** = functional components operating within structures (thesis, controlling idea, definition, explanation, evidence, example, transition, synthesis, reader guidance, closure) — not independent structures.
+- **Relationships** = functional connections among elements (thesis depends on definition; evidence supports claims; explanations elaborate ideas; transitions connect ideas; paragraph contributes to the whole). Instruction frequently concerns relationships rather than elements.
+
+**Entry points:** *Composition Process* enters at the highest levels and moves down (purpose → organization → major parts → paragraphs → elements → sentences → revision → completion). *Live Teacher Review* begins with an existing paragraph/partial draft: Compass first locates it in the hierarchy ("This appears to be a developing body paragraph."), activates that level's canonical representation, and then reasons identically.
+
+**General reasoning sequence (identical regardless of entry point):** (1) identify the available portion; (2) locate it in the hierarchy; (3) activate the canonical structural representation; (4) mark elements present/emerging/absent/unnecessary; (5) determine relationships; (6) identify developmental dependencies; (7) apply **hierarchical instructional triage** (higher-level structural issues constrain lower-level instruction — e.g., no controlling idea ⇒ don't teach transitions; thesis depends on an undefined concept ⇒ teach the definition first; missing explanation ⇒ don't polish sentences; no organizing purpose ⇒ don't refine paragraphs); (8) select ONE instructional objective (becomes `scaffolding_control.primary_target`); (9) coach via the canonical coaching sequence. Reasoning inside this constrained structural space (rather than unconstrained analysis) is what improves consistency, instructional transparency, developmental coherence, response speed, and reasoning efficiency.
+
+**Implementation:** reasoner `SYSTEM_MESSAGE` "UNIFIED STRUCTURAL REASONING" block + `theory.structural_reasoning` record (entry_point, available_portion, hierarchy_level, structure_identified, elements_present/emerging/absent/unnecessary, element_relationships, developmental_dependencies, hierarchical_triage_rationale). Coordinates with W-A..W-E, the one-target/one-invitation rules, and M5A. Teacher-transparent in the Dev Panel ("Where this fits in the writing" — teacher language, no schema names).
+
+
 ## How the layers interact during one coaching turn
 1. **Intake (Layer 5 in / Layer 4 read).** The learner submits or revises the document. The revision delta and the persistent learner model (Layer 4) are loaded — not the whole transcript.
 2. **Policy decision (Layer 2, reading Layer 4, bounded by Layer 1).** Rapid triage applies developmental policy to the delta + learner model: what changed, prior-target status, learner state, inside/outside, the single highest-leverage dimension, and whether the situation is *foundational* (requiring broad reassessment). This is Layer 2 selecting how Layer 3 will run — under the constitution.

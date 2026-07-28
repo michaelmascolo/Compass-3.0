@@ -344,6 +344,25 @@ class InstructionalReasoning(BaseModel):
     dependency_rationale: str = ""              # W-E: plain teacher-language reason WHY this dependency must come before the larger structure
 
 
+class StructuralReasoning(BaseModel):
+    """Unified Structural Reasoning (one canonical reasoner over one nested
+    structural hierarchy; both entry points — Composition Process and live
+    Teacher Review — enter the SAME hierarchy at different points). Populated
+    every turn (applies=True)."""
+    applies: bool = True
+    entry_point: str = ""                 # composition_process | teacher_review
+    available_portion: str = ""           # what portion of the composition is currently available (e.g., 'a single developing body paragraph', 'thesis sentence only', 'full 3-paragraph draft')
+    hierarchy_level: str = ""             # whole_composition | major_part | paragraph | structural_element | relationship | sentence | word
+    structure_identified: str = ""        # the organizational whole located at this level (e.g., 'developing body paragraph', 'introduction', 'complete composition')
+    elements_present: List[str] = Field(default_factory=list)      # functional elements clearly present
+    elements_emerging: List[str] = Field(default_factory=list)     # elements begun but not yet fully realized
+    elements_absent: List[str] = Field(default_factory=list)       # elements the structure needs but that are missing
+    elements_unnecessary: List[str] = Field(default_factory=list)  # elements present but not needed here
+    element_relationships: List[str] = Field(default_factory=list) # functional relationships among elements (e.g., 'thesis depends on definition', 'evidence supports claim')
+    developmental_dependencies: List[str] = Field(default_factory=list)  # lower-level ingredients a higher-level element/structure depends on
+    hierarchical_triage_rationale: str = ""  # why the selected level/opportunity is the highest-leverage one (higher-level issues constrain lower-level instruction)
+
+
 class DevelopmentalTheory(BaseModel):
     """C — Working Developmental Theory (one evolving, provisional theory)."""
     current_telos: str = ""
@@ -357,6 +376,7 @@ class DevelopmentalTheory(BaseModel):
     revision_development: RevisionDevelopment = Field(default_factory=RevisionDevelopment)
     integration_calibration: IntegrationCalibration = Field(default_factory=IntegrationCalibration)
     instructional_reasoning: InstructionalReasoning = Field(default_factory=InstructionalReasoning)
+    structural_reasoning: StructuralReasoning = Field(default_factory=StructuralReasoning)
     current_organization: str = ""
     observed_differentiations: List[str] = Field(default_factory=list)
     observed_integrations: List[str] = Field(default_factory=list)
@@ -730,6 +750,34 @@ Constitutional instructional principles:
 DEFAULT GUIDED COMPOSITION INSTRUCTIONAL SEQUENCE (the recognizable shape of every coaching cycle unless another constitutional principle requires otherwise): (1) recognize emerging competence; (2) explicitly identify the instructional focus; (3) explain the purpose of that structure; (4) identify any missing dependency; (5) teach or scaffold that dependency; (6) return to the larger structure; (7) return responsibility to the learner. Keep it warm and non-mechanical — this is the underlying architecture, not a script to recite.
 === END COMPASS CONSTITUTION ===
 
+UNIFIED STRUCTURAL REASONING (the single canonical reasoning process — apply EVERY turn; it operationalizes the Constitution and governs BOTH entry points). Compass is ONE instructional reasoner operating over ONE canonical nested structural hierarchy. The Composition Process and the live Teacher Review are NOT separate systems — they are two ENTRY POINTS into this same hierarchy; they differ only in WHERE the available writing enters it. Record your structural reasoning in theory.structural_reasoning.
+
+THE CANONICAL STRUCTURAL HIERARCHY (each level constrains the interpretation of the levels beneath it):
+Whole Composition → Major Parts (introduction, body, conclusion, …) → Paragraph → Structural Elements → Relationships among Elements → Sentences → Words.
+- STRUCTURES are organizational wholes (complete composition, introduction, body, conclusion, paragraph). Structures are composed of parts.
+- ELEMENTS are the functional components that operate WITHIN structures (thesis, controlling idea, definition, explanation, evidence, example, transition, synthesis, reader guidance, closure). Elements are NOT independent structures; they contribute to larger structures.
+- RELATIONSHIPS are the functional connections among elements (thesis depends upon definition; evidence supports claims; explanations elaborate ideas; transitions connect ideas; a paragraph contributes to the larger composition). Instruction frequently concerns these RELATIONSHIPS rather than the elements themselves.
+
+ENTRY POINTS (same hierarchy, different entry):
+- COMPOSITION PROCESS enters at the highest levels and moves down: purpose → overall organization → major parts → paragraphs → structural elements → sentences → revision → completion. Set structural_reasoning.entry_point = composition_process.
+- LIVE TEACHER REVIEW usually begins with an existing paragraph or partial draft. FIRST determine where that writing fits in the hierarchy (e.g., "This appears to be a developing body paragraph."), then activate the canonical structural representation for THAT structure. Set entry_point = teacher_review. The remainder of the reasoning is IDENTICAL to the Composition Process. (Infer the entry point from context: a first submission of an already-written passage / mid-draft paragraph = teacher_review; progressive construction from purpose/plan downward = composition_process.)
+
+GENERAL REASONING SEQUENCE (identical regardless of entry point):
+1. Identify what portion of the composition is currently available → available_portion.
+2. Locate that work within the canonical hierarchy → hierarchy_level + structure_identified.
+3. Activate the canonical structural representation for that level (use the retrieved instructional objects + canonical writing model).
+4. Identify the structural elements that are PRESENT / EMERGING / ABSENT / UNNECESSARY → elements_present / elements_emerging / elements_absent / elements_unnecessary.
+5. Determine the functional RELATIONSHIPS among those elements → element_relationships.
+6. Identify developmental DEPENDENCIES (lower-level ingredients a higher-level element/structure needs; feeds W-E) → developmental_dependencies.
+7. Apply HIERARCHICAL INSTRUCTIONAL TRIAGE → hierarchical_triage_rationale.
+8. Select exactly ONE instructional objective (this becomes scaffolding_control.primary_target; still one target/turn).
+9. Generate coaching using the canonical coaching sequence (see below).
+
+HIERARCHICAL INSTRUCTIONAL TRIAGE — always begin with the HIGHEST-LEVERAGE structural opportunity; higher-level structural issues constrain lower-level instruction. E.g.: if no controlling idea exists, do NOT teach transitions; if a thesis depends on an undefined concept, teach the definition before revising the thesis (W-E); if explanation is missing, do NOT prioritize sentence-level polishing; if the composition lacks an organizing purpose, do NOT prioritize paragraph refinements. Reasoning within this constrained structural space (rather than unconstrained analysis) is what makes Compass consistent, transparent, developmentally coherent, and fast.
+
+CANONICAL COACHING SEQUENCE (after triage — the Constitution's default Guided Composition sequence, made concrete against the located structure; warm, non-mechanical): (1) recognize emerging competence; (2) explicitly identify today's instructional focus; (3) locate the student's emerging structure within their OWN writing; (4) explain the purpose of that structure; (5) identify the dependency or missing ingredient; (6) teach or scaffold that dependency; (7) return to the larger structure; (8) return responsibility to the learner. This coordinates with (never overrides) the one-target rule, the one-invitation rule, W-A..W-E, and the M5A anti-coauthoring boundary.
+
+
 
 Do not diagnose hidden traits, abilities, competencies, or stages. Do not assume a universal developmental sequence. Do not assign stages, levels, scores, or stable learner characteristics. Do not posit hidden psychological entities behind observable activity. Attend to observable changes in differentiation, integration, coordination, hierarchical organization, flexibility, intentionality, and participation, visible in writing, revision, explanation, choice, hesitation, response, and participation over time.
 
@@ -912,6 +960,7 @@ OUTPUT FORMAT — respond with ONLY a valid JSON object, no markdown fences, no 
     "revision_development": {"applies": "true only when a prior draft exists to compare against (revise/later draft), else false", "development_detected": "yes/partial/no + brief — did a developmental capacity strengthen? (edits != growth) — else empty", "primary_growth": "the single most important capacity that got stronger (purpose/paragraph/evidence-interp/coherence/reader-understanding/precision/elaboration/conclusion/organization) — else empty", "communication_change": "did communication actually improve, and how? — else empty", "reader_change": "did the reader's likely understanding improve? — else empty", "remaining_opportunity": "if limited/regressed: the ONE remaining developmental opportunity (do not re-teach everything) — else empty", "transfer_message": "how the student can transfer this understanding to FUTURE writing — else empty"},
     "integration_calibration": {"applies": "true every turn", "primary_framework": "which framework's opportunity is primary this turn (aligns with scaffolding_control.primary_target)", "supporting_frameworks": ["frameworks that SUPPORT (not compete with) the primary — unify overlapping opportunities into one focus"], "calibration_check": "is the intervention proportional to the actual need? (guards over-/under-teaching, unnecessary intervention, unmotivated target-shifting)", "consistency_check": "would an equivalent writing situation receive the same priority?", "integration_notes": "how frameworks were unified into one coherent interpretation; any cross-framework transfer for consolidation"},
     "instructional_reasoning": {"applies": "true every turn", "current_unit_of_writing": "whole essay | introduction | paragraph | sentence | claim | evidence | ...", "active_instructional_element": "the canonical element name from the retrieved instructional objects", "element_communicative_purpose": "the communicative work that element performs", "student_current_organization": "what the student is trying to do / understands / is missing or confused about", "canonical_performance_structure": "how the element is normally constructed (from the object)", "primary_developmental_tension": "the ONE gap between the student's organization and the canonical form + teacher purpose", "next_student_act": "the single act the student can perform WITH support (answer/distinguish/compare/explain/revise/select/reorganize/write)", "selected_developmental_resources": ["1-3 resources chosen from the shared resource menu"], "resource_selection_rationale": "why these resources best help THIS student now", "evidence_of_developmental_movement": "what changed since last turn, or 'initial'", "degree_of_student_control": "scaffolded | emerging | increasing | largely_independent", "continue_consolidate_release_or_shift": "continue | consolidate | release | shift_to_prerequisite", "required_dependency": "W-E: the single lower-level conceptual/rhetorical ingredient the higher-level target structure needs but lacks (e.g., the underlying definition a thesis-claim rests on) — empty if none / structure already works", "dependency_status": "none | identified | being_taught | addressed", "dependency_rationale": "W-E: one plain teacher-language sentence explaining WHY this dependency must be developed before the larger structure can improve (e.g., 'Readers need to understand what the concept is before they can evaluate the claim made about it.') — empty if no dependency"},
+    "structural_reasoning": {"applies": "true every turn", "entry_point": "composition_process | teacher_review", "available_portion": "what portion of the composition is currently available (e.g., 'a single developing body paragraph', 'thesis sentence only', 'full draft')", "hierarchy_level": "whole_composition | major_part | paragraph | structural_element | relationship | sentence | word", "structure_identified": "the organizational whole located at this level (e.g., 'developing body paragraph', 'introduction', 'complete composition')", "elements_present": ["functional elements clearly present"], "elements_emerging": ["elements begun but not yet fully realized"], "elements_absent": ["elements the structure needs but that are missing"], "elements_unnecessary": ["elements present but not needed here — usually empty"], "element_relationships": ["functional relationships among elements, e.g. 'thesis depends on definition', 'evidence supports claim', 'paragraph contributes to whole composition'"], "developmental_dependencies": ["lower-level ingredients a higher-level element/structure depends on that are not yet developed"], "hierarchical_triage_rationale": "why the selected level/opportunity is the highest-leverage one — higher-level structural issues constrain lower-level instruction (e.g., no controlling idea → do not teach transitions; missing organizing purpose → do not refine paragraphs)"},
     "observed_differentiations": [], "observed_integrations": [], "observed_coordinations": [],
     "emerging_intentional_control": "",
     "unresolved_tensions": [], "cultural_resources_in_use": [], "potential_cultural_resources": [],
@@ -988,6 +1037,7 @@ def _compact_theory(theory: DevelopmentalTheory) -> dict:
         "revision_development": theory.revision_development.model_dump(),
         "integration_calibration": theory.integration_calibration.model_dump(),
         "instructional_reasoning": theory.instructional_reasoning.model_dump(),
+        "structural_reasoning": theory.structural_reasoning.model_dump(),
         "current_organization": theory.current_organization,
         "unresolved_tensions": theory.unresolved_tensions,
         "currently_relevant_domains": theory.currently_relevant_domains,
@@ -1119,7 +1169,7 @@ SHARED DEVELOPMENTAL RESOURCE MENU (choose the resource(s) that best help THIS s
 
 {_latest_block(session, req)}
 
-Run the full recursive loop AND the governed instructional reasoning, then respond with ONLY the JSON object described in your instructions (including the "instructional_reasoning" block). Revise the ENTIRE working theory rather than appending a note. Keep every field terse per the BREVITY rule.{PREVIEW_OUTPUT_OVERRIDE if preview_output else ""}"""
+Run the full recursive loop AND the governed instructional reasoning AND the unified structural reasoning, then respond with ONLY the JSON object described in your instructions (including the "instructional_reasoning" and "structural_reasoning" blocks). Revise the ENTIRE working theory rather than appending a note. Keep every field terse per the BREVITY rule.{PREVIEW_OUTPUT_OVERRIDE if preview_output else ""}"""
 
 
 def _parse_engine_output(session: Session, raw: str) -> dict:
