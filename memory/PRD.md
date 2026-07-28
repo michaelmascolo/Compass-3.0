@@ -598,3 +598,10 @@ Build Milestone 1 ONLY of an AI writing app that develops students as writers th
 ## Feedback Invitation Reworded — "Can We Ask a Favor?" (2026-06, DONE)
 - Reframed the feedback system from a survey to a personal, humble, collaborative request. Copy/structure only; backend + response keys (helped_most/confusing/improve_one) + all data-testids unchanged.
 - Persistent button: "Can We Ask a Favor?". End dialog: new heading + 3-paragraph intro, 3 brief questions + would-use-again + optional "Anything else"; buttons "Send Feedback" / "Maybe Later". Early-exit: new warm copy, 6 reasons, optional comments; buttons "Send Feedback" / "Leave Without Feedback". Submitting always optional. Verified via compile + screenshot.
+
+## My Ideas PASS 1 — Elaboration Coaching (2026-06, DONE, backend prompt/logic only)
+- Scope: ONLY the My Ideas first pass (`_IDEAS_PASS1_SYSTEM`). Pass 2 and all other Compass coaching unchanged.
+- Rewrote Pass-1 coaching to a warm 6-step elaboration sequence: affirm effort -> name the kind of thinking -> briefly explain that structure -> DESCRIBE (not evaluate) where the student thinking is -> INVITE them to extend their OWN thinking with an OPEN question -> reduce performance pressure. Non-blocking as before.
+- HARD ban on this screen: no directing to notes/readings/sources, no emphasizing missing knowledge (those move to later stages). Content-leak boundary still enforced (never supply/cue the answer, incl. inside an inviting question e.g. NOT "what does the person believe about their abilities?").
+- Enforcement: added `_LEAKAGE_CRITIC_PASS1_SYSTEM` (strips content cues AND source-direction, rewrites toward open elaboration) + `_leakage_sanitize(pass_no)`. Pass-1 runs the reviewer on EVERY turn to guarantee the boundary (Pass 2 keeps the source-directing critic on teach/ask/pause only). Tradeoff: ~+3s per Pass-1 turn (correctness prioritized; deferred layered optimization would reduce it).
+- Verified via curl: fixed-mindset (reported example), photosynthesis, erosion -> 6-step tone, no source-direction, no content leak, decision non-blocking.

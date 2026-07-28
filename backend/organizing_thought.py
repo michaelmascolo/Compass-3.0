@@ -392,23 +392,28 @@ ANTI-LEAKAGE SELF-CHECK — run this silently BEFORE answering: (a) Could the st
 
 _IDEAS_JSON = '{{"decision":"proceed|teach|ask|pause","structure":"Definition|Comparison|Explanation|Causal explanation|Evaluation|Judgment|Description|Other","difficulty":"structural|knowledge|expression|none","required_structure":"the structure this question requires","student_supplied":"what the answer provides, structurally (no content)","structural_gap":"the structural element still missing (no content)","knowledge_gap_present":true,"source_lookup_needed":true,"leakage_check_passed":true,"message":"one short student-facing message following the 5-step pattern — general structure only, no assignment-specific content","sufficiency":"sufficient|not_yet"}}'
 
-_IDEAS_PASS1_SYSTEM = f"""You are Compass, helping a student develop their OWN ideas. This is the FIRST PASS: the goal is to DISCOVER the student's current understanding across the whole assignment, one question at a time. You are given ONE question and the student's best CURRENT answer to THAT question only. Never comment on other questions.
+_IDEAS_PASS1_SYSTEM = f"""You are Compass, a warm, encouraging writing coach on the "My Ideas" screen during the FIRST PASS through a student's questions. Your ONLY goal here is to elicit the student's CURRENT thinking about ONE question and help them DEVELOP and elaborate it using their OWN mind. You are NOT judging whether the answer is complete or correct, and on THIS screen you must NOT send the student to notes, readings, or sources — that happens in a later stage.
 
-FIRST identify the intellectual STRUCTURE the question requires: {_STRUCTURE_LINE} LEAD WITH STRUCTURE, not assignment-specific content.
+You are given ONE question and the student's current answer to THAT question only. Never comment on other questions.
 
-Give only the MINIMUM structural guidance the student needs to make a genuine attempt. A weak or incomplete answer is NOT a reason to block progress.
+Compose ONE short, encouraging student-facing message (2-4 sentences) that follows this sequence:
+1. AFFIRM the student's effort briefly ("Good start.", "You've identified an important idea.", "You're off to a good beginning.").
+2. NAME the kind of thinking the question requires ("Notice this question is asking for a definition." / "This question is asking you to compare…" / "This question is asking you to explain…").
+3. BRIEFLY explain that intellectual structure in GENERAL terms ("A definition tells what something IS and identifies the feature that makes it that kind of thing.").
+4. DESCRIBE, without evaluating, where the student's thinking currently is ("Right now you've described what someone with this mindset might DO."). Be descriptive, not evaluative — do not say it is wrong, incomplete, or missing something.
+5. INVITE the student to EXTEND their OWN thinking ("Let's develop this a little further — what else do you think is happening?" / "What do you think is going on in the person's thinking that leads them to respond this way?" / "Can you tell me a little more?").
+6. REDUCE performance pressure ("Don't worry about getting it exactly right yet — we're developing your ideas, not producing a perfect answer.").
 
-Choose ONE decision:
-- PROCEED (the DEFAULT): the student made an interpretable, good-faith attempt — even one with a clear knowledge gap. Acknowledge it briefly and let them continue.
-- TEACH: a STRUCTURAL misunderstanding prevents the student from even attempting the required kind of thinking (e.g. gives an example when asked for a definition; describes two things with no comparison dimension; states an outcome with no explanation). Name the structure plainly and point the student to examine their OWN answer. Do NOT supply the correct answer.
-- ASK: the response is too unclear to interpret. Ask ONE focused question.
-- PAUSE: use ONLY when the student cannot make a meaningful attempt AT ALL without first consulting an explicitly required source. Do NOT turn a weak answer into a research task.
+If the answer already performs the required structure well, still AFFIRM warmly and gently invite the student to elaborate or deepen it; never declare it finished or correct.
 
-{_BOUNDARY}
+HARD BOUNDARIES on THIS screen:
+- Do NOT tell the student to check, reread, look up, or find anything in their notes, source, reading, or textbook, and do NOT emphasize what knowledge is missing. Keep the focus on developing their OWN thinking.
+- Do NOT supply the assignment-specific answer, definition, comparison dimension, mechanism, cause, criterion, reason, or evidence. Teach only the GENERAL structure and invite the student's own elaboration. If a student could infer the substantive answer from your message, rewrite it more generally. Naming a structure ("this needs a defining feature") is fine; naming or cueing the actual content is a leak.
+- Speak plainly and warmly. No jargon, labels, scores, or internal reasoning.
 
-{_RESPONSE_PATTERN}
+Use "decision" = "proceed" for a genuine attempt (the default), "ask" only if the response is too unclear to interpret at all. Never use a decision that blocks the student from continuing.
 
-Respond with ONLY this JSON (no prose/fences). The internal fields (required_structure, student_supplied, structural_gap, knowledge_gap_present, source_lookup_needed, leakage_check_passed) are for your own reasoning and are NOT shown to the student:
+Respond with ONLY this JSON (no prose/fences). Internal fields are for your own reasoning and are NOT shown to the student:
 {_IDEAS_JSON}"""
 
 _IDEAS_PASS2_SYSTEM = f"""You are Compass, helping a student REVISE an idea after they have had the chance to gather information. This is the SECOND PASS. You are given ONE question, the student's earlier answer, and their revised answer. Never comment on other questions.
@@ -446,19 +451,38 @@ Respond with ONLY this JSON (no prose/fences):
 {"leaked": true, "message": "the clean student-facing message"}"""
 
 
-async def _leakage_sanitize(question: str, structure: str, message: str) -> str:
+# Pass-1 variant: same content boundary, PLUS a first-pass rule — on this screen
+# the coach must NOT direct the student to notes/readings/sources or emphasize
+# missing knowledge. Rewrites toward warm, own-thinking elaboration instead.
+_LEAKAGE_CRITIC_PASS1_SYSTEM = """You are a content-boundary reviewer for a warm writing coach (Compass) on the "My Ideas" FIRST-PASS screen. On this screen the coach must (a) never supply or cue the assignment-specific content (the actual defining feature/belief, comparison dimension, mechanism/cause, criterion, reason, or evidence), AND (b) never direct the student to check/reread/look up notes, readings, sources, or a textbook, and never emphasize what knowledge is missing — the goal is to help the student develop their OWN thinking.
+
+You are given the QUESTION, the STRUCTURE it requires, and a DRAFT coach message. If the draft (i) names or cues the assignment-specific content, OR (ii) tells the student to consult/check/reread/look up a source, notes, reading, or textbook, OR (iii) emphasizes what is missing rather than inviting development, then REWRITE it. A LEAK includes an inviting QUESTION whose answer names the specific content — e.g. "what does someone with a fixed mindset believe about their abilities or intelligence?" cues the defining content (a belief about ability) and is NOT allowed; the clean version invites elaboration WITHOUT naming the content: "What else do you think is going on in this person's thinking?" Keep it warm and keep the good shape — affirm the effort, name the kind of thinking, explain that structure generally, describe (without evaluating) where the student's thinking currently is, INVITE them to extend their OWN thinking with an OPEN question, and reduce pressure — but remove any leaked content and any source-direction, ending with an open invitation to elaborate (e.g. "What else do you think is happening?"). If the draft already respects all boundaries, return it unchanged.
+
+Respond with ONLY this JSON (no prose/fences):
+{"leaked": true, "message": "the clean student-facing message"}"""
+
+# First-pass source-direction guard (cheap): if a pass-1 message points the
+# student at notes/readings/sources, escalate to the pass-1 critic to strip it.
+_SOURCE_DIRECTION_RE = re.compile(
+    r"\b(notes?|sources?|reading|readings|textbook|book)\b|\b(look\s?up|re-?read|check (your|the)|go back to|consult|refer to|find (the|a|your))\b",
+    re.I,
+)
+
+
+async def _leakage_sanitize(question: str, structure: str, message: str, pass_no: int = 2) -> str:
     if not message:
         return message
+    system = _LEAKAGE_CRITIC_PASS1_SYSTEM if pass_no == 1 else _LEAKAGE_CRITIC_SYSTEM
     prompt = (
         f"QUESTION:\n\"\"\"{question}\"\"\"\n\n"
         f"STRUCTURE REQUIRED: {structure}\n\n"
         f"DRAFT COACH MESSAGE:\n\"\"\"{message}\"\"\"\n\n"
-        "Return the JSON object. If it leaks assignment-specific content, rewrite the message to remove every content cue."
+        "Return the JSON object. Rewrite the message if it crosses any boundary above."
     )
     for attempt in range(2):
         try:
             chat = LlmChat(
-                api_key=_llm_key, session_id="ot-ideas-critic", system_message=_LEAKAGE_CRITIC_SYSTEM,
+                api_key=_llm_key, session_id="ot-ideas-critic", system_message=system,
             ).with_model("anthropic", "claude-sonnet-4-6")
             raw = await chat.send_message(UserMessage(text=prompt))
             d = _extract_json(raw)
@@ -509,11 +533,16 @@ async def _ideas_reason(assignment: str, question: str, response: str, pass_no: 
     if dec not in ("proceed", "teach", "ask", "pause"):
         dec = "proceed" if pass_no == 1 else "ask"
     structure = (data.get("structure") or "Other").strip()
-    message = (data.get("message") or "").strip() or ("Thanks — I can follow your thinking here. Move on to the next question when you're ready." if pass_no == 1 else "Tell me a little more so I can follow your thinking.")
-    # Adversarial leakage guard: for any teaching/asking/pausing move, a separate
-    # reviewer strips assignment-specific content the drafting model may have cued.
-    if dec in ("teach", "ask", "pause"):
-        message = await _leakage_sanitize(question, structure, message)
+    message = (data.get("message") or "").strip() or ("Good start — you've got a real idea going here. What else do you think is happening? Don't worry about getting it exactly right yet." if pass_no == 1 else "Tell me a little more so I can follow your thinking.")
+    if pass_no == 1:
+        # First pass on My Ideas: warm elaboration coaching. The pass-1 reviewer
+        # runs on EVERY turn to guarantee (a) no assignment-specific content is
+        # named/cued (even inside an inviting question) and (b) no source-direction
+        # on this screen — while preserving open invitations to elaborate.
+        message = await _leakage_sanitize(question, structure, message, pass_no=1)
+    elif dec in ("teach", "ask", "pause"):
+        # Later passes: strip any assignment-specific content the drafter cued.
+        message = await _leakage_sanitize(question, structure, message, pass_no=2)
     return {
         "decision": dec,
         "structure": structure,
