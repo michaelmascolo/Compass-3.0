@@ -87,8 +87,8 @@ export default function Landing() {
               initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.06, ease: EASE }}
               className="font-serif-display text-5xl sm:text-6xl lg:text-7xl tracking-tight leading-[1.02] text-stone-900"
             >
-              AI for developing thinking —
-              <span className="block text-[#8C3A2A]">not replacing it.</span>
+              AI for developing thinking.
+              <span className="block text-[#8C3A2A]">Not replacing it.</span>
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.16, ease: EASE }}
