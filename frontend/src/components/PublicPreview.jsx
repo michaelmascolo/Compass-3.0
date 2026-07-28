@@ -12,6 +12,7 @@ import { startPreview, getSession, interact, getNoticing, otStart } from "@/lib/
 import ExperienceReflection from "@/components/ExperienceReflection";
 import TeacherReflection from "@/components/TeacherReflection";
 import OrganizingThought from "@/components/OrganizingThought";
+import StudentEntry from "@/components/StudentEntry";
 import WelcomeScreen from "@/components/WelcomeScreen";
 
 // Experience Compass public flow: Welcome (Ch3) -> Assignment (Ch4) -> Writing
@@ -60,12 +61,16 @@ export default function PublicPreview({ mode = "ot" }) {
   // never by an AI turn count.
   const phase = session?.experience_control?.phase || "active";
   const inReflection = phase === "reflection";
-  // A student turn (writing) marks entry into the Writing/coaching experience.
-  // OT persists a session but produces NO turns, so the session existing during
-  // OT must not trigger the coaching UI.
+  // Mode separation: 'teacher' = teacher-simulation wrapper (Experience Compass
+  // welcome + create-assignment + teacher reflection). 'writing' / 'ot' = GENUINE
+  // student entries — the learner completes an assignment they were given, with
+  // no teacher framing.
+  const isTeacher = mode === "teacher";
+  const isStudent = !isTeacher;
   const hasStudentTurn = studentTurns.length > 0;
-  const showWelcome = !entered && !session;
-  const showAssignment = entered && !session && !writingStarted && !otPhase;
+  const showWelcome = isTeacher && !entered && !session;
+  const showAssignment = isTeacher && entered && !session && !writingStarted && !otPhase;
+  const showStudentEntry = isStudent && !session && !writingStarted && !otPhase && !hasStudentTurn;
   const showOT = otPhase && !hasStudentTurn;
   const showWriting = writingStarted && !hasStudentTurn && !otPhase;
 
@@ -115,32 +120,38 @@ export default function PublicPreview({ mode = "ot" }) {
     };
   }, [noticing]);
 
-  // Assignment → Organizing Thought. Create the preview session now (with the
-  // educator's authentic assignment as the authoritative task) so OT can persist
-  // to it; the SAME session then carries into Writing. No parallel session model.
-  const enterOrganizing = useCallback(async () => {
-    if (starting || !assignment.trim()) return;
+  // Student entry → create/resume the session with the student's OWN assignment
+  // (the task they were given), then enter the selected student workflow. Same
+  // session model; no teacher-experience state attached.
+  const enterStudent = useCallback(async (assignmentText) => {
+    if (starting || !assignmentText.trim()) return;
     setStarting(true);
     try {
-      const s = await startPreview({ assignment: assignment.trim() });
-      const ot = await otStart(s.id);
+      const s = await startPreview({ assignment: assignmentText.trim() });
       setSession(s);
-      setOtData(ot);
-      setOtPhase(true);
-      try { localStorage.setItem("compass_ot_session", s.id); } catch (e) { /* ignore */ }
+      setAssignment(assignmentText.trim());
+      if (mode === "ot") {
+        const ot = await otStart(s.id);
+        setOtData(ot);
+        setOtPhase(true);
+      } else {
+        setWritingStarted(true);
+      }
+      try {
+        localStorage.setItem("compass_student_session", JSON.stringify({ id: s.id, mode }));
+      } catch (e) { /* ignore */ }
     } catch (e) {
-      /* stay on assignment screen */
+      /* stay on entry */
     } finally {
       setStarting(false);
     }
-  }, [assignment, starting]);
+  }, [starting, mode]);
 
   // My Plan reached sufficiency → hand the student into the EXISTING Writing
   // workflow on the same session (OT objects remain persisted for context).
   const finishOrganizing = useCallback(() => {
     setOtPhase(false);
     setWritingStarted(true);
-    try { localStorage.removeItem("compass_ot_session"); } catch (e) { /* ignore */ }
   }, []);
 
   // Writing Screen submit — reuse the session when it already exists (came via
@@ -191,33 +202,40 @@ export default function PublicPreview({ mode = "ot" }) {
     setReviewingAsTeacher(false);
     setNoticing(null);
     setRevealStage(0);
-    try { localStorage.removeItem("compass_ot_session"); } catch (e) { /* ignore */ }
+    try { localStorage.removeItem("compass_student_session"); localStorage.removeItem("compass_ot_session"); } catch (e) { /* ignore */ }
   }, []);
 
-  // Resume an in-progress Organizing Thought session on refresh/return: the OT
-  // objects persist in Mongo; the session id is remembered client-side so the
-  // student lands back where they left off (before any writing has begun).
+  // Resume an in-progress STUDENT session on refresh/return. The session id is
+  // remembered client-side WITH its mode, so we never pull an incompatible
+  // session (e.g. a teacher-preview or other-mode session) into this mode.
   useEffect(() => {
-    if (mode !== "ot") return;
-    let sid;
-    try { sid = localStorage.getItem("compass_ot_session"); } catch (e) { sid = null; }
-    if (!sid) return;
-    getSession(sid)
+    if (!isStudent) return;
+    let raw;
+    try { raw = localStorage.getItem("compass_student_session"); } catch (e) { raw = null; }
+    if (!raw) return;
+    let parsed;
+    try { parsed = JSON.parse(raw); } catch (e) { parsed = null; }
+    if (!parsed || !parsed.id || parsed.mode !== mode) return;
+    getSession(parsed.id)
       .then((s) => {
-        const ot = s?.ot;
-        const hasWriting = (s?.turns || []).some((t) => t.role === "student");
-        if (ot && !hasWriting && !ot.handoff_ready) {
-          setSession(s);
-          setOtData(ot);
-          setAssignment(s.assignment || "");
-          setEntered(true);
+        if (!s) {
+          try { localStorage.removeItem("compass_student_session"); } catch (e) { /* ignore */ }
+          return;
+        }
+        const students = (s.turns || []).filter((t) => t.role === "student");
+        setSession(s);
+        setAssignment(s.assignment || "");
+        if (students.length) {
+          setDraft(students[students.length - 1].content || "");
+        } else if (mode === "ot" && s.ot && !s.ot.handoff_ready) {
+          setOtData(s.ot);
           setOtPhase(true);
         } else {
-          try { localStorage.removeItem("compass_ot_session"); } catch (e) { /* ignore */ }
+          setWritingStarted(true);
         }
       })
       .catch(() => {
-        try { localStorage.removeItem("compass_ot_session"); } catch (e) { /* ignore */ }
+        try { localStorage.removeItem("compass_student_session"); } catch (e) { /* ignore */ }
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -290,8 +308,15 @@ export default function PublicPreview({ mode = "ot" }) {
           <AssignmentScreen
             assignment={assignment}
             setAssignment={setAssignment}
-            onContinue={mode === "ot" ? enterOrganizing : () => setWritingStarted(true)}
+            onContinue={() => setWritingStarted(true)}
             onBack={() => setEntered(false)}
+          />
+        ) : showStudentEntry ? (
+          <StudentEntry
+            mode={mode}
+            initialAssignment={assignment}
+            onSubmit={enterStudent}
+            submitting={starting}
           />
         ) : showOT ? (
           <OrganizingThought
@@ -308,6 +333,7 @@ export default function PublicPreview({ mode = "ot" }) {
             onBack={() => {
               setWritingStarted(false);
               if (mode === "ot" && session) setOtPhase(true);
+              else if (isStudent) setSession(null);
             }}
             submitting={starting}
           />
@@ -322,7 +348,7 @@ export default function PublicPreview({ mode = "ot" }) {
               reflection={session?.experience_control?.reflection}
               draft={draft}
               onRestart={restart}
-              onReviewAsTeacher={() => setReviewingAsTeacher(true)}
+              onReviewAsTeacher={isTeacher ? () => setReviewingAsTeacher(true) : undefined}
             />
           )
         ) : (

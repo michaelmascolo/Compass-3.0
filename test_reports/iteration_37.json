@@ -1,0 +1,22 @@
+{
+  "summary": "Frontend-only testing of student-mode framing fix. Verified: (1) ?preview=writing shows genuine student-entry ('Your Assignment', button 'Continue to Writing'), no teacher framing, no organizing-thought; fill+continue lands on writing-input. (2) ?preview=ot shows student-ot-intro ('Organize Your Thinking' + Begin), Begin→student-entry (button 'Continue'), fill+continue→organizing-thought with 'The Assignment' stage. (3) Resume works in-mode: reload on writing-input stays there; reload on organizing-thought resumes there. (4) Cross-mode isolation: after OT session stored, opening ?preview=writing shows student-entry (no organizing-thought). (5) Teacher paths intact: ?preview=teacher still shows welcome-begin-button + 'Welcome to Experience Compass'; ?review renders 'One assignment, six students'. (6) Homepage cards route correctly: btn-teacher-experience→?review, btn-student-writing→?preview=writing→'Your Assignment' (no teacher framing), btn-student-ot→?preview=ot→'Organize Your Thinking' (no teacher framing). All acceptance criteria met.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "PublicPreview.jsx has grown to 826 lines and contains WelcomeScreen usage plus AssignmentScreen, WritingScreen, Thinking, ThinkingWith, NoticingBeats, Beat as inline components — consider splitting into separate files for maintainability (>700 line guideline).",
+    "The resume useEffect in PublicPreview.jsx uses an empty dependency array with an isStudent guard read from closure; while it currently works (mount-only), it's fragile — ok as-is but noted.",
+    "Cross-mode isolation relies on parsed.mode !== mode check against a single localStorage key 'compass_student_session'. Working correctly, but a small note: an OT session stored under this key is NOT cleaned when switching modes, so a follow-up OT visit would still resume. Acceptable per spec (isolation is one-way per current tests)."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (skipped)", "frontend": "100%"},
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Student modes now use StudentEntry (student-entry / student-ot-intro test IDs). Teacher-simulation wrapper is only used when ?preview=teacher. Resume key is 'compass_student_session' storing {id, mode}. Cross-mode isolation is enforced by matching parsed.mode !== mode. All acceptance criteria in iteration_37 request confirmed via live UI tests against REACT_APP_BACKEND_URL."
+}

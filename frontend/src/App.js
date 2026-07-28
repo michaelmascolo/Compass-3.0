@@ -35,12 +35,15 @@ function App() {
   if (params.has("tests")) {
     return <TestHarness />;
   }
-  // Public Preview (?preview) — the in-character student entry experience.
-  //   ?preview            → Organizing Thought → Writing (default)
-  //   ?preview=ot         → Organizing Thought → Writing
-  //   ?preview=writing    → straight into the existing Writing workflow (skip OT)
+  // Public Preview / student entries (?preview).
+  //   ?preview=writing → genuine STUDENT Composition entry (student-facing)
+  //   ?preview=ot      → genuine STUDENT Organizing Thought entry (student-facing)
+  //   ?preview=teacher → teacher-simulation wrapper (Welcome + create-assignment + teacher reflection)
+  //   ?preview         → default: genuine STUDENT Organizing Thought (never the teacher simulation)
   if (params.has("preview")) {
-    return <PublicPreview mode={params.get("preview") === "writing" ? "writing" : "ot"} />;
+    const p = params.get("preview");
+    const mode = p === "writing" ? "writing" : p === "teacher" ? "teacher" : "ot";
+    return <PublicPreview mode={mode} />;
   }
   // Teacher Review (?review) — inspect the frozen engine on precomputed cases.
   if (params.has("review")) {
