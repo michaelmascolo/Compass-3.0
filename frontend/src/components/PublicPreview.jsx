@@ -46,8 +46,9 @@ export default function PublicPreview({ mode = "ot" }) {
   const [reviewingAsTeacher, setReviewingAsTeacher] = useState(false);
   // Chapter 6 — Pedagogical Noticing: the "I understand you" beats shown before
   // the frozen engine's developmental response, on the FIRST encounter only.
-  const [noticing, setNoticing] = useState(null); // {understanding, recognition, bridge}
-  const [revealStage, setRevealStage] = useState(0); // 0 none · 1 understanding · 2 +recognition · 3 +bridge
+  const [noticing, setNoticing] = useState(null); // {observations: [obs1, obs2?]}
+  const [revealStage, setRevealStage] = useState(0); // 0 none · 1 first observation · 2 second observation
+  const submitAtRef = useRef(0); // when the learner submitted (to pace the first observation ~3-5s)
   // Compass Developmental Feedback System.
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [earlyExitOpen, setEarlyExitOpen] = useState(false);
@@ -112,19 +113,23 @@ export default function PublicPreview({ mode = "ot" }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeCoaching?.id]);
 
-  // Chapter 6 — reveal the noticing beats as a conversational sequence: subtle
-  // timing (gentle fades), never a performed animation.
+  // Reveal the interim observations as a paced, grounded sequence. The FIRST
+  // observation is held until ~3.5s after the learner submitted (so it reads as
+  // a genuine reading of their writing, never an instant placating message); a
+  // SECOND grounded observation, if present, follows ~3s later. They never delay
+  // the full coaching response, which replaces them when reasoning completes.
   useEffect(() => {
-    if (!noticing) {
+    if (!noticing || !(noticing.observations || []).length) {
       setRevealStage(0);
       return;
     }
-    setRevealStage(1);
-    const t2 = setTimeout(() => setRevealStage((s) => (s < 2 ? 2 : s)), 1400);
-    const t3 = setTimeout(() => setRevealStage((s) => (s < 3 ? 3 : s)), 2800);
+    const elapsed = Date.now() - (submitAtRef.current || 0);
+    const firstDelay = Math.max(0, 3500 - elapsed); // ensure ~3.5s before first observation
+    const t1 = setTimeout(() => setRevealStage((s) => (s < 1 ? 1 : s)), firstDelay);
+    const t2 = setTimeout(() => setRevealStage((s) => (s < 2 ? 2 : s)), firstDelay + 3000);
     return () => {
+      clearTimeout(t1);
       clearTimeout(t2);
-      clearTimeout(t3);
     };
   }, [noticing]);
 
@@ -171,6 +176,9 @@ export default function PublicPreview({ mode = "ot" }) {
   const submitResponse = useCallback(async () => {
     if (response.trim().length < 15 || starting) return;
     setStarting(true);
+    submitAtRef.current = Date.now();
+    setNoticing(null);
+    setRevealStage(0);
     try {
       let s = session;
       if (!s) {
@@ -861,12 +869,12 @@ function ThinkingWith() {
   );
 }
 
-// Chapter 6 — the Pedagogical Noticing beats. Understanding → (pause) →
-// Recognition (only if genuine) → (pause) → Bridge. Same voice and surface as
-// the coaching that follows, so the encounter reads as one continuous
-// conversation. Gentle fades only.
+// The interim observations. Grounded observation 1 (emerging central idea) →
+// (pause) → grounded observation 2 (the structural relationship/distinction),
+// if present. Same voice and surface as the coaching that follows, so the
+// encounter reads as one continuous, developing line of instruction.
 function NoticingBeats({ noticing, revealStage }) {
-  const { understanding, recognition, bridge } = noticing || {};
+  const observations = (noticing && noticing.observations) || [];
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -880,17 +888,14 @@ function NoticingBeats({ noticing, revealStage }) {
         Your coach
       </div>
       <div className="space-y-3">
-        <Beat show={revealStage >= 1} testid="preview-noticing-understanding">
-          {understanding}
-        </Beat>
-        {recognition && (
-          <Beat show={revealStage >= 2} testid="preview-noticing-recognition">
-            {recognition}
+        {observations[0] && (
+          <Beat show={revealStage >= 1} testid="preview-noticing-observation-1">
+            {observations[0]}
           </Beat>
         )}
-        {bridge && (
-          <Beat show={revealStage >= 3} testid="preview-noticing-bridge">
-            {bridge}
+        {observations[1] && (
+          <Beat show={revealStage >= 2} testid="preview-noticing-observation-2">
+            {observations[1]}
           </Beat>
         )}
       </div>
