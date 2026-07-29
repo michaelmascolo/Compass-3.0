@@ -2953,23 +2953,37 @@ async def _render_coaching(session: Session, req: InteractRequest, plan: dict) -
         return ok, issues
 
     try:
+        _tg1 = time.perf_counter()
         text = await _generate()
+        _t_gen1 = time.perf_counter() - _tg1
+        _tv = time.perf_counter()
         ok, issues = _check(text)
+        _t_val = time.perf_counter() - _tv
         if ok:
-            plan["_validator"] = {"passed": True, "issues": [], "regenerated": False}
+            plan["_validator"] = {"passed": True, "issues": [], "regenerated": False,
+                                   "t_gen1_s": round(_t_gen1, 2), "t_validate_s": round(_t_val, 3),
+                                   "t_gen2_s": 0.0, "calls": 1}
+            logger.info(f"[stage_c] calls=1 gen1={round(_t_gen1,2)}s validate={round(_t_val,3)}s regenerated=False")
             return text
         logger.info(f"[stage_c] validation failed (regenerating once): {issues}")
+        _tg2 = time.perf_counter()
         text2 = await _generate("; ".join(issues))
+        _t_gen2 = time.perf_counter() - _tg2
         ok2, issues2 = _check(text2)
         # Final safety net: never persist meta/leak text. Sanitize; if a leak
         # survives sanitization or nothing usable remains, drop to the Stage-B text.
         final = text2
         if _contains_leak(final):
             final = _sanitize_coaching(final)
+        logger.info(f"[stage_c] calls=2 gen1={round(_t_gen1,2)}s validate={round(_t_val,3)}s gen2={round(_t_gen2,2)}s regenerated=True issues={issues}")
         if not final or _contains_leak(final):
-            plan["_validator"] = {"passed": False, "issues": issues2, "regenerated": True, "fell_back": True}
+            plan["_validator"] = {"passed": False, "issues": issues2, "regenerated": True, "fell_back": True,
+                                   "t_gen1_s": round(_t_gen1, 2), "t_validate_s": round(_t_val, 3),
+                                   "t_gen2_s": round(_t_gen2, 2), "calls": 2}
             return None
-        plan["_validator"] = {"passed": ok2, "issues": issues2, "regenerated": True}
+        plan["_validator"] = {"passed": ok2, "issues": issues2, "regenerated": True,
+                               "t_gen1_s": round(_t_gen1, 2), "t_validate_s": round(_t_val, 3),
+                               "t_gen2_s": round(_t_gen2, 2), "calls": 2}
         return final
     except Exception as e:  # noqa: BLE001
         logger.warning(f"[stage_c] coaching renderer failed: {e}")
