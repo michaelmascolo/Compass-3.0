@@ -2834,10 +2834,85 @@ _ACTION_CUES = [
 
 # a suggestion phrase followed by a quoted clause looks like ready-made text
 _READYMADE_RE = re.compile(
-    r"(you could (?:write|say|put it)|you might (?:write|say)|for example,?\s*you could|try (?:writing|saying)|such as[:,]?)\s*[\"“][^\"”]{20,}[\"”]",
+    r"(you could (?:write|say|put it)|you might (?:write|say)|for example,?\s*you could|try (?:writing|saying)|such as[:,]?)\s*[\"“]([^\"”]{20,})[\"”]",
     re.IGNORECASE,
 )
 _QUOTED_RE = re.compile(r"[\"“]([^\"”]{24,})[\"”]")
+
+# --- Acceptable-scaffold detectors (Phase II Step 4): a quote is NOT a ready-made
+# answer when it is attributed to a reader/other, is a frame/template with a slot,
+# is a question, quotes the student's own words, or is an off-topic structural
+# example. Only an on-topic, unattributed, polished sentence that could be pasted
+# as the student's answer is a constitutional violation. ---
+_ATTRIB_RE = re.compile(
+    r"\b(reader|readers|skeptic|skeptical|someone|somebody|critic|classmate|classmates|"
+    r"audience|opponent|objector|they|people)\b[^\"“]{0,55}?\b"
+    r"(think|thinks|thought|wonder|wonders|wondering|ask|asks|asking|say|says|said|"
+    r"object|objects|respond|responds|assume|assumes|believe|believes|imagine|imagines|push back|might)\b",
+    re.IGNORECASE,
+)
+_FRAME_RE = re.compile(
+    r"(_{2,}|\[[^\]]{0,40}\]|\.\.\.|…|\bblank\b|\byour (?:reason|claim|point|topic|idea|thesis|"
+    r"position|example|evidence|term|word)\b|\bsome (?:reason|specific|word|term)\b)",
+    re.IGNORECASE,
+)
+
+
+def _salient_set(text: str) -> set:
+    return {w.lower() for w in re.findall(r"[a-zA-Z]{5,}", text or "")}
+
+
+def _quote_is_scaffold(quote: str, preceding: str, student_excerpt: str) -> bool:
+    """True when a quoted clause is an ACCEPTABLE scaffold, not a submittable answer."""
+    q = (quote or "").strip()
+    if not q:
+        return True
+    # quoting the student's OWN wording (recognition): the quote is (nearly) a
+    # contiguous substring of the student's actual text. Word-overlap is NOT used
+    # here — a genuine ready-made answer reuses the student's topic vocabulary too.
+    stu = _norm(student_excerpt)
+    qn = _norm(q)
+    if qn and qn in stu:
+        return True
+    # a focused revision question
+    if q.rstrip().endswith("?"):
+        return True
+    # a sentence frame / template with an open slot
+    if _FRAME_RE.search(q):
+        return True
+    # attributed to a reader / skeptic / someone else (illustrative, not the student's answer)
+    if _ATTRIB_RE.search(preceding or ""):
+        return True
+    # an off-topic structural example: shares NO salient content noun with the
+    # student's own writing, so it cannot serve as their answer to THIS assignment.
+    q_nouns = {w for w in _salient_set(q)}
+    stu_nouns = _salient_set(student_excerpt)
+    _STOP = {"thesis", "reason", "reasons", "sentence", "sentences", "essay", "claim",
+             "point", "reader", "readers", "example", "writer", "writers", "should",
+             "because", "argue", "position", "idea", "ideas", "paragraph"}
+    topical = (q_nouns & stu_nouns) - _STOP
+    if not topical:
+        return True
+    return False
+
+
+def _readymade_violation(body: str, student_excerpt: str) -> bool:
+    """Flag ONLY a quote that would hand the student a submittable sentence performing
+    their target operation. Exempts reader-attributed quotes, frames, questions, the
+    student's own words, and off-topic structural examples. Constitutional rule intact."""
+    # suggestion-framed quotes ("you could write: '...'")
+    for m in _READYMADE_RE.finditer(body):
+        q = m.group(2)
+        preceding = body[max(0, m.start()):m.start(2)]
+        if not _quote_is_scaffold(q, preceding, student_excerpt):
+            return True
+    # bare long quotes
+    for m in _QUOTED_RE.finditer(body):
+        q = m.group(1)
+        preceding = body[max(0, m.start() - 60):m.start()]
+        if not _quote_is_scaffold(q, preceding, student_excerpt):
+            return True
+    return False
 
 
 def _norm(s: str) -> str:
@@ -2846,6 +2921,23 @@ def _norm(s: str) -> str:
 
 def _salient_nouns(text: str, drop: set) -> list:
     return [w for w in re.findall(r"[a-zA-Z]{5,}", text or "") if w.lower() not in drop]
+
+
+def _readymade_violation_legacy(body: str, student_excerpt: str) -> bool:
+    """The PRE-refinement rule (any non-student long quote flagged). Kept ONLY to log
+    a before/after comparison on identical live drafts; not used for behavior."""
+    if _READYMADE_RE.search(body or ""):
+        return True
+    stu = _norm(student_excerpt)
+    for q in _QUOTED_RE.findall(body or ""):
+        qn = _norm(q)
+        if qn and qn not in stu:
+            words = qn.split()
+            overlap = sum(1 for w in words if w in stu) / max(1, len(words))
+            if overlap < 0.6:
+                return True
+    return False
+
 
 
 def _validate_coaching(text: str, primary_target: str, required_dependency: str,
@@ -2882,22 +2974,11 @@ def _validate_coaching(text: str, primary_target: str, required_dependency: str,
     if not any(cue in body.lower() for cue in _ACTION_CUES):
         issues.append("contains no clear actionable learner operation (a question or an invited writing move)")
 
-    # 4. must not hand the student a ready-made sentence to submit. Quoting the
-    #    student's OWN wording for recognition is fine; only flag suggestion-framed
-    #    quotes, or a long quote that is NOT drawn from the student's own text.
-    flagged_readymade = bool(_READYMADE_RE.search(body))
-    if not flagged_readymade:
-        stu = _norm(student_excerpt)
-        for q in _QUOTED_RE.findall(body):
-            qn = _norm(q)
-            # if the quote is largely the student's own words, it's recognition — allow
-            if qn and qn not in stu:
-                words = qn.split()
-                overlap = sum(1 for w in words if w in stu) / max(1, len(words))
-                if overlap < 0.6:
-                    flagged_readymade = True
-                    break
-    if flagged_readymade:
+    # 4. must not hand the student a ready-made sentence to submit. Refined (Step 4):
+    #    exempts the student's own words, sentence frames, revision questions, quotes
+    #    attributed to a reader/other, and off-topic structural examples. Only an
+    #    on-topic, unattributed, polished submittable sentence is a violation.
+    if _readymade_violation(body, student_excerpt):
         issues.append("appears to supply a ready-made sentence the student could submit verbatim")
 
     return (len(issues) == 0, issues, target_key, dep_key)
@@ -3037,6 +3118,10 @@ async def _render_coaching(session: Session, req: InteractRequest, plan: dict) -
         _tg1 = time.perf_counter()
         text = await _generate()
         _t_gen1 = time.perf_counter() - _tg1
+        # before/after comparison on the identical gen1 draft (logging only)
+        _old_rm = _readymade_violation_legacy(text, req.content or "")
+        _new_rm = _readymade_violation(text, req.content or "")
+        logger.info(f"[stage_c_validator] readymade_old={_old_rm} readymade_new={_new_rm}")
         _tv = time.perf_counter()
         ok, issues = _check(text)
         _t_val = time.perf_counter() - _tv
