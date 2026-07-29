@@ -152,6 +152,65 @@ def _build_exit_criteria_block() -> str:
 EXIT_CRITERIA_BLOCK = _build_exit_criteria_block()
 
 
+# ---------------------------------------------------------------------------
+# DETERMINISTIC PLAN HYDRATOR (Phase II, Step 2). Given the canonical element key
+# the LLM CHOSE, assemble ALL deterministic instructional scaffolding straight
+# from the Writing Knowledge Base — canonical explanation, purpose, performance
+# structure, structural relationships, dependency relationships, developmental
+# difficulties, instructional strategies, observable indicators, exit criterion.
+# The LLM no longer needs to RE-TYPE these; it only needs to name the element.
+# Behavior-preserving: consumers PREFER hydrated KB values and fall back to the
+# LLM-emitted values when an element is not in the KB.
+# ---------------------------------------------------------------------------
+# canonical element key -> (instructional_objects element name, exit_criteria id)
+KB_ELEMENT_MAP = {
+    "communicative_purpose": ("Purpose", "communicative_purpose"),
+    "overall_organization": ("Organization", "overall_organization"),
+    "introduction": ("Introduction", "introduction"),
+    "paragraph_purpose": ("Paragraph", "paragraph_purpose"),
+    "controlling_idea": ("Topic Sentence", "controlling_idea"),
+    "thesis": ("Thesis", "thesis"),
+    "definition": ("Definition", "definition"),
+    "explanation": ("Explanation / Analysis", "explanation"),
+    "evidence": ("Evidence", "evidence"),
+    "example": ("Example", "example"),
+    "transition": ("Transition", "transition"),
+    "reader_guidance": ("Audience Awareness", "reader_guidance"),
+    "synthesis": ("Synthesis", "synthesis"),
+    "closure": ("Conclusion", "closure"),
+    "sentence_purpose": ("Sentence", "sentence_purpose"),
+    "sentence_relationships": ("Coherence", "sentence_relationships"),
+}
+
+
+def hydrate_element(element_key: Optional[str]) -> dict:
+    """Return the deterministic KB scaffolding for a canonical element key, or {}
+    if the key is unknown. Pure lookup — never an LLM call."""
+    m = KB_ELEMENT_MAP.get(element_key or "")
+    if not m:
+        return {}
+    io_name, exit_id = m
+    io = _IO_BY_NAME.get((io_name or "").lower(), {}) or {}
+    ex = EXIT_CRITERIA_BY_ID.get(exit_id or "", {}) or {}
+    return {
+        "element_key": element_key,
+        "canonical_element": io.get("element") or ex.get("name") or element_key,
+        "explanation": CANONICAL_EXPLANATIONS.get(element_key, ""),
+        "purpose": io.get("communicative_purpose", "") or ex.get("purpose", ""),
+        "performance_structure": io.get("performance_structure", ""),
+        "relationships": io.get("related_elements", []) or [],
+        "dependencies": ex.get("dependencies", []) or [],
+        "difficulties": io.get("common_obstacles", "") or "; ".join(ex.get("failure_modes", []) or []),
+        "strategies": io.get("next_developmental_moves", ""),
+        "revision_strategies": io.get("revision_strategies", []) or [],
+        "indicators": io.get("indicators_of_control", ""),
+        "exit_criterion": ex.get("exit_criterion", ""),
+        "next_operation": ex.get("next_operation", ""),
+    }
+
+
+
+
 
 def get_relevant_instructional_objects(names: list) -> list:
     """Retrieve full instructional objects by element name/alias (exact-ish match)."""
@@ -1813,28 +1872,36 @@ def _curate_case(case: dict) -> dict:
 
     set_aside = _clean_list(scaf.get("postponed") or scaf.get("diagnosed_opportunities"))
 
-    # WHERE IT FITS — the element's place in the essay's architecture, drawn from
-    # the SAME Stage B plan that drives the student coaching. structural_reasoning
-    # is richest in the full engine; preview sessions carry the same information in
-    # instructional_reasoning (purpose + canonical performance structure).
-    architecture = _clean_list(
-        (struct.get("element_relationships") or [])
-        + (struct.get("developmental_dependencies") or [])
-    )
+    # DETERMINISTIC KB lookup keyed on the CHOSEN focus element — the same hydrator
+    # that feeds student coaching, so Teacher Review is the professional mirror.
+    focus_target = (scaf.get("primary_target") or instr.get("active_instructional_element") or "").strip()
+    kb = hydrate_element(_element_key_for(focus_target))
+
+    # WHERE IT FITS — prefer canonical KB architecture (consistent across students);
+    # fall back to the LLM's structural_reasoning, then instructional_reasoning.
+    architecture = _clean_list(kb.get("relationships") or [])
+    if not architecture:
+        architecture = _clean_list(
+            (struct.get("element_relationships") or [])
+            + (struct.get("developmental_dependencies") or [])
+        )
     if not architecture:
         architecture = _clean_list([
-            (instr.get("element_communicative_purpose") or "").strip(),
-            (instr.get("canonical_performance_structure") or "").strip(),
+            (kb.get("purpose") or instr.get("element_communicative_purpose") or "").strip(),
+            (kb.get("performance_structure") or instr.get("canonical_performance_structure") or "").strip(),
         ])
     if not architecture and struct.get("structure_identified"):
         architecture = [f"This works at the level of the {struct.get('structure_identified')}."]
 
-    # WHAT NEXT — where the writer goes once this element is strengthened.
+    # WHAT NEXT — the writer's next step is a JUDGMENT (contextual sequencing); keep
+    # the LLM value, backed by the canonical KB next_operation.
     next_step = (
         (instr.get("next_developmental_step") or "").strip()
         or (scaf.get("future_opportunity") or "").strip()
+        or (kb.get("next_operation") or "").strip()
     )
-    exit_criterion = (struct.get("active_exit_criterion") or "").strip()
+    # Exit criterion is deterministic KB knowledge — prefer canonical.
+    exit_criterion = (kb.get("exit_criterion") or struct.get("active_exit_criterion") or "").strip()
 
     return {
         "id": case.get("id"),
@@ -1850,16 +1917,16 @@ def _curate_case(case: dict) -> dict:
             ]),
             "recognized": recognized[:4],
             "focus": {
-                "target": (scaf.get("primary_target") or instr.get("active_instructional_element") or "").strip(),
-                "element": (instr.get("active_instructional_element") or "").strip(),
-                "purpose": (instr.get("element_communicative_purpose") or "").strip(),
+                "target": focus_target,
+                "element": (kb.get("canonical_element") or instr.get("active_instructional_element") or "").strip(),
+                "purpose": (kb.get("purpose") or instr.get("element_communicative_purpose") or "").strip(),
             },
             "why": (scaf.get("prioritization_rationale") or instr.get("primary_developmental_tension") or "").strip(),
             "set_aside": set_aside,
             "architecture": architecture[:4],
             "exit_criterion": exit_criterion,
             "next_step": next_step,
-            "broader": (scaf.get("future_opportunity") or instr.get("element_communicative_purpose") or "").strip(),
+            "broader": (scaf.get("future_opportunity") or kb.get("purpose") or instr.get("element_communicative_purpose") or "").strip(),
         },
     }
 
@@ -2877,6 +2944,19 @@ def _coaching_plan_prompt(session: Session, req: InteractRequest, plan: dict) ->
         expl_lines += f"- CANONICAL explanation of the target element (adapt to grade level, PRESERVE its meaning — do NOT invent a different theoretical description): \"{plan['target_explanation']}\"\n"
     if plan.get("dependency_explanation"):
         expl_lines += f"- CANONICAL explanation of the dependency element (adapt, preserve meaning): \"{plan['dependency_explanation']}\"\n"
+    # Deterministic canonical scaffolding from the Writing Knowledge Base (looked up,
+    # not reconstructed) — the fixed teaching content for THIS element. Adapt to the
+    # student's level; preserve meaning; do not invent alternatives.
+    kb = plan.get("kb") or {}
+    kb_lines = ""
+    if kb.get("purpose"):
+        kb_lines += f"- CANONICAL communicative purpose of this element (what it does for a reader): \"{kb['purpose']}\"\n"
+    if kb.get("performance_structure"):
+        kb_lines += f"- CANONICAL performance structure (how writers construct this element — teach toward this, do not dump it): \"{kb['performance_structure']}\"\n"
+    if kb.get("strategies"):
+        kb_lines += f"- CANONICAL instructional strategy for this element (a transferable move; adapt into your own words): \"{kb['strategies']}\"\n"
+    if kb.get("relationships"):
+        kb_lines += f"- STRUCTURAL relationships (how this element fits the essay architecture): {', '.join(kb['relationships'][:6])}\n"
     return (
         f"ASSIGNMENT CONTEXT:\n\"\"\"{(session.assignment or '').strip()[:600]}\"\"\"\n\n"
         f"STUDENT'S RELEVANT WRITING (the material to teach through — do NOT rewrite it):\n\"\"\"{excerpt}\"\"\"\n\n"
@@ -2884,6 +2964,7 @@ def _coaching_plan_prompt(session: Session, req: InteractRequest, plan: dict) ->
         f"- BINDING primary instructional target (the writing element this turn MUST teach): {plan['primary_target']}\n"
         f"{dep_line}"
         f"{expl_lines}"
+        f"{kb_lines}"
         f"- Developmental sufficiency of the current focus: {suff} "
         f"({'already sufficient — acknowledge and advance to the next step' if suff.lower()=='sufficient' else 'not yet — teach/scaffold it this turn'})\n"
         f"- Active exit criterion (what must become TRUE for the student to move on — do NOT quote this verbatim, teach toward it): {plan.get('active_exit_criterion') or '(n/a)'}\n"
@@ -3003,16 +3084,22 @@ def _build_coaching_plan(parsed: dict) -> dict:
     )
     target_key = _element_key_for(sc.primary_target or "")
     dep_key = _element_key_for(ir.required_dependency or "") if dependency_active else None
+    kb = hydrate_element(target_key)          # deterministic canonical scaffolding
+    dep_kb = hydrate_element(dep_key) if dep_key else {}
     return {
         "primary_target": (sc.primary_target or "").strip(),
         "required_dependency": (ir.required_dependency or "").strip(),
         "dependency_active": dependency_active,
         "sufficiency_for_next_step": (ir.sufficiency_for_next_step or "").strip(),
         "next_developmental_step": (ir.next_developmental_step or "").strip(),
-        "active_exit_criterion": (sr.active_exit_criterion or "").strip(),
+        # Exit criterion is deterministic KB knowledge — prefer the canonical value,
+        # fall back to the LLM-emitted one only when the element is not in the KB.
+        "active_exit_criterion": (kb.get("exit_criterion") or sr.active_exit_criterion or "").strip(),
         "candidate_move": parsed.get("invitation", ""),
-        "target_explanation": CANONICAL_EXPLANATIONS.get(target_key or "", ""),
-        "dependency_explanation": CANONICAL_EXPLANATIONS.get(dep_key or "", ""),
+        "target_explanation": kb.get("explanation") or CANONICAL_EXPLANATIONS.get(target_key or "", ""),
+        "dependency_explanation": dep_kb.get("explanation") or CANONICAL_EXPLANATIONS.get(dep_key or "", ""),
+        "kb": kb,
+        "dep_kb": dep_kb,
     }
 
 

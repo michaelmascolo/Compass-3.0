@@ -6423,6 +6423,49 @@
         "transfer": "pattern_interpreted",
         "engine_usage": "pattern_boilerplate"
       }
+    },
+    {
+      "domain": "writing",
+      "element": "Synthesis",
+      "aliases": [
+        "integration",
+        "bringing ideas together"
+      ],
+      "definition": "Showing the reader how several developed ideas fit together into a larger point.",
+      "communicative_purpose": "Show how multiple ideas work together to create a meaning larger than any one of them alone.",
+      "performance_structure": "Gather the developed ideas that belong together; name the relationship among them; state the larger point that emerges from combining them; show the reader why the whole means more than the parts.",
+      "recognition_diagnostics": "The draft lists or explains several ideas but never states what they add up to; the reader is left to assemble the larger meaning alone.",
+      "common_obstacles": "Mere summary instead of integration; disconnected points left side by side; restating each idea without naming the larger point they create together.",
+      "next_developmental_moves": "Ask the student which ideas belong together and what larger point those ideas make when combined; invite them to write the one sentence that states the meaning created by the combination.",
+      "indicators_of_control": "The student independently draws developed ideas together into a stated larger meaning, rather than summarizing them one by one.",
+      "related_elements": [
+        "Explanation / Analysis",
+        "Organization",
+        "Conclusion",
+        "Thesis",
+        "Supporting Claim",
+        "Unity"
+      ],
+      "functional_relationships": {
+        "explanation": "Synthesis builds on ideas the student has already explained; it names what those explanations add up to.",
+        "organization": "Synthesis depends on the ideas being developed and arranged clearly enough to be combined.",
+        "conclusion": "Synthesis often prepares closure by establishing the larger meaning the ending completes."
+      },
+      "common_difficulties": [
+        "mere summary",
+        "disconnected points"
+      ],
+      "revision_strategies": [
+        "Underline the separate ideas, then write one sentence stating what they mean together.",
+        "Replace a summary sentence with a sentence that names the relationship among the ideas."
+      ],
+      "indicators_of_development": "Begins to state a combined meaning rather than re-listing ideas.",
+      "stopping_conditions": [
+        "Learner independently states the larger meaning created by combining developed ideas.",
+        "Diminishing returns — the element performs its canonical function for this reader and purpose."
+      ],
+      "canonical_source": "developmental_exit_criteria.json:synthesis + canonical_explanations.synthesis",
+      "enrichment_version": "phase2-step1-gapfill-v1"
     }
   ]
 }

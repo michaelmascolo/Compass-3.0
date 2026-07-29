@@ -21,146 +21,309 @@
     "sentence_relationships": "Sentences should connect so your reader sees why each one follows the last."
   },
   "levels": {
-    "whole_composition": ["communicative_purpose", "overall_organization"],
-    "introduction": ["introduction"],
-    "body_paragraph": ["paragraph_purpose", "controlling_idea", "definition", "explanation", "evidence", "example", "transition", "reader_guidance", "synthesis", "closure"],
-    "sentence": ["sentence_purpose", "sentence_relationships"]
+    "whole_composition": [
+      "communicative_purpose",
+      "overall_organization"
+    ],
+    "introduction": [
+      "introduction"
+    ],
+    "body_paragraph": [
+      "paragraph_purpose",
+      "controlling_idea",
+      "definition",
+      "explanation",
+      "evidence",
+      "example",
+      "transition",
+      "reader_guidance",
+      "synthesis",
+      "closure"
+    ],
+    "sentence": [
+      "sentence_purpose",
+      "sentence_relationships"
+    ]
   },
   "elements": [
     {
-      "id": "communicative_purpose", "n": 1, "name": "Communicative Purpose", "level": "whole_composition",
+      "id": "communicative_purpose",
+      "n": 1,
+      "name": "Communicative Purpose",
+      "level": "whole_composition",
       "purpose": "Identify what the writer is trying to accomplish.",
       "cognitive_operation": "Establish a meaningful communicative goal.",
       "exit_criterion": "Can the remainder of the composition be organized around a reasonably clear communicative purpose?",
       "dependencies": [],
-      "failure_modes": ["no clear purpose", "multiple competing purposes", "purpose shifts without reason"],
+      "failure_modes": [
+        "no clear purpose",
+        "multiple competing purposes",
+        "purpose shifts without reason"
+      ],
       "next_operation": "Overall organization"
     },
     {
-      "id": "overall_organization", "n": 2, "name": "Overall Organization", "level": "whole_composition",
+      "id": "overall_organization",
+      "n": 2,
+      "name": "Overall Organization",
+      "level": "whole_composition",
       "purpose": "Provide a coherent progression toward the communicative purpose.",
       "cognitive_operation": "Organize major ideas into an understandable whole.",
       "exit_criterion": "Can the reader reasonably follow the intended progression of ideas?",
-      "dependencies": ["Communicative purpose"],
-      "failure_modes": ["disconnected sections", "arbitrary order", "no progression"],
+      "dependencies": [
+        "Communicative purpose"
+      ],
+      "failure_modes": [
+        "disconnected sections",
+        "arbitrary order",
+        "no progression"
+      ],
       "next_operation": "Major parts"
     },
     {
-      "id": "introduction", "n": 3, "name": "Introduction", "level": "introduction",
+      "id": "introduction",
+      "n": 3,
+      "name": "Introduction",
+      "level": "introduction",
       "purpose": "Prepare the reader for the composition.",
       "cognitive_operation": "Orient the reader.",
       "exit_criterion": "Can the reader understand what this composition will be about and why it matters?",
-      "dependencies": ["Purpose"],
-      "failure_modes": ["begins abruptly", "lacks orientation", "irrelevant opening"],
+      "dependencies": [
+        "Purpose"
+      ],
+      "failure_modes": [
+        "begins abruptly",
+        "lacks orientation",
+        "irrelevant opening"
+      ],
       "next_operation": "Thesis"
     },
     {
-      "id": "paragraph_purpose", "n": 4, "name": "Paragraph Purpose", "level": "body_paragraph",
+      "id": "paragraph_purpose",
+      "n": 4,
+      "name": "Paragraph Purpose",
+      "level": "body_paragraph",
       "purpose": "Establish the contribution this paragraph makes to the whole composition.",
       "cognitive_operation": "Determine what work this paragraph performs.",
       "exit_criterion": "Can the paragraph be understood as accomplishing one identifiable purpose?",
-      "dependencies": ["Overall organization"],
-      "failure_modes": ["multiple unrelated purposes", "no clear contribution"],
+      "dependencies": [
+        "Overall organization"
+      ],
+      "failure_modes": [
+        "multiple unrelated purposes",
+        "no clear contribution"
+      ],
       "next_operation": "Controlling idea"
     },
     {
-      "id": "controlling_idea", "n": 5, "name": "Controlling Idea (Paragraph Thesis)", "level": "body_paragraph",
+      "id": "controlling_idea",
+      "n": 5,
+      "name": "Controlling Idea (Paragraph Thesis)",
+      "level": "body_paragraph",
       "purpose": "Organize the paragraph.",
       "cognitive_operation": "Express the central idea that governs the paragraph.",
       "exit_criterion": "Can the remaining sentences reasonably develop this idea?",
-      "dependencies": ["Paragraph purpose"],
-      "failure_modes": ["unclear claim", "multiple competing ideas", "no organizing idea"],
+      "dependencies": [
+        "Paragraph purpose"
+      ],
+      "failure_modes": [
+        "unclear claim",
+        "multiple competing ideas",
+        "no organizing idea"
+      ],
       "next_operation": "Definitions (if needed) or explanation"
     },
     {
-      "id": "definition", "n": 6, "name": "Definition", "level": "body_paragraph",
+      "id": "definition",
+      "n": 6,
+      "name": "Definition",
+      "level": "body_paragraph",
       "purpose": "Enable the reader to understand an important concept.",
       "cognitive_operation": "Identify what something IS.",
       "exit_criterion": "Can the concept now be used in subsequent explanation without confusing the reader?",
-      "dependencies": ["Identification of the concept"],
-      "failure_modes": ["behavior instead of concept", "examples instead of definition", "circular definition", "undefined technical language"],
+      "dependencies": [
+        "Identification of the concept"
+      ],
+      "failure_modes": [
+        "behavior instead of concept",
+        "examples instead of definition",
+        "circular definition",
+        "undefined technical language"
+      ],
       "next_operation": "Explanation"
     },
     {
-      "id": "explanation", "n": 7, "name": "Explanation", "level": "body_paragraph",
+      "id": "explanation",
+      "n": 7,
+      "name": "Explanation",
+      "level": "body_paragraph",
       "purpose": "Help the reader understand why or how.",
       "cognitive_operation": "Develop meaning.",
       "exit_criterion": "Can the reader understand the intended relationship among the ideas?",
-      "dependencies": ["Controlling idea", "Definitions when necessary"],
-      "failure_modes": ["assertion without explanation", "disconnected ideas", "unexplained reasoning"],
+      "dependencies": [
+        "Controlling idea",
+        "Definitions when necessary"
+      ],
+      "failure_modes": [
+        "assertion without explanation",
+        "disconnected ideas",
+        "unexplained reasoning"
+      ],
       "next_operation": "Evidence or examples if needed"
     },
     {
-      "id": "evidence", "n": 8, "name": "Evidence", "level": "body_paragraph",
+      "id": "evidence",
+      "n": 8,
+      "name": "Evidence",
+      "level": "body_paragraph",
       "purpose": "Support claims.",
       "cognitive_operation": "Connect claims to observations, examples, or sources.",
       "exit_criterion": "Can the claim now be reasonably accepted or considered by the reader?",
-      "dependencies": ["Claim"],
-      "failure_modes": ["unsupported assertion", "irrelevant evidence", "evidence without explanation"],
+      "dependencies": [
+        "Claim"
+      ],
+      "failure_modes": [
+        "unsupported assertion",
+        "irrelevant evidence",
+        "evidence without explanation"
+      ],
       "next_operation": "Integration"
     },
     {
-      "id": "example", "n": 9, "name": "Example", "level": "body_paragraph",
+      "id": "example",
+      "n": 9,
+      "name": "Example",
+      "level": "body_paragraph",
       "purpose": "Clarify an abstract idea.",
       "cognitive_operation": "Illustrate.",
       "exit_criterion": "Does the example genuinely help the reader understand the idea?",
-      "dependencies": ["Explanation"],
-      "failure_modes": ["irrelevant example", "example replaces explanation"],
+      "dependencies": [
+        "Explanation"
+      ],
+      "failure_modes": [
+        "irrelevant example",
+        "example replaces explanation"
+      ],
       "next_operation": "Return to explanation"
     },
     {
-      "id": "transition", "n": 10, "name": "Transition", "level": "body_paragraph",
+      "id": "transition",
+      "n": 10,
+      "name": "Transition",
+      "level": "body_paragraph",
       "purpose": "Help readers understand relationships between ideas.",
       "cognitive_operation": "Connect ideas.",
       "exit_criterion": "Can the reader understand why the next idea follows from the previous one?",
-      "dependencies": ["Clear relationship between ideas"],
-      "failure_modes": ["transition without relationship", "relationship without signal"],
+      "dependencies": [
+        "Clear relationship between ideas"
+      ],
+      "failure_modes": [
+        "transition without relationship",
+        "relationship without signal"
+      ],
       "next_operation": "Continue development"
     },
     {
-      "id": "reader_guidance", "n": 11, "name": "Reader Guidance", "level": "body_paragraph",
+      "id": "reader_guidance",
+      "n": 11,
+      "name": "Reader Guidance",
+      "level": "body_paragraph",
       "purpose": "Help the reader stay oriented.",
       "cognitive_operation": "Maintain coherence.",
       "exit_criterion": "Can the reader easily follow who, what, and which idea is being discussed?",
-      "dependencies": ["Organization"],
-      "failure_modes": ["unclear references", "abrupt topic shifts", "ambiguity"],
+      "dependencies": [
+        "Organization"
+      ],
+      "failure_modes": [
+        "unclear references",
+        "abrupt topic shifts",
+        "ambiguity"
+      ],
       "next_operation": "Continue development"
     },
     {
-      "id": "synthesis", "n": 12, "name": "Synthesis", "level": "body_paragraph",
+      "id": "synthesis",
+      "n": 12,
+      "name": "Synthesis",
+      "level": "body_paragraph",
       "purpose": "Show how multiple ideas work together.",
       "cognitive_operation": "Integrate.",
       "exit_criterion": "Can the reader understand the larger meaning created by combining the ideas?",
-      "dependencies": ["Multiple developed ideas"],
-      "failure_modes": ["mere summary", "disconnected points"],
+      "dependencies": [
+        "Multiple developed ideas"
+      ],
+      "failure_modes": [
+        "mere summary",
+        "disconnected points"
+      ],
       "next_operation": "Closure"
     },
     {
-      "id": "closure", "n": 13, "name": "Closure", "level": "body_paragraph",
+      "id": "closure",
+      "n": 13,
+      "name": "Closure",
+      "level": "body_paragraph",
       "purpose": "Provide a sense of completion.",
       "cognitive_operation": "Conclude.",
       "exit_criterion": "Can the reader recognize that this unit of writing has reached a natural stopping point?",
-      "dependencies": ["Completed development"],
-      "failure_modes": ["abrupt ending", "repetition", "introduction of new major ideas"],
+      "dependencies": [
+        "Completed development"
+      ],
+      "failure_modes": [
+        "abrupt ending",
+        "repetition",
+        "introduction of new major ideas"
+      ],
       "next_operation": "Revision or next section"
     },
     {
-      "id": "sentence_purpose", "n": 14, "name": "Sentence Purpose", "level": "sentence",
+      "id": "sentence_purpose",
+      "n": 14,
+      "name": "Sentence Purpose",
+      "level": "sentence",
       "purpose": "Ensure each sentence performs a recognizable function.",
       "cognitive_operation": "Express one meaningful contribution.",
       "exit_criterion": "Does this sentence perform an identifiable function within the paragraph?",
       "dependencies": [],
-      "failure_modes": ["no clear function", "multiple unrelated functions"],
+      "failure_modes": [
+        "no clear function",
+        "multiple unrelated functions"
+      ],
       "next_operation": "Sentence relationships"
     },
     {
-      "id": "sentence_relationships", "n": 15, "name": "Sentence Relationships", "level": "sentence",
+      "id": "sentence_relationships",
+      "n": 15,
+      "name": "Sentence Relationships",
+      "level": "sentence",
       "purpose": "Connect sentences into coherent discourse.",
       "cognitive_operation": "Relate each sentence to surrounding sentences.",
       "exit_criterion": "Can the reader understand why each sentence belongs where it is?",
       "dependencies": [],
-      "failure_modes": ["isolated sentence", "broken flow"],
+      "failure_modes": [
+        "isolated sentence",
+        "broken flow"
+      ],
       "next_operation": "Surface revision"
+    },
+    {
+      "id": "thesis",
+      "n": 100,
+      "name": "Thesis (Whole-Essay Controlling Idea)",
+      "level": "whole_composition",
+      "purpose": "State the single central idea the whole essay exists to establish.",
+      "cognitive_operation": "Commit to one arguable, supportable central claim that answers the task.",
+      "exit_criterion": "Can every part of the essay be organized around this one central claim, and could a thoughtful reader restate it?",
+      "dependencies": [
+        "Communicative purpose"
+      ],
+      "failure_modes": [
+        "topic instead of claim",
+        "fact or question instead of a position",
+        "claim the body does not develop",
+        "scope too broad to support"
+      ],
+      "next_operation": "Overall organization"
     }
   ],
   "general_constitutional_rule": "Compass should never continue teaching a structural element merely because additional improvement is theoretically possible. Instruction ends when the current element can adequately support the learner's next authentic cognitive operation. The objective function is developmental progress, not local perfection."
