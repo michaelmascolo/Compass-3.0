@@ -125,6 +125,7 @@ def load_exit_criteria() -> dict:
 
 EXIT_CRITERIA = load_exit_criteria()
 EXIT_CRITERIA_BY_ID = {e["id"]: e for e in EXIT_CRITERIA.get("elements", [])}
+CANONICAL_EXPLANATIONS = EXIT_CRITERIA.get("canonical_explanations", {})
 
 
 def _build_exit_criteria_block() -> str:
@@ -2819,7 +2820,7 @@ The coaching message MUST perform these functions, IN THIS ORDER, in natural stu
 5. INVITE EXACTLY ONE learner-performed WRITING operation — the student does the next writing move themselves; never supply the answer. Frame it as a WRITING act, not a content/topic quiz.
 6. EXPLAIN HOW TODAY'S WORK CONNECTS BACK to the larger writing goal (the return path) — e.g. "Once your definition is clear, we'll come back and use it to sharpen your thesis."
 
-TEACH THE ELEMENT, DON'T JUST NAME IT: whenever you introduce any structural element (thesis, definition, evidence, explanation, transition, controlling idea, …), briefly say what it is and why writers use it, in one short student-accessible clause. You are gradually teaching students the architecture of writing, not just structural vocabulary.
+TEACH THE ELEMENT, DON'T JUST NAME IT: whenever you introduce any structural element (thesis, definition, evidence, explanation, transition, controlling idea, …), briefly say what it is and why writers use it, in one short student-accessible clause. When the plan supplies a CANONICAL explanation for the element, RETRIEVE AND ADAPT IT — use that stable canonical explanation (simplified to the student's grade level if needed) rather than inventing a new theoretical description each time; preserve its instructional meaning so Compass teaches a consistent architecture of writing across students. You are gradually teaching students the architecture of writing, not just structural vocabulary.
 
 WRITING BEFORE CONTENT — NO DISCIPLINARY OVERREACH (constitutional; the instructional object is always WRITING, content is only the medium): You teach the writing operation, never the subject-matter theory. You must NEVER introduce disciplinary content, interpretations, or conceptual claims that the student has not already expressed, UNLESS that content was explicitly supplied by the assignment or teacher. Do NOT name or teach the academic concepts underneath the student's topic — e.g. do NOT talk about "the belief or attitude underneath the behavior", "the idea they hold that makes them stop", motivation, persistence-as-a-construct, or any theory (e.g. Dweck's) the student hasn't written themselves. Do NOT quiz the student on the topic ("what does someone with this mindset believe/feel/do?"). Instead, teach the WRITING move and derive your examples and questions from distinctions ALREADY PRESENT in the student's own writing. For a definition, use the writing distinction does/is: "Right now your sentences tell your reader what each mindset DOES. A definition usually helps a reader understand what something IS before explaining what it does. Can you rewrite one sentence so it tells your reader what a fixed mindset IS, in your own words? Once we have that definition, we'll return to strengthening your thesis." The student supplies all content; you develop only the writing.
 
@@ -2839,12 +2840,18 @@ def _coaching_plan_prompt(session: Session, req: InteractRequest, plan: dict) ->
         else f"- No active dependency; the primary target IS the immediate focus.\n"
     )
     suff = plan.get("sufficiency_for_next_step") or "not_yet"
+    expl_lines = ""
+    if plan.get("target_explanation"):
+        expl_lines += f"- CANONICAL explanation of the target element (adapt to grade level, PRESERVE its meaning — do NOT invent a different theoretical description): \"{plan['target_explanation']}\"\n"
+    if plan.get("dependency_explanation"):
+        expl_lines += f"- CANONICAL explanation of the dependency element (adapt, preserve meaning): \"{plan['dependency_explanation']}\"\n"
     return (
         f"ASSIGNMENT CONTEXT:\n\"\"\"{(session.assignment or '').strip()[:600]}\"\"\"\n\n"
         f"STUDENT'S RELEVANT WRITING (the material to teach through — do NOT rewrite it):\n\"\"\"{excerpt}\"\"\"\n\n"
         "COMPLETED INSTRUCTIONAL PLAN (from Stage B — render this faithfully; do not change it):\n"
         f"- BINDING primary instructional target (the writing element this turn MUST teach): {plan['primary_target']}\n"
         f"{dep_line}"
+        f"{expl_lines}"
         f"- Developmental sufficiency of the current focus: {suff} "
         f"({'already sufficient — acknowledge and advance to the next step' if suff.lower()=='sufficient' else 'not yet — teach/scaffold it this turn'})\n"
         f"- Active exit criterion (what must become TRUE for the student to move on — do NOT quote this verbatim, teach toward it): {plan.get('active_exit_criterion') or '(n/a)'}\n"
@@ -2948,6 +2955,8 @@ def _build_coaching_plan(parsed: dict) -> dict:
         (ir.required_dependency or "").strip()
         and dep_status in ("identified", "being_taught")
     )
+    target_key = _element_key_for(sc.primary_target or "")
+    dep_key = _element_key_for(ir.required_dependency or "") if dependency_active else None
     return {
         "primary_target": (sc.primary_target or "").strip(),
         "required_dependency": (ir.required_dependency or "").strip(),
@@ -2956,6 +2965,8 @@ def _build_coaching_plan(parsed: dict) -> dict:
         "next_developmental_step": (ir.next_developmental_step or "").strip(),
         "active_exit_criterion": (sr.active_exit_criterion or "").strip(),
         "candidate_move": parsed.get("invitation", ""),
+        "target_explanation": CANONICAL_EXPLANATIONS.get(target_key or "", ""),
+        "dependency_explanation": CANONICAL_EXPLANATIONS.get(dep_key or "", ""),
     }
 
 
