@@ -2939,6 +2939,112 @@ def _readymade_violation_legacy(body: str, student_excerpt: str) -> bool:
     return False
 
 
+# ---------------------------------------------------------------------------
+# ORIENTATION PLAN (Phase II, Step 4c). The six-function orientation structure is
+# an INSTRUCTIONAL decision that now lives in Compass, not the model. We assemble an
+# ordered Orientation Plan from the hydrated plan/KB and hand it to Stage C; the
+# renderer chooses the WORDING, not the architecture. A deterministic validator then
+# checks that all six functions are present in the rendered coaching.
+# ---------------------------------------------------------------------------
+ORIENTATION_FUNCTIONS = [
+    "recognition", "object", "canonical_explanation",
+    "architecture", "strategy", "transition",
+]
+
+
+def _build_orientation_plan(plan: dict) -> dict:
+    """Ordered orientation scaffold derived from the hydrated plan. `recognition` is a
+    student-specific judgment the renderer must supply (grounded in the writing); the
+    rest are deterministic slots the renderer only has to express naturally."""
+    kb = plan.get("kb") or {}
+    target = plan.get("primary_target") or kb.get("canonical_element") or ""
+    rels = kb.get("relationships") or []
+    arch = kb.get("purpose") or ""
+    if rels:
+        arch = (arch + " " if arch else "") + "It works together with: " + ", ".join(rels[:4]) + "."
+    return {
+        "recognition": "Open with a specific, evidence-based recognition of what the student has ALREADY done in their own writing.",
+        "object": target,
+        "canonical_explanation": plan.get("target_explanation") or "",
+        "architecture": (arch or "").strip(),
+        "strategy": kb.get("strategies") or "",
+        "transition": plan.get("candidate_move") or "Invite exactly ONE learner-performed writing operation using the student's own material.",
+    }
+
+
+def _orientation_block(plan: dict) -> str:
+    op = _build_orientation_plan(plan)
+    lines = [
+        "ORIENTATION PLAN (express these SIX functions naturally and in this order — you choose the wording, NOT the structure; do not label or number them):",
+        f"1. RECOGNITION — {op['recognition']}",
+        f"2. INSTRUCTIONAL OBJECT — name this element explicitly: {op['object']}",
+    ]
+    if op["canonical_explanation"]:
+        lines.append(f"3. CANONICAL EXPLANATION — adapt (preserve meaning): \"{op['canonical_explanation']}\"")
+    else:
+        lines.append("3. CANONICAL EXPLANATION — briefly say what this element is and why writers use it.")
+    if op["architecture"]:
+        lines.append(f"4. ARCHITECTURE — state where this fits in the essay: an essay is built from a few structural elements that work together, and this element's place is — {op['architecture']}")
+    else:
+        lines.append("4. ARCHITECTURE — remind the student an essay is built from a few structural elements that work together, and say where this one fits.")
+    if op["strategy"]:
+        lines.append(f"5. TRANSFERABLE STRATEGY — teach one general writing move (adapt into your own words): \"{op['strategy']}\"")
+    else:
+        lines.append("5. TRANSFERABLE STRATEGY — teach one transferable writing move for building this element.")
+    lines.append(f"6. TRANSITION INTO LEARNER WORK — {op['transition']}")
+    return "\n".join(lines)
+
+
+# lenient detectors — calibrated so high-quality drafts pass and a dropped function fails
+_RECOG_MARKERS = ("already", "you've", "you have", "you're", "you did", "you named", "you have named",
+                  "you stated", "you staked", "you lined", "you laid", "you backed", "you took",
+                  "you have taken", "you've taken", "strong", "clear position", "solid", "foundation",
+                  "real ", "genuine", "good ", "nice ", "done something", "you set", "you chose")
+_EXPL_MARKERS = ("is the", "isn't just", "is not just", "is a ", "which is", "the part that", "the one",
+                 "tells your reader", "tells a reader", "job of a", "means ", "the single", "a way to",
+                 "helps your reader", "helps a reader", "lets your reader")
+_ARCH_MARKERS = ("essay", "organize", "organized", "paragraph", "whole ", "fits", "part of", "built",
+                 "structure", "central idea", "central claim", "points back", "around", "anchor",
+                 "backbone", "every ", "hold together", "hangs together", "rest of your")
+_STRAT_MARKERS = ("one strategy", "a strategy", "one move", "a move writers", "writers use", "writers often",
+                  "ask yourself", "one technique", "a technique", "one habit", "writers do", "a good move",
+                  "one thing writers", "a question writers")
+
+
+def _orientation_functions(text: str, plan: dict, target_key: Optional[str]) -> list:
+    """Return the list of MISSING orientation functions (empty == all six present)."""
+    body = (text or "")
+    low = body.lower()
+    sentences = re.split(r"(?<=[.!?])\s+", body.strip())
+    opening = " ".join(sentences[:2]).lower()
+    missing = []
+    # 1 recognition (in the opening)
+    if not ("you" in opening and any(m in opening for m in _RECOG_MARKERS)):
+        missing.append("recognition")
+    # 2 object
+    if target_key:
+        if not _coaching_names_element(body, target_key):
+            missing.append("object")
+    elif plan.get("primary_target") and not any(w.lower() in low for w in _salient_nouns(plan["primary_target"], set())):
+        missing.append("object")
+    # 3 canonical explanation
+    expl = plan.get("target_explanation") or ""
+    expl_overlap = len(_salient_set(expl) & _salient_set(body)) if expl else 0
+    if not (any(m in low for m in _EXPL_MARKERS) or expl_overlap >= 2):
+        missing.append("canonical_explanation")
+    # 4 architecture fit
+    if not any(m in low for m in _ARCH_MARKERS):
+        missing.append("architecture")
+    # 5 transferable strategy
+    if not any(m in low for m in _STRAT_MARKERS):
+        missing.append("strategy")
+    # 6 transition into a learner operation
+    if not any(cue in low for cue in _ACTION_CUES):
+        missing.append("transition")
+    return missing
+
+
+
 
 def _validate_coaching(text: str, primary_target: str, required_dependency: str,
                        dependency_active: bool, student_excerpt: str = "") -> tuple:
@@ -2980,6 +3086,16 @@ def _validate_coaching(text: str, primary_target: str, required_dependency: str,
     #    on-topic, unattributed, polished submittable sentence is a violation.
     if _readymade_violation(body, student_excerpt):
         issues.append("appears to supply a ready-made sentence the student could submit verbatim")
+
+    # 5. complete SIX-FUNCTION orientation structure (Step 4c): recognition, object,
+    #    canonical explanation, architecture fit, transferable strategy, transition.
+    _plan_min = {
+        "primary_target": primary_target,
+        "target_explanation": hydrate_element(target_key).get("explanation", "") if target_key else "",
+    }
+    missing_fns = _orientation_functions(body, _plan_min, target_key)
+    if missing_fns:
+        issues.append("orientation is missing required function(s): " + ", ".join(missing_fns))
 
     return (len(issues) == 0, issues, target_key, dep_key)
 
@@ -3038,6 +3154,7 @@ def _coaching_plan_prompt(session: Session, req: InteractRequest, plan: dict) ->
         kb_lines += f"- CANONICAL instructional strategy for this element (a transferable move; adapt into your own words): \"{kb['strategies']}\"\n"
     if kb.get("relationships"):
         kb_lines += f"- STRUCTURAL relationships (how this element fits the essay architecture): {', '.join(kb['relationships'][:6])}\n"
+    orientation = _orientation_block(plan)
     return (
         f"ASSIGNMENT CONTEXT:\n\"\"\"{(session.assignment or '').strip()[:600]}\"\"\"\n\n"
         f"STUDENT'S RELEVANT WRITING (the material to teach through — do NOT rewrite it):\n\"\"\"{excerpt}\"\"\"\n\n"
@@ -3051,7 +3168,8 @@ def _coaching_plan_prompt(session: Session, req: InteractRequest, plan: dict) ->
         f"- Active exit criterion (what must become TRUE for the student to move on — do NOT quote this verbatim, teach toward it): {plan.get('active_exit_criterion') or '(n/a)'}\n"
         f"- Next developmental step (where we go once sufficient): {plan.get('next_developmental_step') or '(n/a)'}\n"
         f"- Candidate scaffolding move Stage B considered (a seed you may refine, not a script): {plan.get('candidate_move') or '(none)'}\n\n"
-        "Write the student-facing coaching message now."
+        f"{orientation}\n\n"
+        "Write the student-facing coaching message now — express the six orientation functions above naturally, in order, as 4–7 warm sentences."
     )
 
 
