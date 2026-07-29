@@ -12,9 +12,19 @@ full 66-case benchmark → certify or roll back. Certification compares INSTRUCT
 (categorical exact) and free-text CONTENT SIMILARITY (Jaccard), never textual identity, and always
 relative to the same-code noise floor.
 
-Established noise floor (12-case smoke, same code): object ≈ 100% (stable) · dependency ≈ 50% ·
-sequence ≈ 83% · sufficiency ≈ 75% · free-text (bottleneck/exit/next) Jaccard ≈ 0.10/0.48/0.19.
-(Being widened to 2–3 same-code runs.)
+Established noise floor — CORRECTED 2026-07-29 on a CLEAN, provenance-stamped control
+(frozen `server.py` sha256 `2cc4bdcb…`, sys-msg `1c485e2c13d7b8ff`, two same-code 12-case runs):
+object **83% (10/12)** — NOT 100% as previously assumed · dependency 50% · sequence 91% ·
+sufficiency 91% · free-text (bottleneck/exit/next) Jaccard ≈ 0.07/0.38/0.15.
+Baseline-noisy object cases (vary on identical code): **TC55, TC61**. Everything else stable.
+⇒ Certification can NO LONGER demand 100% object agreement; the correct test is PER-CASE:
+does the candidate destabilize a case the frozen baseline held STABLE? (See ATTEMPT #2.)
+
+PROVENANCE POLICY (adopted 2026-07-29, permanent): every `stage_b_baseline.py capture` now
+stamps its output + log with git commit, working-tree-dirty flag, `server.py` sha256, and the
+loaded SYSTEM_MESSAGE sha256_16. `compare` prints both files' provenance and auto-flags when two
+files share an identical `server.py` sha256 (⇒ that comparison is a NOISE-FLOOR, same-code run).
+Every benchmark result is now permanently tied to the exact code that produced it.
 
 ---
 
@@ -39,8 +49,48 @@ sequence ≈ 83% · sufficiency ≈ 75% · free-text (bottleneck/exit/next) Jacc
 
 ## ATTEMPT #2 — Group 2 Field 1: `structural_reasoning.element_relationships`
 - **Original classification:** Deterministic-communicative (KB `io.related_elements`).
-- **Experimental change:** (in progress) remove ONLY this field from Stage B output.
-- **Benchmark outcome:** (pending)
-- **Noise-floor comparison:** (pending)
-- **Final classification:** (pending)
-- **Rationale / decision:** (pending)
+- **Experimental change:** removed ONLY this field from the Stage B `structural_reasoning` output
+  contract + reworded prompt step 5 ("use these to inform your judgment … you do NOT output them").
+  Hydrator already supplies relationships downstream.
+- **Controls (CLEAN, provenance-verified — the whole point of this re-run):**
+  - FROZEN baseline: commit `d5686a0`, `server.py` sha256 `2cc4bdcb…`, sys-msg `1c485e2c13d7b8ff`.
+    Files: `stage_b_g2f1_baseline_d5686a0_run{1..5}.json`.
+  - CANDIDATE: commit `e0fa10b`, `server.py` sha256 `68ae56c7…`, sys-msg `3c72345527a89173`.
+    Files: `stage_b_g2f1_candidate_e0fa10b_run{1..5}.json`.
+  - (The prior session's runs were DISCARDED: they imported `server.py` while the candidate diff was
+    on disk, so both "baseline" and "candidate" ran identical candidate code — ambiguous control.)
+- **Noise floor (frozen run1 vs run2, 12-case):** object 10/12 (83%), dependency 6/12,
+  sequence 11/12, sufficiency 11/12; free-text Jaccard 0.07/0.38/0.15. Baseline-unstable object
+  cases = TC55, TC61.
+- **Migration effect (frozen vs candidate, 12-case):** object agreement ~75% — near the noise
+  floor in aggregate, BUT the per-case signal is decisive. Focused n=5 confirmation on the 3 suspect
+  cases (frozen `run{1..5}` vs candidate `run{1..5}`):
+
+  | Case | Frozen object (n=5) | Candidate object (n=5) | Read |
+  |---|---|---|---|
+  | **TC37** | `thesis` 5/5 (100% stable) | thesis **2/5** (+overall_organization×2, communicative_purpose×1) | **destabilized** |
+  | **TC49** | `thesis` 5/5 (100% stable) | thesis **2/5** (+communicative_purpose×2, None×1) | **destabilized** |
+  | TC66 | communicative_purpose 4/5 | communicative_purpose 4/5 | within noise (no effect) |
+
+- **Noise-floor comparison:** TC37 and TC49 are 100% stable on frozen code (zero variance across 5
+  same-code runs) yet collapse to 40% agreement with the baseline-correct object under the candidate,
+  in multiple divergent directions. That is a genuine migration effect ABOVE the noise floor — not
+  model stochasticity (TC66, genuinely near-noisy in baseline, is unchanged → correct control behavior).
+- **Final classification:** **Mixed (deterministic-content but epistemically-active reasoning scaffold).**
+  Requiring Stage B to articulate the functional RELATIONSHIPS among elements evidently stabilizes the
+  foundational `object` judgment. Identical lesson to ATTEMPT #1's two fields.
+- **Rationale / decision:** **NOT CERTIFIED → ROLLED BACK** (2026-07-29). `server.py` restored to
+  frozen `d5686a0` (sys-msg hash back to `1c485e2c13d7b8ff`, backend health 200). KEEP
+  `element_relationships` in the Stage B output; continue hydrating downstream from
+  `instructional_objects[el].related_elements` for consistency. `object` selection is too foundational
+  to accept destabilization of a baseline-stable case.
+
+---
+
+## Implication for the rest of GROUP 2
+Two consecutive "looks-deterministic" fields (Group 1's pair, and now `element_relationships`) have
+each turned out to be reasoning-active. Working hypothesis: the STRUCTURAL-RELATION family of fields
+(relationships / dependencies) scaffolds object selection and is unlikely to be safely removable.
+Before spending runs on `developmental_dependencies` / `active_exit_criterion`, expect the same result;
+test one at a time against the CLEAN provenance-stamped noise floor, and apply the per-case rule
+(destabilization of a frozen-stable case = fail), not aggregate percentage.

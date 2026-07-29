@@ -50,8 +50,34 @@ Test `element_relationships`, `developmental_dependencies`, `active_exit_criteri
 
 ---
 
-## GROUP 2 — canonical structural relations (NOT STARTED)
-Planned removals: `structural_reasoning.element_relationships`,
-`structural_reasoning.developmental_dependencies`, `structural_reasoning.active_exit_criterion`
-→ hydrated from `instructional_objects[el].related_elements`, `exit.dependencies`,
-`exit.exit_criterion`. Begin only after Group 1 is certified.
+## GROUP 2 — canonical structural relations
+Status: **Field 1 ATTEMPTED → NOT CERTIFIED → ROLLED BACK** (2026-07-29). Fields 2–3 NOT STARTED.
+
+| Field | Why removal was attempted | Now comes from | Equivalence evidence / VERDICT |
+|---|---|---|---|
+| `structural_reasoning.element_relationships` | Looked deterministic (cross-references from KB). | KB hydrator `instructional_objects[el].related_elements`. | **REVERTED** — reclassified **Mixed (reasoning-active)**. See below. |
+| `structural_reasoning.developmental_dependencies` | Looked deterministic (KB `exit.dependencies`). | KB hydrator. | NOT STARTED — expect same result (structural-relation family). |
+| `structural_reasoning.active_exit_criterion` | Looked deterministic (KB `exit.exit_criterion`). | KB hydrator. | NOT STARTED. |
+
+### Method (CLEAN, provenance-stamped — re-run after prior session's controls were ambiguous)
+- Every capture now records git commit + `server.py` sha256 + SYSTEM_MESSAGE hash (permanent policy).
+- FROZEN baseline: `d5686a0` / server.py `2cc4bdcb…` / sys-msg `1c485e2c13d7b8ff` (runs 1–5).
+- CANDIDATE: `e0fa10b` / server.py `68ae56c7…` / sys-msg `3c72345527a89173` (runs 1–5).
+- Certification test = PER-CASE: does the candidate destabilize a case the frozen baseline held stable?
+
+### Results (12-case smoke + n=5 focused confirmation)
+- Frozen object noise floor = **83% (10/12)**; baseline-unstable cases = TC55, TC61.
+- **TC37**: frozen `thesis` 5/5 → candidate `thesis` 2/5 (destabilized).
+- **TC49**: frozen `thesis` 5/5 → candidate `thesis` 2/5 (destabilized).
+- **TC66**: frozen 4/5 → candidate 4/5 (within noise; no effect).
+
+### VERDICT — NOT CERTIFIED, ROLLED BACK
+- Two frozen-STABLE cases (TC37, TC49) collapse to 40% under the candidate, in divergent directions
+  → real migration effect above the noise floor. `element_relationships` acts as a reasoning scaffold
+  that stabilizes object selection → reclassify **Mixed**; keep in Stage B; keep hydrating downstream.
+- Rollback verified: SYSTEM_MESSAGE hash restored to `1c485e2c13d7b8ff`, backend health 200.
+
+### Implication
+The STRUCTURAL-RELATION family (relationships / dependencies) is likely reasoning-active, not pure
+output. Test `developmental_dependencies` / `active_exit_criterion` one at a time only if pursued;
+expect the same finding. Certify per-case against the clean noise floor, never on aggregate %.

@@ -1,0 +1,129 @@
+{
+  "provenance": {
+    "captured_at": "2026-07-29T22:57:57",
+    "git_commit": "e0fa10bb97efae073c6c8b41ba75ff8425b5b0e7",
+    "git_short": "e0fa10b",
+    "git_working_tree_dirty": true,
+    "git_dirty_files": [
+      "M  backend/server.py",
+      "M backend/tests/stage_b_baseline.py",
+      "?? backend/tests/m14_run.log",
+      "?? backend/tests/phase3_run.log",
+      "?? backend/tests/phase3a_run.log",
+      "?? frontend/yarn.lock",
+      "?? memory/phase2_baseline/g2f1_candidate.patch",
+      "?? memory/phase2_baseline/log_baseline_run1.log",
+      "?? memory/phase2_baseline/log_baseline_run2.log",
+      "?? memory/phase2_baseline/log_baseline_run3.log",
+      "?? memory/phase2_baseline/log_baseline_run4.log",
+      "?? memory/phase2_baseline/log_baseline_run5.log",
+      "?? memory/phase2_baseline/log_cand_run1.log",
+      "?? memory/phase2_baseline/log_cand_run2.log",
+      "?? memory/phase2_baseline/log_cand_run3.log",
+      "?? memory/phase2_baseline/log_cand_run4.log",
+      "?? memory/phase2_baseline/log_cand_run5.log",
+      "?? memory/phase2_baseline/stage_b_g2f1_baseline_d5686a0_run1.json",
+      "?? memory/phase2_baseline/stage_b_g2f1_baseline_d5686a0_run2.json",
+      "?? memory/phase2_baseline/stage_b_g2f1_candidate_e0fa10b_run1.json",
+      "?? memory/phase2_baseline/stage_b_g2f1_candidate_e0fa10b_run2.json",
+      "?? memory/phase2_baseline/stage_b_g2f1_candidate_e0fa10b_run3.json",
+      "?? memory/phase2_baseline/stage_b_g2f1_candidate_e0fa10b_run4.json",
+      "?? memory/phase2_baseline/stage_b_g2f1_candidate_e0fa10b_run5.json",
+      "?? test_reports/leakage_dryrun.log",
+      "?? yarn.lock"
+    ],
+    "server_py_sha256": "2cc4bdcb26c1e0273059aee7f71d25d3960b14df643b72fd8d256bfa6647d556",
+    "system_message_sha256_16": "1c485e2c13d7b8ff"
+  },
+  "results": [
+    {
+      "id": "TC37",
+      "name": "Compare/contrast — no organizing scheme",
+      "object": "thesis",
+      "object_raw": "Thesis / controlling idea",
+      "bottleneck": "no controlling idea exists — student is naming topics and features rather than asserting what the comparison should establish.",
+      "diagnosed": [
+        "no controlling idea / thesis — no governing claim about the two approaches",
+        "no comparison structure — dimensions not aligned across subjects",
+        "no organizing principle — sentences arbitrary in order",
+        "no significance — no explanation of why the comparison matters"
+      ],
+      "evidence": [
+        "both subjects named correctly",
+        "multiple dimensions touched on"
+      ],
+      "strategy": [
+        "focused question",
+        "reminder of the assignment",
+        "connection between local writing and whole-essay purpose"
+      ],
+      "dependency": "thesis",
+      "dependency_status": "identified",
+      "sequence": "continue",
+      "sufficiency": "not_yet",
+      "exit": "can every part of the essay be organized around a reasonably clear communicative purpose / controlling idea?",
+      "next": "once a controlling idea is stated, choose an organizing structure (subject-by-subject or point-by-point) that serves it.",
+      "coaching": "You've already done something real here: you've named both approaches — congestion pricing and public transit investment — and you've started noticing what matters about each one, like cost and fairness. Now let's work on your thesis, which is the part of an essay that tells your reader the single main idea the whole piece is trying to establish — everything else in your essay will exist to support it. A thesis sits near the start of your essay and gives your reader a reason to keep reading, because it signals what you want them to understand or accept by the end. One strategy writers use when building a thesis for a comparison essay is to ask themselves: \"What is the most important idea I want my reader to walk away with about these two things?\" — and then turn that answer into one focused, supportable statement. So here's that question for you: looking at what you've noticed about congestion pricing and public transit, what's the one big idea you want a reader to understand about how these two approaches compare? Once you have that central claim, we'll use it to choose an organizing structure — like going through one approach at a time, or comparing them point by point — that makes your whole essay easy to follow.",
+      "coaching_words": 219,
+      "_secs": 81.1
+    },
+    {
+      "id": "TC49",
+      "name": "Annotated bibliography — describes, doesn't evaluate",
+      "object": "thesis",
+      "object_raw": "Central Claim — producing one evaluative judgment about the source",
+      "bottleneck": "draft is entirely descriptive; no evaluative assertion present — annotation cannot fulfill its purpose.",
+      "diagnosed": [
+        "no evaluative claim — annotation describes, does not evaluate.",
+        "no reader-purpose connection — relevance not linked to any research use.",
+        "descriptive details (length, date) not interpreted for significance."
+      ],
+      "evidence": [
+        "all four sentences are purely descriptive — no evaluative language present."
+      ],
+      "strategy": [
+        "brief direct explanation",
+        "focused question",
+        "reminder of the assignment"
+      ],
+      "dependency": null,
+      "dependency_status": "being_taught",
+      "sequence": "continue",
+      "sufficiency": "not_yet",
+      "exit": "can the paragraph be understood as accomplishing one identifiable evaluative purpose? (paragraph purpose exit: one identifiable purpose present.)",
+      "next": "use the evaluative judgment to anchor the annotation and then interpret the descriptive details (date, statistics) in its service.",
+      "coaching": "You've already gathered the basic facts a reader needs to locate the source — you noted the topic, the date, the length, and the presence of statistics, which shows you were reading actively. Now let's work on the central claim of your annotation, which is the single evaluative judgment that tells your reader not just what the source contains, but what you think about it. An annotation's central claim works the way a thesis does in an essay: it gives the reader the one main idea the whole piece exists to establish, and everything else — those facts about the date and statistics — exists to support or explain that judgment. A strategy writers use here is to ask themselves, \"What is the most important thing I want my reader to understand or accept about this source?\" — and then turn that answer into one focused, debatable statement. Right now your draft describes the source, but it doesn't yet make a claim a reader could push back on, like whether the source is credible, relevant to a specific purpose, or limited in some way. Try writing one sentence that makes that judgment — something another person could disagree with. Once you have that evaluative claim, we'll come back and use your descriptive details (the 2019 date, the statistics) to support and develop it.",
+      "coaching_words": 223,
+      "_secs": 79.3
+    },
+    {
+      "id": "TC66",
+      "name": "Perfectionist stuck — won't commit anything",
+      "object": "communicative_purpose",
+      "object_raw": "Communicative Purpose — surface a first reaction/stance",
+      "bottleneck": "purpose has collapsed into 'finish the assignment correctly' with no authentic communicative intent yet surfaced.",
+      "diagnosed": [
+        "paralysis prevents any draft; the bottleneck is affective, not conceptual.",
+        "communicative purpose entirely unestablished.",
+        "no thesis or stance surfaced yet."
+      ],
+      "evidence": [
+        "'i keep deleting everything' — confirms repeated attempt-and-abandon pattern."
+      ],
+      "strategy": [
+        "focused question",
+        "decomposition into a smaller act",
+        "ordinary-language restatement"
+      ],
+      "dependency": null,
+      "dependency_status": "identified",
+      "sequence": "continue",
+      "sufficiency": "not_yet",
+      "exit": "communicative purpose exit: can the composition be organized around a reasonably clear purpose? not yet — no text exists.",
+      "next": "use the student's rough reaction to begin forming a contestable thesis.",
+      "coaching": "The fact that you noticed something felt wrong and kept pushing back against it — that's actually a real writer's instinct at work, even if it doesn't feel that way right now. Today we're going to work on something called communicative purpose, which is the foundation everything else in your essay will build on. Your purpose is simply what you want your reader to understand or believe by the end — it shapes your thesis, your organization, your tone, every choice you make, so without even a rough sense of it, there's nothing yet to organize around. One strategy writers use when they're stuck is to ask: *What should be different for my reader after they finish this?* That question doesn't require a perfect answer — it just needs a genuine one. So here's your only job right now: don't write the essay, just write one sentence, as messy as you want, that says what you actually think or feel about standardized testing — any gut reaction counts. Once you have that first honest reaction on the page, we'll use it to start shaping a real, contestable thesis.",
+      "coaching_words": 188,
+      "_secs": 70.7
+    }
+  ]
+}

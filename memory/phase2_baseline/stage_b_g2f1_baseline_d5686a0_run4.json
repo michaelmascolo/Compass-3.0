@@ -1,0 +1,128 @@
+{
+  "provenance": {
+    "captured_at": "2026-07-29T22:57:57",
+    "git_commit": "e0fa10bb97efae073c6c8b41ba75ff8425b5b0e7",
+    "git_short": "e0fa10b",
+    "git_working_tree_dirty": true,
+    "git_dirty_files": [
+      "M  backend/server.py",
+      "M backend/tests/stage_b_baseline.py",
+      "?? backend/tests/m14_run.log",
+      "?? backend/tests/phase3_run.log",
+      "?? backend/tests/phase3a_run.log",
+      "?? frontend/yarn.lock",
+      "?? memory/phase2_baseline/g2f1_candidate.patch",
+      "?? memory/phase2_baseline/log_baseline_run1.log",
+      "?? memory/phase2_baseline/log_baseline_run2.log",
+      "?? memory/phase2_baseline/log_baseline_run3.log",
+      "?? memory/phase2_baseline/log_baseline_run4.log",
+      "?? memory/phase2_baseline/log_baseline_run5.log",
+      "?? memory/phase2_baseline/log_cand_run1.log",
+      "?? memory/phase2_baseline/log_cand_run2.log",
+      "?? memory/phase2_baseline/log_cand_run3.log",
+      "?? memory/phase2_baseline/log_cand_run4.log",
+      "?? memory/phase2_baseline/log_cand_run5.log",
+      "?? memory/phase2_baseline/stage_b_g2f1_baseline_d5686a0_run1.json",
+      "?? memory/phase2_baseline/stage_b_g2f1_baseline_d5686a0_run2.json",
+      "?? memory/phase2_baseline/stage_b_g2f1_candidate_e0fa10b_run1.json",
+      "?? memory/phase2_baseline/stage_b_g2f1_candidate_e0fa10b_run2.json",
+      "?? memory/phase2_baseline/stage_b_g2f1_candidate_e0fa10b_run3.json",
+      "?? memory/phase2_baseline/stage_b_g2f1_candidate_e0fa10b_run4.json",
+      "?? memory/phase2_baseline/stage_b_g2f1_candidate_e0fa10b_run5.json",
+      "?? test_reports/leakage_dryrun.log",
+      "?? yarn.lock"
+    ],
+    "server_py_sha256": "2cc4bdcb26c1e0273059aee7f71d25d3960b14df643b72fd8d256bfa6647d556",
+    "system_message_sha256_16": "1c485e2c13d7b8ff"
+  },
+  "results": [
+    {
+      "id": "TC37",
+      "name": "Compare/contrast — no organizing scheme",
+      "object": "thesis",
+      "object_raw": "Thesis (controlling idea for the comparison)",
+      "bottleneck": "draft names subjects and lists observations but does not assert what the comparison is meant to show — topic without claim.",
+      "diagnosed": [
+        "no controlling idea / thesis — draft is a list of disconnected observations",
+        "no organizing structure — cannot choose block vs. point-by-point without a basis for comparison",
+        "no basis of comparison established — what common question do both approaches answer?"
+      ],
+      "evidence": [
+        "two subjects clearly identified",
+        "some attributes of each are present"
+      ],
+      "strategy": [
+        "focused question",
+        "reminder of the assignment",
+        "connection between local writing and whole-essay purpose"
+      ],
+      "dependency": "thesis",
+      "dependency_status": "identified",
+      "sequence": "continue",
+      "sufficiency": "not_yet",
+      "exit": "can every part of the essay be organized around a reasonably clear controlling idea, and could a thoughtful reader restate it?",
+      "next": "use the student's answer to build a focused, contestable thesis, then choose an organizing structure.",
+      "coaching": "You've already done something useful here — you've named both approaches and started noticing real tensions, like cost and fairness, that matter in a comparison. Today we're working on your **thesis**, the single idea your whole essay exists to establish. A thesis tells your reader the main idea you're trying to make them understand or accept — it's what holds everything else together, from your introduction to your final point, and it's what helps your reader follow *why* you're comparing these two approaches in the first place. One strategy writers use is to ask themselves: \"What is the most important thing I want my reader to understand or decide after reading this?\" — and then turn that answer into one focused, supportable statement. Your draft names congestion pricing and public transit and gestures at some real differences, but right now it doesn't yet tell the reader what those differences *show* — what conclusion the comparison is building toward. So here's your one question to sit with: what do you most want a reader to walk away understanding about these two approaches to reducing traffic? Once you have an answer to that, we'll use it to build a focused thesis — and from there, we'll look at how to organize the whole essay around it.",
+      "coaching_words": 214,
+      "_secs": 86.9
+    },
+    {
+      "id": "TC49",
+      "name": "Annotated bibliography — describes, doesn't evaluate",
+      "object": "thesis",
+      "object_raw": "Evaluative claim (central claim about source reliability/relevance)",
+      "bottleneck": "draft describes rather than evaluates — no genuine assertion about the source's value is present.",
+      "diagnosed": [
+        "no evaluative claim — draft only describes the source",
+        "descriptive details not interpreted or connected to reliability/relevance",
+        "missing evidence of evaluation criteria (author credentials, publication, methodology)"
+      ],
+      "evidence": [
+        "all four sentences are purely descriptive — consistent pattern, not random"
+      ],
+      "strategy": [
+        "brief direct explanation",
+        "reminder of the assignment",
+        "focused question"
+      ],
+      "dependency": null,
+      "dependency_status": "identified",
+      "sequence": "continue",
+      "sufficiency": "not_yet",
+      "exit": "a clear evaluative claim (verdict) is stated that the descriptive details could plausibly support.",
+      "next": "once a verdict is stated, connect the descriptive details as evidence supporting that verdict.",
+      "coaching": "You've already gathered some real details about this source — you know when it was written, how long it is, and what topic it covers, and those facts will matter later. Right now, though, let's focus on the evaluative claim, which is the heart of any annotation: it's the part where you tell your reader what you've decided about a source, not just what's inside it. An annotation works like a thesis — it gives your reader the single main idea the whole piece exists to establish, which here means your verdict on whether this source is reliable and relevant enough to use. One strategy writers use to build this kind of claim is to ask themselves, \"What is the most important thing I want my reader to understand or accept about this source?\" — and then turn that answer into one focused, supportable statement. Try it now: in one sentence, what is your verdict on whether this source is reliable enough to use for your project, and what is your single strongest reason for that judgment? Once you have that verdict on the page, we'll come back to the details you've already collected and connect them as evidence that supports it.",
+      "coaching_words": 202,
+      "_secs": 81.0
+    },
+    {
+      "id": "TC66",
+      "name": "Perfectionist stuck — won't commit anything",
+      "object": null,
+      "object_raw": "Unblock — surface a raw position statement",
+      "bottleneck": "student cannot move toward thesis or structure because no raw position exists; the affective block is preventing even the first cognitive act.",
+      "diagnosed": [
+        "no draft exists — affective block preventing any writing",
+        "communicative purpose not yet articulated by student",
+        "no thesis or position visible"
+      ],
+      "evidence": [
+        "student explicitly describes deleting everything and writing nothing."
+      ],
+      "strategy": [
+        "brief direct explanation",
+        "ordinary-language restatement",
+        "decomposition into a smaller act"
+      ],
+      "dependency": "thesis",
+      "dependency_status": "identified",
+      "sequence": "continue",
+      "sufficiency": "not_yet",
+      "exit": "communicative purpose — can the remainder of the composition be organized around a reasonably clear communicative purpose? not yet; student has not stated any purpose or position.",
+      "next": "turn the raw position into a contestable thesis claim.",
+      "coaching": "The fact that you're deleting things means you *have* been thinking — you've just been holding your writing to a finished standard before it's had a chance to exist yet. Today we're going to work on something even more basic than a thesis: just surfacing a raw position statement, which is the very first move a writer makes before anything else can be built. A raw position statement is simply your gut reaction — what you actually think about the topic, before it's shaped into anything formal. An essay is built from a few elements working together (a claim, the reasons behind it, the way evidence connects to that claim), and a raw position statement is the seed all of those grow from — without it, there's nothing to develop. One strategy writers use to break the delete loop is to step away from the essay entirely and just finish this sentence in their head: *\"I think standardized testing is ___.\"* So forget the blank page for a moment — in one sentence, or even just a few words, what do you actually think about standardized testing? There's no wrong answer here, because this isn't your essay yet; it's just thinking made visible, and once you have it down, we'll shape it into a real thesis claim.",
+      "coaching_words": 217,
+      "_secs": 70.6
+    }
+  ]
+}

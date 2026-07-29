@@ -1,0 +1,121 @@
+{
+  "provenance": {
+    "captured_at": "2026-07-29T22:53:25",
+    "git_commit": "e0fa10bb97efae073c6c8b41ba75ff8425b5b0e7",
+    "git_short": "e0fa10b",
+    "git_working_tree_dirty": true,
+    "git_dirty_files": [
+      "M backend/tests/stage_b_baseline.py",
+      "?? backend/tests/m14_run.log",
+      "?? backend/tests/phase3_run.log",
+      "?? backend/tests/phase3a_run.log",
+      "?? frontend/yarn.lock",
+      "?? memory/phase2_baseline/g2f1_candidate.patch",
+      "?? memory/phase2_baseline/log_baseline_run1.log",
+      "?? memory/phase2_baseline/log_baseline_run2.log",
+      "?? memory/phase2_baseline/log_cand_run1.log",
+      "?? memory/phase2_baseline/log_cand_run2.log",
+      "?? memory/phase2_baseline/log_cand_run3.log",
+      "?? memory/phase2_baseline/log_cand_run4.log",
+      "?? memory/phase2_baseline/log_cand_run5.log",
+      "?? memory/phase2_baseline/stage_b_g2f1_baseline_d5686a0_run1.json",
+      "?? memory/phase2_baseline/stage_b_g2f1_baseline_d5686a0_run2.json",
+      "?? memory/phase2_baseline/stage_b_g2f1_candidate_e0fa10b_run1.json",
+      "?? memory/phase2_baseline/stage_b_g2f1_candidate_e0fa10b_run2.json",
+      "?? test_reports/leakage_dryrun.log",
+      "?? yarn.lock"
+    ],
+    "server_py_sha256": "68ae56c787fc8f05869c03570116a3622d2e566121c95a1223fa1e74b4450b30",
+    "system_message_sha256_16": "3c72345527a89173"
+  },
+  "results": [
+    {
+      "id": "TC37",
+      "name": "Compare/contrast — no organizing scheme",
+      "object": "overall_organization",
+      "object_raw": "Overall organization — establishing shared comparison dimensions",
+      "bottleneck": "no shared comparison dimensions — without them, neither a thesis nor organized paragraphs can be built.",
+      "diagnosed": [
+        "no thesis or controlling claim",
+        "no shared comparison dimensions established",
+        "no organizing structure (point-by-point or block)",
+        "observations disconnected — no coherence or paragraph structure"
+      ],
+      "evidence": [
+        "both subjects appear in draft — student knows the two approaches"
+      ],
+      "strategy": [
+        "brief direct explanation",
+        "decomposition into a smaller act",
+        "reminder of the assignment"
+      ],
+      "dependency": "thesis",
+      "dependency_status": "identified",
+      "sequence": "continue",
+      "sufficiency": "not_yet",
+      "exit": "can the reader reasonably follow the intended progression of ideas? (overall organization exit criterion) — currently no.",
+      "next": "use named dimensions to draft a thesis and choose an organizational pattern.",
+      "coaching": "You've already noticed real differences between these two approaches — cost, fairness, and speed all show up in your observations, which means you're thinking like a writer who has something to compare. Today we're working on overall organization, specifically on establishing shared comparison dimensions, which is the foundation that lets a comparison essay hold together. Organization is the order that lets your reader follow your ideas from start to finish — without it, even strong observations feel scattered. In a comparison essay, that order comes from choosing two or three dimensions and then examining *both* approaches through each one, so the reader can see them side by side rather than as separate lists. One strategy writers use is to ask themselves: what are the major jobs this essay needs to do, and what order does my reader need them in? For a comparison, those \"jobs\" are usually the shared dimensions — things like cost, fairness, or effectiveness — that you apply to both subjects in turn. Look back at your five observations and ask yourself: which two or three questions am I really asking about *both* approaches? Name those dimensions, and we'll use them to shape your organization and then draft a thesis that tells your reader exactly what your essay will argue.",
+      "coaching_words": 213,
+      "_secs": 78.6
+    },
+    {
+      "id": "TC49",
+      "name": "Annotated bibliography — describes, doesn't evaluate",
+      "object": "communicative_purpose",
+      "object_raw": "Communicative purpose of annotation (evaluate vs. describe) — dependency: research question needed before relevance can be judged",
+      "bottleneck": "student conflates 'completing the annotation' with 'describing the source' rather than 'evaluating it for a reader.'",
+      "diagnosed": [
+        "no evaluative claim — only description of surface features",
+        "research question/focus absent — blocks relevance evaluation",
+        "reliability judgment missing (no author credentials, publication venue, methodology noted)",
+        "communicative purpose of annotation genre not yet grasped"
+      ],
+      "evidence": [
+        "all four sentences describe surface features — consistent with description-not-evaluation pattern"
+      ],
+      "strategy": [
+        "brief direct explanation",
+        "ordinary-language restatement",
+        "focused question"
+      ],
+      "dependency": null,
+      "dependency_status": "identified",
+      "sequence": "shift_to_prerequisite",
+      "sufficiency": "not_yet",
+      "exit": "controlling idea (paragraph thesis): can the remaining sentences reasonably develop one evaluative idea?",
+      "next": "once research question is named, draft an evaluative claim about relevance and/or reliability.",
+      "coaching": "You've already done something useful here — you've identified real features of the source, like when it was published and what topic it covers, and that kind of noticing is exactly where annotation starts. Today we're working on the *communicative purpose* of an annotation, which is the difference between describing a source and evaluating it — and that distinction shapes every other choice you'll make. An annotation's purpose is what you want your reader to understand or believe by the end: not just \"here's what the article contains,\" but \"here's whether this source is trustworthy and whether it actually helps with my specific research focus.\" One strategy writers use is to ask, *What should be different for my reader after reading this?* — and then use that answer to test whether every sentence in the annotation is doing evaluative work or just descriptive work. Before you can answer that question for this source, though, we need one key ingredient: your research question, because without it, \"relevant\" doesn't mean anything yet. So the first move is yours — can you write down, in your own words, the specific question or focus your research project is trying to answer? Once you name that, we'll come back and use it to draft an evaluative claim about whether this source is reliable and relevant to your project.",
+      "coaching_words": 223,
+      "_secs": 88.3
+    },
+    {
+      "id": "TC66",
+      "name": "Perfectionist stuck — won't commit anything",
+      "object": "communicative_purpose",
+      "object_raw": "Communicative Purpose / operative position",
+      "bottleneck": "topic present but no operative purpose or position — cannot begin drafting.",
+      "diagnosed": [
+        "no operative position exists yet — surface a stance",
+        "perfectionism blocking action — reduce stakes"
+      ],
+      "evidence": [
+        "'nothing i write is good enough' signals perfectionism, not absence of ideas"
+      ],
+      "strategy": [
+        "focused question",
+        "ordinary-language restatement",
+        "decomposition into a smaller act"
+      ],
+      "dependency": "thesis",
+      "dependency_status": "identified",
+      "sequence": "continue",
+      "sufficiency": "not_yet",
+      "exit": "can the remainder of the composition be organized around a reasonably clear communicative purpose?",
+      "next": "use the stated position to begin formulating a thesis claim.",
+      "coaching": "The fact that you notice when something doesn't feel right — and care enough to delete it — actually tells me you already have a sense of what you want to say; you're just not sure how to trust it yet. Before we think about structure or argument, let's work on something called your **communicative purpose** — the part of writing where you decide what you want your reader to understand or believe by the end. Every essay is built from a few elements working together (a central claim, the reasons behind it, the way everything connects), and communicative purpose is what coordinates all of them: it shapes your thesis, guides your organization, and sets your tone. One strategy writers use when they're stuck is to ask, *\"What should be different for my reader after they finish this — what should they think, feel, or believe that they didn't before?\"* That question cuts through the pressure of getting the wording perfect, because it starts with what you actually think, not how to say it. So right now, before anything else: in one honest sentence, what do you actually think about standardized testing? There's no wrong answer — once I hear your real take, we'll use it to build your thesis from there.",
+      "coaching_words": 212,
+      "_secs": 63.5
+    }
+  ]
+}

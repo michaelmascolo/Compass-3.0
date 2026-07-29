@@ -1,0 +1,129 @@
+{
+  "provenance": {
+    "captured_at": "2026-07-29T22:57:57",
+    "git_commit": "e0fa10bb97efae073c6c8b41ba75ff8425b5b0e7",
+    "git_short": "e0fa10b",
+    "git_working_tree_dirty": true,
+    "git_dirty_files": [
+      "M  backend/server.py",
+      "M backend/tests/stage_b_baseline.py",
+      "?? backend/tests/m14_run.log",
+      "?? backend/tests/phase3_run.log",
+      "?? backend/tests/phase3a_run.log",
+      "?? frontend/yarn.lock",
+      "?? memory/phase2_baseline/g2f1_candidate.patch",
+      "?? memory/phase2_baseline/log_baseline_run1.log",
+      "?? memory/phase2_baseline/log_baseline_run2.log",
+      "?? memory/phase2_baseline/log_baseline_run3.log",
+      "?? memory/phase2_baseline/log_baseline_run4.log",
+      "?? memory/phase2_baseline/log_baseline_run5.log",
+      "?? memory/phase2_baseline/log_cand_run1.log",
+      "?? memory/phase2_baseline/log_cand_run2.log",
+      "?? memory/phase2_baseline/log_cand_run3.log",
+      "?? memory/phase2_baseline/log_cand_run4.log",
+      "?? memory/phase2_baseline/log_cand_run5.log",
+      "?? memory/phase2_baseline/stage_b_g2f1_baseline_d5686a0_run1.json",
+      "?? memory/phase2_baseline/stage_b_g2f1_baseline_d5686a0_run2.json",
+      "?? memory/phase2_baseline/stage_b_g2f1_candidate_e0fa10b_run1.json",
+      "?? memory/phase2_baseline/stage_b_g2f1_candidate_e0fa10b_run2.json",
+      "?? memory/phase2_baseline/stage_b_g2f1_candidate_e0fa10b_run3.json",
+      "?? memory/phase2_baseline/stage_b_g2f1_candidate_e0fa10b_run4.json",
+      "?? memory/phase2_baseline/stage_b_g2f1_candidate_e0fa10b_run5.json",
+      "?? test_reports/leakage_dryrun.log",
+      "?? yarn.lock"
+    ],
+    "server_py_sha256": "2cc4bdcb26c1e0273059aee7f71d25d3960b14df643b72fd8d256bfa6647d556",
+    "system_message_sha256_16": "1c485e2c13d7b8ff"
+  },
+  "results": [
+    {
+      "id": "TC37",
+      "name": "Compare/contrast — no organizing scheme",
+      "object": "thesis",
+      "object_raw": "Thesis (controlling idea for the comparison)",
+      "bottleneck": "draft names the two subjects but makes no claim — it is a list, not a comparison with a point.",
+      "diagnosed": [
+        "no thesis / controlling idea — essay has no organizing spine",
+        "no basis for comparison stated — dimensions of comparison unestablished",
+        "sentences unordered — no organizing principle"
+      ],
+      "evidence": [
+        "two subjects are correctly identified",
+        "some relevant features noted (cost, fairness, speed)"
+      ],
+      "strategy": [
+        "partial scaffold",
+        "brief direct explanation",
+        "reminder of the assignment"
+      ],
+      "dependency": "thesis",
+      "dependency_status": "none",
+      "sequence": "continue",
+      "sufficiency": "not_yet",
+      "exit": "can every part of the essay be organized around one central claim, and could a thoughtful reader restate it?",
+      "next": "once a thesis exists, establish the basis of comparison and organize paragraphs around shared dimensions.",
+      "coaching": "You've already identified something real about both approaches — you noticed that congestion pricing involves cost to drivers, that public transit requires major construction investment, and that fairness is a concern — which means you're thinking like a writer who is paying attention to what matters. Now let's work on your thesis, the single sentence that tells your reader the main idea your whole essay is trying to establish. An essay is built from a few elements working together — a thesis, the reasons and evidence behind it, and the way those parts connect — and the thesis sits at the center, giving the reader the one controlling idea everything else exists to develop. One strategy writers use is to ask themselves: *What is the most important thing I want my reader to understand or accept about these two approaches?* — and then turn that answer into a focused, supportable statement rather than leaving it spread across several separate observations. Right now a reader finishing your draft might ask, \"So what does this writer actually think?\" — so try this frame with your own ideas: *Congestion pricing and public transit investment differ in _______, which means _______.* What would you put in those blanks? Once your thesis gives the reader that one clear claim, we'll use it to establish the basis of your comparison and organize your paragraphs around shared dimensions.",
+      "coaching_words": 231,
+      "_secs": 85.8
+    },
+    {
+      "id": "TC49",
+      "name": "Annotated bibliography — describes, doesn't evaluate",
+      "object": "thesis",
+      "object_raw": "Central Claim — the student needs to form an evaluative position about this source",
+      "bottleneck": "student offers a topic/description rather than a position; no assertion a reader could weigh.",
+      "diagnosed": [
+        "no central evaluative claim — draft is purely descriptive",
+        "no connection to the research project (relevance not established)",
+        "no assessment of reliability or credibility",
+        "no explanation/reasoning linking source features to usefulness"
+      ],
+      "evidence": [
+        "four sentences all describe rather than evaluate — consistent with description-as-annotation misconception"
+      ],
+      "strategy": [
+        "brief direct explanation",
+        "focused question",
+        "reminder of the assignment"
+      ],
+      "dependency": "explanation",
+      "dependency_status": "identified",
+      "sequence": "continue",
+      "sufficiency": "not_yet",
+      "exit": "can the student state a clear, supportable evaluative position about this source?",
+      "next": "form one evaluative claim about the source's usefulness or reliability, anchored to the research project's purpose.",
+      "coaching": "You've already done something useful: you've pulled out concrete facts about this source — its topic, date, and length — which shows you're paying attention to what a source actually contains. Now let's take the next step, and to do that we need to work on something called a central claim, which is the single main idea your annotation exists to establish — the judgment you're making about this source, not just a description of it. An annotation's job isn't to summarize; it's to evaluate, so everything you write should grow out of one clear position, like \"this source is useful for my project because…\" or \"this source has limitations because…\" One strategy writers use when building a central claim is to ask themselves: *What is the most important thing I want my reader to understand or accept about this source?* — and then turn that answer into a focused, supportable statement. Here's what will help us get there: what is your research project actually about, and what would you need a source to do in order to be genuinely useful to it? Once you can answer that, you'll have the foundation for a real evaluative claim — and after that, we'll work on shaping that claim into the central statement that drives your whole annotation.",
+      "coaching_words": 216,
+      "_secs": 85.9
+    },
+    {
+      "id": "TC66",
+      "name": "Perfectionist stuck — won't commit anything",
+      "object": "communicative_purpose",
+      "object_raw": "Communicative Purpose — elicit an honest initial position to break the block",
+      "bottleneck": "purpose has collapsed into 'finish the assignment correctly' rather than 'say what i actually think' — assignment-completion misconception.",
+      "diagnosed": [
+        "student has no text — perfectionism block must be addressed before any structural work",
+        "communicative purpose not yet articulated",
+        "no thesis or stance exists yet"
+      ],
+      "evidence": [
+        "student recognizes something is blocked — metacognitive awareness present."
+      ],
+      "strategy": [
+        "ordinary-language restatement",
+        "focused question",
+        "brief direct explanation"
+      ],
+      "dependency": null,
+      "dependency_status": "identified",
+      "sequence": "continue",
+      "sufficiency": "not_yet",
+      "exit": "can the remainder of the composition be organized around a reasonably clear communicative purpose? — not yet met.",
+      "next": "once a position is voiced, scaffold it toward a provisional thesis.",
+      "coaching": "The fact that you keep drafting and deleting tells me something real: you already have a standard in your head — you know what you want to say should *mean* something. That instinct is actually where good writing begins. Every essay is built from a few elements that work together — a central claim, the reasons behind it, and the way everything connects — and the one we're starting with today is your communicative purpose, which is simply what you want your reader to understand or believe by the end. Think of purpose as the engine underneath every choice you make in an essay: the words, the order, the tone — they all exist to create one specific change in your reader's thinking. A useful move writers use when they feel stuck is to ask, \"What should be *different* for my reader after they finish this?\" — and let that answer pull the first words out, before worrying about polish. So, with the bar completely lowered: in one sentence, what do you actually think about standardized testing? It doesn't have to be right or elegant — just honest, because once you have that, we'll shape it into a provisional thesis.",
+      "coaching_words": 200,
+      "_secs": 71.7
+    }
+  ]
+}

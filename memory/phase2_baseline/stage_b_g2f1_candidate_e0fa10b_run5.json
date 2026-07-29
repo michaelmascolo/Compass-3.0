@@ -1,0 +1,120 @@
+{
+  "provenance": {
+    "captured_at": "2026-07-29T22:53:25",
+    "git_commit": "e0fa10bb97efae073c6c8b41ba75ff8425b5b0e7",
+    "git_short": "e0fa10b",
+    "git_working_tree_dirty": true,
+    "git_dirty_files": [
+      "M backend/tests/stage_b_baseline.py",
+      "?? backend/tests/m14_run.log",
+      "?? backend/tests/phase3_run.log",
+      "?? backend/tests/phase3a_run.log",
+      "?? frontend/yarn.lock",
+      "?? memory/phase2_baseline/g2f1_candidate.patch",
+      "?? memory/phase2_baseline/log_baseline_run1.log",
+      "?? memory/phase2_baseline/log_baseline_run2.log",
+      "?? memory/phase2_baseline/log_cand_run1.log",
+      "?? memory/phase2_baseline/log_cand_run2.log",
+      "?? memory/phase2_baseline/log_cand_run3.log",
+      "?? memory/phase2_baseline/log_cand_run4.log",
+      "?? memory/phase2_baseline/log_cand_run5.log",
+      "?? memory/phase2_baseline/stage_b_g2f1_baseline_d5686a0_run1.json",
+      "?? memory/phase2_baseline/stage_b_g2f1_baseline_d5686a0_run2.json",
+      "?? memory/phase2_baseline/stage_b_g2f1_candidate_e0fa10b_run1.json",
+      "?? memory/phase2_baseline/stage_b_g2f1_candidate_e0fa10b_run2.json",
+      "?? test_reports/leakage_dryrun.log",
+      "?? yarn.lock"
+    ],
+    "server_py_sha256": "68ae56c787fc8f05869c03570116a3622d2e566121c95a1223fa1e74b4450b30",
+    "system_message_sha256_16": "3c72345527a89173"
+  },
+  "results": [
+    {
+      "id": "TC37",
+      "name": "Compare/contrast — no organizing scheme",
+      "object": "thesis",
+      "object_raw": "Thesis / controlling idea",
+      "bottleneck": "draft is a list of topics/facts, not a controlling idea; reader cannot tell what the comparison is meant to show.",
+      "diagnosed": [
+        "no controlling idea / thesis — five sentences do not add up to one claim",
+        "no organizing structure for comparison (no basis, no dimensions, no significance)",
+        "no paragraph structure — draft is a list, not organized prose"
+      ],
+      "evidence": [
+        "two subjects correctly identified from assignment",
+        "observations touch on relevant features (cost, equity, practicality)"
+      ],
+      "strategy": [
+        "focused question",
+        "brief direct explanation",
+        "connection between local writing and whole-essay purpose"
+      ],
+      "dependency": "thesis",
+      "dependency_status": "none",
+      "sequence": "continue",
+      "sufficiency": "not_yet",
+      "exit": "can every part of the essay be organized around one central claim, and could a thoughtful reader restate it?",
+      "next": "use the controlling idea to choose an organizing structure for the comparison.",
+      "coaching": "You've already identified two real approaches — congestion pricing and public transit investment — and you've started noticing genuine tensions in each one, like cost and fairness. That's solid groundwork for a comparison essay. Today we're focusing on your thesis, or controlling idea — the part that tells your reader the single main idea your whole essay exists to establish. An essay is built from a few elements working together (a central claim, the support behind it, and the way everything connects), and the thesis is the anchor: once it's strong, it guides what belongs in the essay and what doesn't. One strategy writers use is to ask themselves, \"What is the single most important thing I want my reader to understand or accept after reading this?\" — then shape the answer into one focused, supportable statement. Right now your draft gives readers five separate observations, but doesn't yet tell them what to *make* of those observations — what the comparison actually shows. In one sentence, what is the most important idea you want a reader to walk away with after comparing these two approaches? Once your controlling idea is clear, we'll use it to choose an organizing structure for the comparison.",
+      "coaching_words": 202,
+      "_secs": 75.0
+    },
+    {
+      "id": "TC49",
+      "name": "Annotated bibliography — describes, doesn't evaluate",
+      "object": "thesis",
+      "object_raw": "Evaluative claim (central claim) — move from description to judgment",
+      "bottleneck": "annotation consists entirely of description; no assertion that the source is (or is not) useful, credible, or relevant — the evaluative claim is entirely absent.",
+      "diagnosed": [
+        "no evaluative claim — annotation is purely descriptive",
+        "surface bibliographic facts not connected to research purpose",
+        "no reasoning about why facts about the source matter"
+      ],
+      "evidence": [
+        "four sentences are all descriptive — consistent pattern, not a single omission"
+      ],
+      "strategy": [
+        "brief direct explanation",
+        "naive-reader perspective",
+        "focused question"
+      ],
+      "dependency": null,
+      "dependency_status": "being_taught",
+      "sequence": "continue",
+      "sufficiency": "not_yet",
+      "exit": "can the paragraph be understood as accomplishing one identifiable evaluative purpose — i.e., does it assert whether and why the source is useful?",
+      "next": "once student articulates an evaluative judgment, scaffold the reasoning that supports it.",
+      "coaching": "You've already captured the essential facts about your source — the topic, the date, and the length — and that gives us a real foundation to build from. An essay (or annotation) is built from a few structural elements that work together: a central claim, the reasoning behind it, and the way everything connects — so today we're going to work on your evaluative claim, which is the part where you move from describing the source to actually judging it. An evaluative claim is the main idea your writing exists to establish — it tells your reader not just what the source is, but whether and why it matters for your research. One strategy writers use to build this kind of claim is to stop and ask themselves, \"What is the single most important thing I want my reader to understand or accept about this source?\" — and then turn that answer into a focused, supportable statement. Right now your draft tells us what the article covers, when it was written, and how long it is, but it doesn't yet say whether you think the source is useful or credible for your project. So here's your one writing move for today: in your own words, try writing one sentence that makes a judgment — is this source useful or reliable for your research, and what's your reason for thinking so? Once that evaluative claim is clear, we'll work on building the reasoning that supports it.",
+      "coaching_words": 245,
+      "_secs": 83.8
+    },
+    {
+      "id": "TC66",
+      "name": "Perfectionist stuck — won't commit anything",
+      "object": "communicative_purpose",
+      "object_raw": "Communicative Purpose — surface a rough position as entry point",
+      "bottleneck": "purpose collapses into task-completion anxiety; no operative position articulated.",
+      "diagnosed": [
+        "no operative position yet articulated — cannot begin thesis or purpose work",
+        "perfectionism blocking any initial draft production"
+      ],
+      "evidence": [
+        "student explicitly names the block: 'don't want to put down the wrong thing' — perfectionism, not ignorance of topic."
+      ],
+      "strategy": [
+        "focused question",
+        "decomposition into a smaller act",
+        "ordinary-language restatement"
+      ],
+      "dependency": "thesis",
+      "dependency_status": "identified",
+      "sequence": "continue",
+      "sufficiency": "not_yet",
+      "exit": "can the remainder of the composition be organized around a reasonably clear communicative purpose?",
+      "next": "once a rough position is named, shape it toward a communicative purpose, then toward a contestable thesis claim.",
+      "coaching": "The fact that you're deleting because nothing feels \"good enough\" actually tells me something real: you have a standard, a sense that your writing should *mean* something — and that instinct is exactly what strong writers rely on. Let's use it. An essay is built from a few elements that work together — a position, the reasons behind it, and a purpose that ties everything to your reader — and right now we're going to work on communicative purpose, which is simply what you want your reader to understand or believe by the time they finish reading. That purpose is what coordinates every other choice you'll make: your thesis, your organization, your tone, all of it points toward one desired change in your reader's thinking. A strategy writers use to find that purpose is to ask, *What should be different for my reader after they read this?* — and the answer to that question becomes the compass for the whole essay. So forget the essay for a moment: just tell me, in one rough sentence or even a few words, what you actually think about standardized testing — right or wrong, polished or not, just your gut. Once you name that, we'll shape it into a communicative purpose, and then into a contestable thesis your whole essay can organize around.",
+      "coaching_words": 220,
+      "_secs": 81.8
+    }
+  ]
+}

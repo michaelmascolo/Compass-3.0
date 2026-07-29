@@ -8,13 +8,40 @@ Certification compares INSTRUCTIONAL JUDGMENT (not text): object, bottleneck, ev
 dependency, sequence, exit, next, plus coaching presence. Deterministic fields (exit, relationships)
 are expected to be IDENTICAL post-migration because they are hydrated from the KB.
 """
-import sys, json, asyncio, time
+import sys, json, asyncio, time, hashlib, subprocess
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import server
 from server import Session, Telos, InteractRequest
 
 CORPUS = Path(__file__).resolve().parents[1] / "test_cases" / "instructional_test_cases.json"
+REPO_ROOT = Path(__file__).resolve().parents[2]
+SERVER_PY = Path(__file__).resolve().parents[1] / "server.py"
+
+
+def _git(args):
+    try:
+        return subprocess.check_output(["git"] + args, cwd=str(REPO_ROOT),
+                                       stderr=subprocess.DEVNULL).decode().strip()
+    except Exception:
+        return None
+
+
+def provenance() -> dict:
+    """Permanently tie a benchmark run to the exact code that produced it.
+    Records the git commit, working-tree cleanliness, the byte-hash of server.py,
+    and the SYSTEM_MESSAGE hash actually loaded into this process."""
+    dirty = _git(["status", "--porcelain"]) or ""
+    sys_msg = getattr(server, "SYSTEM_MESSAGE", "") or ""
+    return {
+        "captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "git_commit": _git(["rev-parse", "HEAD"]),
+        "git_short": _git(["rev-parse", "--short", "HEAD"]),
+        "git_working_tree_dirty": bool(dirty.strip()),
+        "git_dirty_files": [l.strip() for l in dirty.splitlines() if l.strip()],
+        "server_py_sha256": hashlib.sha256(SERVER_PY.read_bytes()).hexdigest(),
+        "system_message_sha256_16": hashlib.sha256(sys_msg.encode()).hexdigest()[:16],
+    }
 
 
 def _norm(s):
@@ -64,6 +91,8 @@ def capture_judgment(case, parsed) -> dict:
 
 
 async def run_capture(out_path, limit=None, ids=None):
+    prov = provenance()
+    print("PROVENANCE:", json.dumps(prov))
     corpus = json.loads(CORPUS.read_text())
     cases = corpus if isinstance(corpus, list) else corpus.get("cases", corpus)
     if ids:
@@ -86,8 +115,16 @@ async def run_capture(out_path, limit=None, ids=None):
         except Exception as e:
             print(f"[{i+1}/{len(cases)}] {case.get('id')} ERROR {e}")
             results.append({"id": case.get("id"), "error": str(e)})
-    Path(out_path).write_text(json.dumps(results, indent=2, ensure_ascii=False))
+    Path(out_path).write_text(json.dumps({"provenance": prov, "results": results}, indent=2, ensure_ascii=False))
     print("wrote", out_path)
+
+
+def _load_results(path):
+    """Accept both the new provenance-wrapped format and the legacy bare-list format."""
+    data = json.loads(Path(path).read_text())
+    if isinstance(data, dict):
+        return data.get("results", []), data.get("provenance")
+    return data, None
 
 
 def _sim(a, b):
@@ -103,8 +140,16 @@ def _sim(a, b):
 
 
 def compare(baseline_path, candidate_path):
-    B = {r["id"]: r for r in json.loads(Path(baseline_path).read_text()) if "error" not in r}
-    C = {r["id"]: r for r in json.loads(Path(candidate_path).read_text()) if "error" not in r}
+    b_results, b_prov = _load_results(baseline_path)
+    c_results, c_prov = _load_results(candidate_path)
+    B = {r["id"]: r for r in b_results if "error" not in r}
+    C = {r["id"]: r for r in c_results if "error" not in r}
+    print("=== PROVENANCE ===")
+    print("  BASELINE :", json.dumps(b_prov) if b_prov else "(legacy — no provenance recorded)")
+    print("  CANDIDATE:", json.dumps(c_prov) if c_prov else "(legacy — no provenance recorded)")
+    if b_prov and c_prov and b_prov.get("server_py_sha256") == c_prov.get("server_py_sha256"):
+        print("  NOTE: identical server.py sha256 in both files → this is a NOISE-FLOOR comparison (same code).")
+    print()
     ids = [i for i in B if i in C]
     # categorical instructional judgments — equivalence is meaningful (exact after _key/_norm)
     keys_cat = ["object", "dependency", "sequence", "sufficiency"]
