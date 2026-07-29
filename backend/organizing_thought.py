@@ -317,6 +317,9 @@ def _blank_response() -> dict:
         "recommended_status": "", "confirmed_status": "",
         "present": "", "gap": "",
         "pass2_text": "", "pass2_status": "in_progress",
+        # Instructional lifecycle: draft (typed, auto-saved, never evaluated) ->
+        # shared (student requested coaching; Stage B/C ran) -> revised (edited after coaching).
+        "state": "draft",
     }
 
 
@@ -738,6 +741,12 @@ class IdeasInteract(BaseModel):
     pass_no: int = 1
 
 
+class IdeasSave(BaseModel):
+    index: int
+    content: str
+    pass_no: int = 1
+
+
 class IdeasAdvance(BaseModel):
     index: int
 
@@ -772,6 +781,31 @@ async def ideas_init(session_id: str):
     doc = await _load_session(session_id)
     ot = doc.get("ot") or _blank_ot(doc.get("assignment", ""))
     ideas = _ensure_ideas(ot)
+    await _save_ot(session_id, ot)
+    return {"ideas": ideas, "ot": ot}
+
+
+@router.post("/{session_id}/ideas/save")
+async def ideas_save(session_id: str, body: IdeasSave):
+    """Lightweight, non-LLM persistence of the student's current draft text.
+    Used by Next / Previous / See my understanding / Build my ideas. Never invokes
+    coaching — pedagogical evaluation is reserved for /ideas/interact ("Share")."""
+    doc = await _load_session(session_id)
+    ot = doc.get("ot") or _blank_ot(doc.get("assignment", ""))
+    ideas = _ensure_ideas(ot)
+    qs = ideas["questions"]
+    if body.index < 0 or body.index >= len(qs):
+        raise HTTPException(status_code=422, detail="question index out of range")
+    key = str(body.index)
+    r = {**_blank_response(), **ideas["responses"].get(key, {})}
+    if body.pass_no == 2:
+        r["pass2_text"] = body.content
+    else:
+        r["pass1_text"] = body.content
+    # Editing an already-shared answer makes it a revision; otherwise it stays a draft.
+    r["state"] = "revised" if r.get("state") == "shared" else (r.get("state") or "draft")
+    ideas["responses"][key] = r
+    ot["objects"]["my_ideas"] = _compose_my_ideas(ot)
     await _save_ot(session_id, ot)
     return {"ideas": ideas, "ot": ot}
 
@@ -813,6 +847,7 @@ async def ideas_interact(session_id: str, body: IdeasInteract):
         elif existing:
             rl.remove(existing)
         returned_suff = "attempted"
+    r["state"] = "shared"
     ot["objects"]["my_ideas"] = _compose_my_ideas(ot)
     await _save_ot(session_id, ot)
     return {

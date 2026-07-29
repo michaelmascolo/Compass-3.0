@@ -125,6 +125,8 @@ export const otIdeasInit = async (id) =>
   (await axios.post(`${API}/ot/${id}/ideas/init`)).data;
 export const otIdeasInteract = async (id, index, content, passNo = 1) =>
   (await axios.post(`${API}/ot/${id}/ideas/interact`, { index, content, pass_no: passNo })).data;
+export const otIdeasSave = async (id, index, content, passNo = 1) =>
+  (await axios.post(`${API}/ot/${id}/ideas/save`, { index, content, pass_no: passNo })).data;
 export const otIdeasAdvance = async (id, index) =>
   (await axios.post(`${API}/ot/${id}/ideas/advance`, { index })).data;
 export const otIdeasMap = async (id) =>

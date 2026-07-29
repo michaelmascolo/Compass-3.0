@@ -4,7 +4,7 @@ import {
   ArrowRight, ArrowLeft, Loader2, MessageSquareQuote, Check, Map, Search, PauseCircle, Sparkles,
 } from "lucide-react";
 import {
-  otIdeasInit, otIdeasInteract, otIdeasAdvance, otIdeasMap, otIdeasConfirmMap,
+  otIdeasInit, otIdeasInteract, otIdeasSave, otIdeasAdvance, otIdeasMap, otIdeasConfirmMap,
   otIdeasInquiryPlan, otIdeasPause, otIdeasResume, otIdeasConstructGuidance, otIdeasConstruct,
 } from "@/lib/api";
 
@@ -133,7 +133,7 @@ export default function MyIdeasWorkflow({ sessionId, ot, setOt }) {
 
   const persistIfDirty = useCallback(async () => {
     if (dirty && answer.trim()) {
-      const res = await otIdeasInteract(sessionId, idx, answer, passNo);
+      const res = await otIdeasSave(sessionId, idx, answer, passNo);
       setOt(res.ot);
     }
   }, [dirty, answer, sessionId, idx, passNo, setOt]);
