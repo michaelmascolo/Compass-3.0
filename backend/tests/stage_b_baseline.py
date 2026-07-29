@@ -63,10 +63,13 @@ def capture_judgment(case, parsed) -> dict:
     }
 
 
-async def run_capture(out_path, limit=None):
+async def run_capture(out_path, limit=None, ids=None):
     corpus = json.loads(CORPUS.read_text())
     cases = corpus if isinstance(corpus, list) else corpus.get("cases", corpus)
-    if limit:
+    if ids:
+        idset = set(ids)
+        cases = [c for c in cases if c.get("id") in idset]
+    elif limit:
         cases = cases[:limit]
     results = []
     for i, case in enumerate(cases):
@@ -87,29 +90,51 @@ async def run_capture(out_path, limit=None):
     print("wrote", out_path)
 
 
+def _sim(a, b):
+    """Token-overlap (Jaccard) for free-text fields — instructional-content similarity,
+    not textual identity."""
+    sa = {w for w in _norm(a).split() if len(w) > 3}
+    sb = {w for w in _norm(b).split() if len(w) > 3}
+    if not sa and not sb:
+        return 1.0
+    if not sa or not sb:
+        return 0.0
+    return len(sa & sb) / len(sa | sb)
+
+
 def compare(baseline_path, candidate_path):
     B = {r["id"]: r for r in json.loads(Path(baseline_path).read_text()) if "error" not in r}
     C = {r["id"]: r for r in json.loads(Path(candidate_path).read_text()) if "error" not in r}
     ids = [i for i in B if i in C]
-    keys_exact = ["object", "dependency", "exit"]          # object/dependency judgment + hydrated exit
-    keys_soft = ["sequence", "sufficiency"]                 # short categorical judgments
-    agree = {k: 0 for k in keys_exact + keys_soft}
+    # categorical instructional judgments — equivalence is meaningful (exact after _key/_norm)
+    keys_cat = ["object", "dependency", "sequence", "sufficiency"]
+    # free-text judgments/deterministic — compare by content SIMILARITY (not identity)
+    keys_text = ["bottleneck", "exit", "next"]
+    agree = {k: 0 for k in keys_cat}
+    sim = {k: [] for k in keys_text}
     diffs = []
     for i in ids:
         b, c = B[i], C[i]
         row_diff = {}
-        for k in keys_exact + keys_soft:
+        for k in keys_cat:
             if _norm(b.get(k)) == _norm(c.get(k)):
                 agree[k] += 1
             else:
                 row_diff[k] = {"baseline": b.get(k), "candidate": c.get(k)}
+        for k in keys_text:
+            sim[k].append(_sim(b.get(k), c.get(k)))
         if row_diff:
             diffs.append({"id": i, "diff": row_diff})
     n = len(ids)
     print(f"compared {n} cases")
-    for k in keys_exact + keys_soft:
-        print(f"  {k:14s} equivalence: {agree[k]}/{n}  ({100*agree[k]//max(1,n)}%)")
-    print(f"  cases with any judgment diff: {len(diffs)}/{n}")
+    print("  -- categorical instructional judgment (exact equivalence) --")
+    for k in keys_cat:
+        print(f"    {k:12s}: {agree[k]}/{n}  ({100*agree[k]//max(1,n)}%)")
+    print("  -- free-text fields (content similarity, mean Jaccard) --")
+    for k in keys_text:
+        m = sum(sim[k]) / max(1, len(sim[k]))
+        print(f"    {k:12s}: {m:.2f}")
+    print(f"  cases with any categorical diff: {len(diffs)}/{n}")
     Path("/tmp/baseline_compare.json").write_text(json.dumps({"n": n, "agree": agree, "diffs": diffs}, indent=2, ensure_ascii=False))
     print("details -> /tmp/baseline_compare.json")
 
@@ -118,7 +143,10 @@ if __name__ == "__main__":
     cmd = sys.argv[1] if len(sys.argv) > 1 else "capture"
     if cmd == "capture":
         out = sys.argv[2] if len(sys.argv) > 2 else "/tmp/stage_b_baseline.json"
-        lim = int(sys.argv[3]) if len(sys.argv) > 3 else None
-        asyncio.run(run_capture(out, lim))
+        arg3 = sys.argv[3] if len(sys.argv) > 3 else None
+        if arg3 and not arg3.isdigit():
+            asyncio.run(run_capture(out, ids=[x.strip() for x in arg3.split(",") if x.strip()]))
+        else:
+            asyncio.run(run_capture(out, int(arg3) if arg3 else None))
     elif cmd == "compare":
         compare(sys.argv[2], sys.argv[3])
