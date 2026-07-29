@@ -8,6 +8,8 @@ import {
   Target,
   HelpCircle,
   TrendingUp,
+  Layers,
+  ArrowRight,
   Loader2,
   ArrowUpRight,
 } from "lucide-react";
@@ -137,6 +139,28 @@ export default function TeacherReflection({ sessionId, onBack }) {
                       {data.explanation.set_aside.join("; ")}
                     </p>
                   )}
+                </Q>
+              )}
+              {data.explanation?.architecture?.length > 0 && (
+                <Q icon={Layers} q="Where does this element fit within the architecture of the essay?">
+                  <ul className="list-disc pl-5 space-y-1" data-testid="reflection-architecture">
+                    {data.explanation.architecture.map((s, i) => (
+                      <li key={i}>{s}</li>
+                    ))}
+                  </ul>
+                  {data.explanation.exit_criterion && (
+                    <p className="text-stone-600 mt-2">
+                      <span className="font-mono-panel text-[11px] uppercase tracking-[0.14em] text-stone-400">
+                        Ready to move on when:{" "}
+                      </span>
+                      {data.explanation.exit_criterion}
+                    </p>
+                  )}
+                </Q>
+              )}
+              {data.explanation?.next_step && (
+                <Q icon={ArrowRight} q="What should the writer learn next, once this element is strengthened?">
+                  <p data-testid="reflection-next-step">{data.explanation.next_step}</p>
                 </Q>
               )}
               {data.explanation?.broader && (

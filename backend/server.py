@@ -1800,6 +1800,7 @@ def _curate_case(case: dict) -> dict:
     reader = th.get("reader_construction", {}) or {}
     scaf = th.get("scaffolding_control", {}) or {}
     instr = th.get("instructional_reasoning", {}) or {}
+    struct = th.get("structural_reasoning", {}) or {}
 
     recognized = _clean_list(
         (th.get("observed_differentiations") or [])
@@ -1811,6 +1812,29 @@ def _curate_case(case: dict) -> dict:
         recognized.append(emerging)
 
     set_aside = _clean_list(scaf.get("postponed") or scaf.get("diagnosed_opportunities"))
+
+    # WHERE IT FITS — the element's place in the essay's architecture, drawn from
+    # the SAME Stage B plan that drives the student coaching. structural_reasoning
+    # is richest in the full engine; preview sessions carry the same information in
+    # instructional_reasoning (purpose + canonical performance structure).
+    architecture = _clean_list(
+        (struct.get("element_relationships") or [])
+        + (struct.get("developmental_dependencies") or [])
+    )
+    if not architecture:
+        architecture = _clean_list([
+            (instr.get("element_communicative_purpose") or "").strip(),
+            (instr.get("canonical_performance_structure") or "").strip(),
+        ])
+    if not architecture and struct.get("structure_identified"):
+        architecture = [f"This works at the level of the {struct.get('structure_identified')}."]
+
+    # WHAT NEXT — where the writer goes once this element is strengthened.
+    next_step = (
+        (instr.get("next_developmental_step") or "").strip()
+        or (scaf.get("future_opportunity") or "").strip()
+    )
+    exit_criterion = (struct.get("active_exit_criterion") or "").strip()
 
     return {
         "id": case.get("id"),
@@ -1830,8 +1854,11 @@ def _curate_case(case: dict) -> dict:
                 "element": (instr.get("active_instructional_element") or "").strip(),
                 "purpose": (instr.get("element_communicative_purpose") or "").strip(),
             },
-            "why": (scaf.get("prioritization_rationale") or "").strip(),
+            "why": (scaf.get("prioritization_rationale") or instr.get("primary_developmental_tension") or "").strip(),
             "set_aside": set_aside,
+            "architecture": architecture[:4],
+            "exit_criterion": exit_criterion,
+            "next_step": next_step,
             "broader": (scaf.get("future_opportunity") or instr.get("element_communicative_purpose") or "").strip(),
         },
     }
@@ -1904,13 +1931,14 @@ CONSTRAINTS (all mandatory):
 
 async def _pedagogical_noticing(assignment: str, response: str, session_id: str) -> Optional[dict]:
     """Run the small, fast interim-observations generation. Returns
-    {observations: [..], understanding: obs1} on success, or None on
-    failure/timeout (caller falls back to the plain thinking state)."""
+    {observations: [..], understanding: obs1, _t_noticing_s: float} on success, or
+    None on failure/timeout (caller falls back to the plain thinking state)."""
     prompt = (
         f"The assignment the learner is responding to:\n\"\"\"{(assignment or '').strip()}\"\"\"\n\n"
         f"The learner's writing so far:\n\"\"\"{(response or '').strip()}\"\"\"\n\n"
         "Produce your interim observations. Respond with ONLY the JSON object."
     )
+    _t0 = time.perf_counter()
     try:
         chat = LlmChat(
             api_key=EMERGENT_LLM_KEY,
@@ -1925,8 +1953,10 @@ async def _pedagogical_noticing(assignment: str, response: str, session_id: str)
         observations = [o.strip() for o in obs_raw if isinstance(o, str) and o.strip()][:2]
         if not observations:
             return None
+        _t = round(time.perf_counter() - _t0, 2)
+        logger.info(f"[latency] acknowledgement_noticing={_t}s session={session_id}")
         # understanding kept for backward-compatibility with any other consumer
-        return {"observations": observations, "understanding": observations[0]}
+        return {"observations": observations, "understanding": observations[0], "_t_noticing_s": _t}
     except Exception as e:  # noqa: BLE001
         logger.warning(f"interim observations failed for {session_id}: {e}")
         return None
@@ -2814,13 +2844,13 @@ You MUST NOT: re-diagnose the writing; choose a different instructional target; 
 
 Compass is not primarily giving advice about THIS essay — it is teaching students how writers construct essays. Every coaching interaction is organized around ONE named structural element (or a relation between elements) and MUST perform these functions, IN THIS ORDER, in natural student language. Do NOT number them or use labels — weave them into 4–7 short, warm sentences:
 1. RECOGNIZE AN AUTHENTIC EMERGING STRENGTH FIRST — open with a genuine, evidence-based recognition of what the student has already accomplished, grounded in their ACTUAL writing, and use it as the foundation for the next step. Specific, not generic; a real emerging strength in their words; connected to the next move. NEVER empty praise ("Good job", "Nice work", "You're doing great", "Great start").
-2. EXPLICITLY ANNOUNCE TODAY'S INSTRUCTIONAL OBJECT — name, in plain student words, the ONE structural element (or relation) you are teaching this turn ("Today we're going to strengthen your thesis.", "Today we're working on your definition.", "Today we're focusing on how evidence supports a claim."). Natural variation is fine, but the object must be named explicitly. When a dependency is active, the announced object IS the dependency; name it and note it serves the larger goal (e.g. the thesis).
+2. ORIENT THE STUDENT, THEN EXPLICITLY ANNOUNCE TODAY'S INSTRUCTIONAL OBJECT — in one short, plain clause remind the student that an essay is built from a few structural elements that work together (a claim, the reasons and evidence behind it, the way they connect), then name the ONE structural element (or relation) you are teaching this turn and where it sits among those parts ("Today we're going to strengthen your thesis — the part that tells your reader what your whole essay will argue.", "Today we're working on your definition, which your thesis depends on."). Natural variation is fine, but the object must be named explicitly. When a dependency is active, the announced object IS the dependency; name it and note it serves the larger goal (e.g. the thesis).
 3. PRESENT THE CANONICAL EXPLANATION of that element — retrieve and adapt the canonical explanation supplied in the plan (grade-appropriate, meaning preserved); do not invent a new theoretical description.
 4. TEACH ONE TRANSFERABLE WRITING STRATEGY for constructing or strengthening that element — a general move writers use, stated so it transfers beyond this one essay (e.g. "One strategy writers use when strengthening a thesis is to commit to a single central claim rather than several possibilities."). This is always a WRITING strategy, never disciplinary content.
 5. APPLY THAT STRATEGY DIRECTLY TO THE STUDENT'S OWN WRITING — invite EXACTLY ONE learner-performed writing operation that uses their own material; never supply the answer or introduce content they have not written.
-6. EXPLAIN HOW MASTERING THIS ELEMENT SUPPORTS THE LARGER ARCHITECTURE of the essay (e.g. "Once your thesis clearly states your central claim, it becomes easier to organize every paragraph around that idea."). When a dependency is active, include the return path to the larger target ("Once your definition is clear, we'll bring it back to sharpen your thesis.").
+6. EXPLAIN HOW MASTERING THIS ELEMENT SUPPORTS THE LARGER ARCHITECTURE of the essay, THEN POINT TO WHERE THE WRITER IS GOING NEXT — say how this element fits and helps the whole (e.g. "Once your thesis clearly states your central claim, it becomes easier to organize every paragraph around that idea."), and ALWAYS close by naming, in plain student words, the next move you'll turn to once this is stronger (e.g. "Once this definition is clear, we'll come back and use it to sharpen your thesis.", "After this, we'll look at how your evidence supports that claim."). The student should always leave knowing WHERE they are going next — do this whether or not the current element is already sufficient. When a dependency is active, the "next" is the return path to the larger target.
 
-CONSTITUTIONAL PRINCIPLE — every coaching interaction must leave the student knowing: WHAT structural element they worked on, WHY it matters, AT LEAST ONE transferable strategy for constructing it, and HOW it relates to the larger architecture of an essay. Compass is building writers, not simply improving essays.
+CONSTITUTIONAL PRINCIPLE — every coaching interaction must leave the student knowing FOUR things: (1) WHAT structural element they worked on, (2) WHY it matters, (3) WHERE it fits in the architecture of an essay, and (4) WHERE they are going next. Plus at least ONE transferable strategy for constructing the element. Compass is building writers, not simply improving essays.
 
 TEACH THE ELEMENT, DON'T JUST NAME IT: whenever you introduce any structural element (thesis, definition, evidence, explanation, transition, controlling idea, …), briefly say what it is and why writers use it, in one short student-accessible clause. When the plan supplies a CANONICAL explanation for the element, RETRIEVE AND ADAPT IT — use that stable canonical explanation (simplified to the student's grade level if needed) rather than inventing a new theoretical description each time; preserve its instructional meaning so Compass teaches a consistent architecture of writing across students. You are gradually teaching students the architecture of writing, not just structural vocabulary.
 
@@ -2828,7 +2858,7 @@ WRITING BEFORE CONTENT — NO DISCIPLINARY OVERREACH (constitutional; the instru
 
 If the plan marks the current element as already SUFFICIENT, acknowledge the achievement plainly, restate the larger goal, name the next element you're advancing to (the next developmental step), and invite the first writing operation on it.
 
-Write only the coaching message (3–6 short sentences). No preamble, no labels, no lists, no quotation of a model answer."""
+Write only the coaching message (4–7 short sentences). No preamble, no labels, no lists, no quotation of a model answer."""
 
 
 def _coaching_plan_prompt(session: Session, req: InteractRequest, plan: dict) -> str:

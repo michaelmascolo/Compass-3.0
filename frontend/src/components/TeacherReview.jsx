@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Compass, ArrowLeft, Eye, Sparkles, Target, HelpCircle, TrendingUp, Loader2 } from "lucide-react";
+import { Compass, ArrowLeft, Eye, Sparkles, Target, HelpCircle, TrendingUp, Layers, ArrowRight, Loader2 } from "lucide-react";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -123,6 +123,19 @@ export default function TeacherReview() {
                           {selected.explanation.set_aside.length > 0 && (
                             <p className="text-stone-600 mt-2"><span className="font-mono-panel text-[11px] uppercase tracking-[0.14em] text-stone-400">Set aside for later: </span>{selected.explanation.set_aside.join("; ")}</p>
                           )}
+                        </Q>
+                      )}
+                      {selected.explanation.architecture?.length > 0 && (
+                        <Q icon={Layers} q="Where does this element fit within the architecture of the essay?">
+                          <ul className="list-disc pl-5 space-y-1" data-testid="review-architecture">{selected.explanation.architecture.map((s, i) => <li key={i}>{s}</li>)}</ul>
+                          {selected.explanation.exit_criterion && (
+                            <p className="text-stone-600 mt-2"><span className="font-mono-panel text-[11px] uppercase tracking-[0.14em] text-stone-400">Ready to move on when: </span>{selected.explanation.exit_criterion}</p>
+                          )}
+                        </Q>
+                      )}
+                      {selected.explanation.next_step && (
+                        <Q icon={ArrowRight} q="What should the writer learn next, once this element is strengthened?">
+                          <p data-testid="review-next-step">{selected.explanation.next_step}</p>
                         </Q>
                       )}
                       {selected.explanation.broader && (

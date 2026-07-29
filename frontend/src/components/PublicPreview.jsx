@@ -9,6 +9,7 @@ import {
   CornerDownRight,
 } from "lucide-react";
 import { startPreview, getSession, interact, getNoticing, otStart, feedbackEvent } from "@/lib/api";
+import { metacognitionSequence } from "@/lib/writerMetacognition";
 import ExperienceReflection from "@/components/ExperienceReflection";
 import TeacherReflection from "@/components/TeacherReflection";
 import OrganizingThought from "@/components/OrganizingThought";
@@ -838,54 +839,57 @@ function WritingScreen({ assignment, ot, response, setResponse, onSubmit, onBack
   );
 }
 
-function Thinking() {
-  const lines = [
-    "Reading your response as a reader would…",
-    "Sitting with what you actually said…",
-    "Thinking about what a reader needs here…",
-  ];
+// The wait period is now instructional. Instead of a generic loading state, it
+// models how experienced writers think (writer metacognition), then bridges to
+// Compass's instructional focus. It NEVER narrates Compass's internal reasoning.
+function MetacognitionCue({ testid, toFocus }) {
+  const seqRef = useRef(null);
+  if (seqRef.current === null) {
+    seqRef.current = metacognitionSequence({ toFocus, general: toFocus ? 3 : 4 });
+  }
+  const seq = seqRef.current;
   const [i, setI] = useState(0);
   useEffect(() => {
-    const t = setInterval(() => setI((n) => (n + 1) % lines.length), 4000);
+    const t = setInterval(() => {
+      // When bridging to focus, hold on the final focus line; otherwise cycle.
+      setI((n) => (toFocus ? Math.min(n + 1, seq.length - 1) : (n + 1) % seq.length));
+    }, 4800);
     return () => clearInterval(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [seq.length, toFocus]);
+  const isFocus = toFocus && i === seq.length - 1;
   return (
-    <div className="flex items-center gap-3 pl-1">
-      <div className="flex items-center gap-1.5">
+    <div className="flex items-start gap-3 pl-1" data-testid={testid}>
+      <div className="flex items-center gap-1.5 mt-2">
         <span className="thinking-dot h-2 w-2 rounded-full bg-[#8C3A2A]" />
         <span className="thinking-dot h-2 w-2 rounded-full bg-[#8C3A2A]" style={{ animationDelay: "0.2s" }} />
         <span className="thinking-dot h-2 w-2 rounded-full bg-[#8C3A2A]" style={{ animationDelay: "0.4s" }} />
       </div>
-      <motion.span
+      <motion.p
         key={i}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.7 }}
-        transition={{ duration: 0.6 }}
-        className="text-stone-500 text-sm italic font-serif-display"
+        initial={{ opacity: 0, y: 4 }}
+        animate={{ opacity: isFocus ? 0.9 : 0.72, y: 0 }}
+        transition={{ duration: 0.7, ease: "easeOut" }}
+        data-testid={`${testid}-line`}
+        className={`text-sm leading-relaxed font-serif-display max-w-md ${isFocus ? "text-[#8C3A2A] italic" : "text-stone-600"}`}
       >
-        {lines[i]}
-      </motion.span>
+        {seq[i]}
+      </motion.p>
     </div>
   );
 }
 
-// Chapter 6 — a subtle "thinking with you" cue shown AFTER the noticing beats,
-// while the frozen engine finishes its developmental response. Conversational,
-// not a performance.
+// Shown when interim observations have NOT arrived yet: pure writer metacognition
+// (keeps cycling until the acknowledgement or coaching appears).
+function Thinking() {
+  return <MetacognitionCue testid="preview-thinking-cue" toFocus={false} />;
+}
+
+// Chapter 6 — shown AFTER the grounded acknowledgement (the interim observations).
+// Progresses from writer metacognition toward Compass's instructional focus while
+// the frozen engine finishes. Never narrates Compass's internal reasoning.
 function ThinkingWith() {
-  return (
-    <div className="flex items-center gap-3 pl-1" data-testid="preview-thinking-with">
-      <div className="flex items-center gap-1.5">
-        <span className="thinking-dot h-2 w-2 rounded-full bg-[#8C3A2A]" />
-        <span className="thinking-dot h-2 w-2 rounded-full bg-[#8C3A2A]" style={{ animationDelay: "0.2s" }} />
-        <span className="thinking-dot h-2 w-2 rounded-full bg-[#8C3A2A]" style={{ animationDelay: "0.4s" }} />
-      </div>
-      <span className="text-stone-500 text-sm italic font-serif-display">
-        Thinking with you about your response…
-      </span>
-    </div>
-  );
+  return <MetacognitionCue testid="preview-thinking-with" toFocus={true} />;
 }
 
 // The interim observations. Grounded observation 1 (emerging central idea) →
