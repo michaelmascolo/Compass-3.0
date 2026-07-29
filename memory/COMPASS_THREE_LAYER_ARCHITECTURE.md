@@ -25,17 +25,27 @@ Accessed only through the deterministic **hydrator** (`hydrate_element(element_k
 Versioned and corrigible; re-audited by `tests/kb_audit.py` (instructional completeness).
 
 ## Layer 2 — Instructional Judgment (Stage B)
-The LLM's UNIQUE contribution: interpret THIS student's writing and decide. Stage B owns, and only
-owns, judgments that depend on the specific draft:
-- interpretation of the student's writing (frameworks M6–M14, structural elements present/absent),
-- the developmental bottleneck (primary tension),
-- selection of the instructional object (`active_instructional_element` / `primary_target`),
-- selection of the instructional strategy/resources (from the KB menu),
-- dependency decision (which prerequisite applies HERE),
-- instructional sequencing (continue/consolidate/release/shift; next step),
-- sufficiency judgment, evidence supporting the diagnosis, confidence/calibration.
-Stage B does NOT define or re-state canonical knowledge (purposes, performance structures,
-relationships, dependencies, exit criteria, explanations) — those are hydrated from Layer 1.
+The LLM's UNIQUE contribution: interpret THIS student's writing and decide. Stage B owns judgments
+that depend on the specific draft: interpretation (frameworks M6–M14, structural elements
+present/absent), the developmental bottleneck, selection of the instructional object, selection of
+the strategy/resources (from the KB menu), the dependency decision, instructional sequencing,
+sufficiency, evidence, calibration.
+
+Stage B does NOT need to output canonical knowledge whose ONLY role is to communicate a decision
+(cross-references, criteria) — those are hydrated from Layer 1. HOWEVER, some canonical content is
+**epistemically active** during reasoning (see the refined Mixed definition below): the model
+articulating it demonstrably stabilizes its judgment. Such content REMAINS in the Stage B reasoning
+process even though it is also hydrated downstream for consistency.
+
+### Field roles (refined 2026-06-29 after the Group 1 ablation)
+- **Judgment** — depends on this student's paper. Lives in Stage B.
+- **Deterministic-communicative** — student-independent AND its only role is to communicate/express
+  a decision downstream. Safe to remove from Stage B output; hydrated from Layer 1.
+- **Mixed (deterministic-but-epistemically-active)** — deterministic in CONTENT, but the act of the
+  model producing it during reasoning helps CONSTRUCT the decision. Must remain in Stage B reasoning;
+  also hydrated downstream. Removing it changes the judgment even though the content is fixed.
+  *Empirically established members:* `element_communicative_purpose`, `canonical_performance_structure`
+  (Group 1 ablation: removing them shifted `object` above its noise floor → reasoning scaffold).
 
 ## Layer 3 — Instructional Communication (Stage C)
 Expresses the plan as supportive, developmentally appropriate coaching while preserving learner
@@ -45,13 +55,16 @@ agency. Stage C chooses WORDING, not instructional architecture:
 - constrained by the deterministic validator: names the target, no disciplinary overreach, no
   prompt leakage, no ready-made student answer, all six orientation functions present.
 
-## The permanent boundary (Stage B contract — post Group 1+2 migration)
-Stage B is REQUIRED to output ONLY judgment (+ mixed, pending separation). It is NOT required to
-output canonical, student-independent knowledge; that is hydrated. Specifically, Stage B no longer
-emits: `element_communicative_purpose`, `canonical_performance_structure`,
-`element_relationships`, `developmental_dependencies`, `active_exit_criterion` (all → Layer 1 via
-the hydrator). Mixed fields (`selected_developmental_resources`, `dependency_rationale`,
-`next_developmental_step`) remain in Stage B until their deterministic core is cleanly separated.
+## The permanent boundary (Stage B contract)
+Stage B is REQUIRED to output judgment fields + Mixed (epistemically-active) fields. It need NOT
+output deterministic-communicative fields (pure cross-references/criteria), which are hydrated.
+- **KEEP in Stage B (Mixed, reasoning-critical):** `element_communicative_purpose`,
+  `canonical_performance_structure` — deterministic content, but reasoning scaffold (Group 1
+  ablation proved removal shifts the object). Also `selected_developmental_resources`,
+  `dependency_rationale`, `next_developmental_step` (mixed, pending isolation).
+- **Migration candidates (Deterministic-communicative, pending single-field ablation):**
+  `element_relationships`, `developmental_dependencies`, `active_exit_criterion` — tested ONE at a
+  time against the noise floor (Group 2). Removed only if `object` stays at its noise floor.
 
 ## Certification rule for any change touching this boundary
 A change is acceptable ONLY if instructional JUDGMENT remains equivalent on the 66-case benchmark:
