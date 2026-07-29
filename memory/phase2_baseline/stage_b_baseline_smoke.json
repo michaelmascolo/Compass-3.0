@@ -1,0 +1,60 @@
+[
+  {
+    "id": "TC01",
+    "name": "Misunderstanding the assignment",
+    "object": "thesis",
+    "object_raw": "Thesis — answer the assignment question with a contestable claim",
+    "bottleneck": "draft addresses 'school in general' not 'year-round school specifically'; no contestable position taken.",
+    "diagnosed": [
+      "no thesis / no answer to assignment question",
+      "topic-not-claim: general school statements, not a position on year-round school",
+      "no organization or body yet"
+    ],
+    "evidence": [
+      "four sentences all affirm school's general value — consistent if undifferentiated orientation"
+    ],
+    "strategy": [
+      "brief direct explanation",
+      "partial scaffold",
+      "reminder of the assignment"
+    ],
+    "dependency": "thesis",
+    "dependency_status": "none",
+    "sequence": "continue",
+    "sufficiency": "not_yet",
+    "exit": "can every part of the essay be organized around one central claim that answers the assignment? — not yet met.",
+    "next": "once a contestable position exists, check scope and then move to supporting claims / organization.",
+    "coaching": "You've already put something real on the page — your writing shows you genuinely believe school matters and sets kids up for the future, and that conviction is exactly the kind of feeling a strong essay grows from. Today we're working on your thesis, which is the part of an essay that tells your reader the one main idea the whole essay exists to establish. A thesis sits at the heart of everything: it answers the assignment question with a clear position, so your reader knows right away what you're arguing and why every paragraph is there. One strategy writers use is to ask themselves, \"What is the most important idea I want my reader to understand or accept?\" — and then turn that answer into a single, focused statement that could be argued. Your writing hasn't yet taken a position on the assignment's specific question — would year-round school actually help students learn? — so try finishing this sentence in your own words: \"Year-round school would [help / not help] students learn because ___.\" Once you have a thesis that answers that question with a reason, we'll use it to check that your supporting ideas all connect back to that one central claim.",
+    "coaching_words": 204,
+    "_secs": 76.7
+  },
+  {
+    "id": "TC02",
+    "name": "Answering a broader question than asked",
+    "object": "thesis",
+    "object_raw": "Thesis — reorient to assignment scope",
+    "bottleneck": "thesis addresses 'society' broadly; assignment requires a claim specifically about teen friendships — the draft does not answer the prompt.",
+    "diagnosed": [
+      "thesis does not answer the assignment (scope is 'society' not 'teen friendships')",
+      "three competing topics rather than one governing claim",
+      "no contestable position stated"
+    ],
+    "evidence": [
+      "student has an evaluative stance: 'bad'"
+    ],
+    "strategy": [
+      "reminder of the assignment",
+      "brief direct explanation",
+      "focused question"
+    ],
+    "dependency": "thesis",
+    "dependency_status": "identified",
+    "sequence": "continue",
+    "sufficiency": "not_yet",
+    "exit": "can every part of the essay be organized around one central claim, and could a thoughtful reader restate it? — currently no, because the claim addresses society not teen friendships.",
+    "next": "once the thesis answers the assignment, develop supporting claims that advance it.",
+    "coaching": "You've already done something real here — you've taken a clear stance that social media causes harm, and that conviction is exactly the energy a strong argument needs. Now let's focus on your thesis, which is the single sentence that tells your reader the one main idea your whole essay exists to establish and defend. A thesis sits at the heart of your introduction and controls everything else: your reasons, your evidence, your organization — all of it grows from that one central claim. Right now your draft argues that social media is bad for society broadly, but the assignment asks you to take a position specifically about teen friendships, so we need to redirect that claim to answer the actual question. One strategy writers use is to ask themselves, \"What is the most important idea I want my reader to understand or accept?\" — and then turn that answer into one focused, contestable sentence that could be argued either way. Using what you already believe about social media, can you try writing one sentence that takes a clear position on whether social media harms teen friendships specifically? Once your thesis is locked onto that scope, we'll build your supporting claims around it.",
+    "coaching_words": 203,
+    "_secs": 74.5
+  }
+]
