@@ -829,3 +829,19 @@ Build Milestone 1 ONLY of an AI writing app that develops students as writers th
   bridged data. Details: SPRINT2_CLOSURE_REPORT.md.
 - DEFERRED per owner: Wire-Trace-into-nav; full spec reconciliation (until Canonical Spec v2.1 frozen);
   Stage B perturbation methodology (research). ONLY Sprint 2 was authorized.
+
+## FUTURE ARCHITECTURAL REQUIREMENT — BACKLOG ONLY (DO NOT IMPLEMENT)
+Recorded 2026-07-30 (owner note; NOT authorized for implementation).
+- Sprint 2 is ACCEPTED and FROZEN. The persistence-before-presentation rule is implemented on the
+  production (`exhaustive`) path exactly as intended.
+- **Streaming/triage invariant (future):** If any future streaming or triage mode becomes part of the
+  PRODUCTION system, the architectural rule still holds: *No learner-visible instructional decision may
+  appear before a corresponding structured instructional state has been created.* If streaming requires
+  earlier rendering, the system must FIRST create a PROVISIONAL instructional state, then UPDATE it when
+  the final decision is reached. Persistent instructional state remains the authoritative representation
+  of Compass at all times.
+- This is a future architectural requirement only. It requires NO modification to the certified Sprint 2
+  implementation. (Relates to the Sprint-2 known-nuance: today the opt-in `triage_experimental` path can
+  render a partial invitation before the finalize-time structured write; that path is non-production.)
+- No further implementation sprints are authorized until Compass Canonical Specification v2.1 is completed
+  and frozen. Effort returns to architecture, not implementation.
