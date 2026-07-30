@@ -863,3 +863,21 @@ Recorded 2026-07-30 (owner note; NOT authorized for implementation).
   extended (teacher/admin-only, no scores). New endpoint POST /api/instructional-state/{id}/target-override.
 - Tests: sprint3_decision_tests.py 16/16 (T1–T12 + guards + TC-02 live). Regression Sprint1 11/11,
   Sprint2 12/12. Details: SPRINT3_CLOSURE_REPORT.md. Sprint 4 NOT begun.
+
+## CANONICAL SPEC v2.1 — RECONCILIATION ITEM (RECORDED 2026-07-30; NOT YET IMPLEMENTED)
+Owner architectural clarification. Sprint 3 accepted & frozen; this does NOT reopen Sprint 3.
+- **Problem:** the interim `NO_TARGET_SUFFICIENT` value mixes decision VALIDITY with instructional
+  NECESSITY. It exposed a specification gap, not a software defect.
+- **Resolution (to implement during v2.1 reconciliation):** make the state model orthogonal by separating
+  two concepts:
+  - `decision_status` ∈ { READY, BLOCKED_INSUFFICIENT_EVIDENCE, BLOCKED_CONTRADICTORY_EVIDENCE,
+    BLOCKED_PREREQUISITE_UNKNOWN, TEACHER_OVERRIDE }  ← REMOVE `NO_TARGET_SUFFICIENT`.
+  - `instructional_need` ∈ { NEEDS_INSTRUCTION, NO_CURRENT_INSTRUCTIONAL_TARGET }  ← NEW field.
+- **Mapping:** the engine may reach `decision_status = READY` with
+  `instructional_need = NO_CURRENT_INSTRUCTIONAL_TARGET` (strong writing / no invented weakness). Today's
+  `NO_TARGET_SUFFICIENT` maps to exactly that pair. Current BLOCKED_* stay as-is with
+  `instructional_need = NEEDS_INSTRUCTION` (or left unset while blocked).
+- **Guards affected later:** DE-01 must accept (READY + NO_CURRENT_INSTRUCTIONAL_TARGET + 0 active targets)
+  as valid, alongside "exactly one active target" and blocked states.
+- **Status:** RECORDED for Canonical Specification v2.1. No further implementation work is authorized
+  until this clarification is incorporated into v2.1.
