@@ -13,6 +13,7 @@ import TeacherConfig from "@/components/TeacherConfig";
 import TeacherHome from "@/components/TeacherHome";
 import MeaningWorkspace from "@/components/MeaningWorkspace";
 import AssignmentRepresentation from "@/components/AssignmentRepresentation";
+import DiagnosticTrace from "@/components/DiagnosticTrace";
 import { createSession, getSession, interact, editTelos } from "@/lib/api";
 
 const STORAGE_KEY = "dws_session_id";
@@ -52,6 +53,10 @@ function App() {
   // Compass 2.0 · Sprint 1 — Assignment Representation (?represent).
   if (params.has("represent")) {
     return <AssignmentRepresentation />;
+  }
+  // Sprint 1 — read-only diagnostic trace for authorized teacher/admin (?trace=<state_id>).
+  if (params.has("trace")) {
+    return <DiagnosticTrace />;
   }
   // Meaning Workspace (?meaning=<session_id>) — visual thinking canvas. Routing
   // is designed so more entry points can be added later without change here.

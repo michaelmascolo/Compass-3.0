@@ -788,3 +788,23 @@ Build Milestone 1 ONLY of an AI writing app that develops students as writers th
 - FINDING: frozen `object` noise floor is **83% (10/12), NOT 100%** (baseline-noisy cases TC55/TC61). Certification rule corrected to PER-CASE. Decisive result: **TC37** & **TC49** are frozen-stable `thesis` 5/5 but collapse to 2/5 under the candidate (divergent directions) → genuine destabilization above noise. TC66 unchanged (4/5 both) = correct control.
 - VERDICT: `element_relationships` is **Mixed (reasoning-active)** — articulating element relationships stabilizes object selection (same lesson as Group 1). ROLLED BACK to frozen; backend health 200. KEEP in Stage B output + keep hydrating downstream.
 - Implication: the structural-relation family (relationships/dependencies) is likely all reasoning-active; `developmental_dependencies` / `active_exit_criterion` not started, expect the same. Full detail: `memory/phase2_baseline/MIGRATION_LOG.md` (ATTEMPT #2) + `STEP3_MIGRATION_LEDGER.md` (Group 2).
+
+## SPRINT 1 — Instructional State, Evidence & Audit Foundation (2026-07-30, CERTIFIED/FROZEN)
+- Built an ADDITIVE, isolated persistence + audit layer so every future instructional decision traces to
+  student EVIDENCE + a selected INSTRUCTIONAL OBJECT + a SUPPORT LEVEL + an EXIT CRITERION + a REQUIREMENT
+  ID. Frozen Stage B/C engine and all existing features untouched (SYSTEM_MESSAGE still 1c485e2c13d7b8ff).
+- New module `backend/compass_foundation.py`: 3 collections (`instructional_states`, `evidence_records`,
+  append-only `audit_events`); models distinguish OBSERVED / HYPOTHESIZED / UNKNOWN and never store a
+  hypothesis as fact; 6 machine-checkable guards (VA-05, DS-01, DS-02, TC-01, VA-06, VA-07); read-only
+  diagnostic trace + audit endpoints gated to teacher/admin; read-only migration of legacy sessions.
+- Frontend `DiagnosticTrace.jsx` (`?trace=<state_id>&role=teacher`) — minimal read-only panel; students 403.
+- Tests A–G + DS-02 + auth + happy-path + append-only correction = 11/11 PASS. Migration: created 50,
+  limitations logged 150, zero legacy records modified.
+- Endpoints: POST `/api/instructional-state`, GET `/api/instructional-state/{id}`, POST `.../revision`,
+  POST `.../evidence`, POST `.../override`, POST `.../advance`, GET `.../trace`, GET `.../audit`,
+  POST `.../audit/correct`, POST `/api/admin/foundation/migrate`. Details: SPRINT1_CLOSURE_REPORT.md.
+- FREEZE: foundation certified; later sprints consume its interfaces but must not rewrite it without an
+  explicit failed requirement.
+- NOTE: Stage B optimization thread (F1 reword) was benchmarked + ROLLED BACK before this sprint; F1
+  destabilized borderline TC37/TC49 (same cases as G2F1). Open methodology question (perturbation noise
+  floor vs sampling noise floor) is PARKED pending owner direction — see MIGRATION_LOG.md ATTEMPT #3.

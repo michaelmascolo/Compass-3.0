@@ -4200,6 +4200,10 @@ import feedback as _feedback
 _feedback.init(db, now_iso)
 app.include_router(_feedback.router)
 
+# Sprint 1 — Compass Instructional State, Evidence & Audit Foundation (additive, isolated).
+import compass_foundation as _foundation
+app.include_router(_foundation.foundation_router)
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
