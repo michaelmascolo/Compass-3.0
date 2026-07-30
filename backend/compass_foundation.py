@@ -155,6 +155,23 @@ class InstructionalState(BaseModel):
     last_revision_produced: str = ""                     # revision text produced this turn, if any
     exit_criterion_description: str = ""                 # the exit criterion text under instruction
     turns_recorded: int = 0                              # count of live engine turns bridged
+    # --- Sprint 3 (Instructional Decision Engine) additive fields ---
+    demonstrated_strengths: List[str] = Field(default_factory=list)
+    strength_status: str = "UNKNOWN"                     # PRESENT | UNKNOWN
+    candidate_instructional_objects: List[str] = Field(default_factory=list)
+    selected_instructional_object: Optional[str] = None
+    selected_object_definition: str = ""
+    structural_prerequisite_status: str = "NOT_APPLICABLE"   # MET|NOT_MET|UNKNOWN|NOT_APPLICABLE
+    conceptual_prerequisite_status: str = "NOT_APPLICABLE"
+    observed_selection_evidence: List[str] = Field(default_factory=list)
+    priority_rationale: str = ""
+    deferred_targets: List[str] = Field(default_factory=list)
+    decision_status: str = ""                            # READY|BLOCKED_*|TEACHER_OVERRIDE|NO_TARGET_SUFFICIENT
+    decision_confidence: str = ""                        # high|medium|low
+    decision_uncertainty: List[str] = Field(default_factory=list)
+    engine_recommendation: Optional[str] = None          # preserved original when a teacher overrides
+    decision_requirement_ids: List[str] = Field(default_factory=list)
+    decision_timestamp: str = ""
     # provenance
     migrated_from_session_id: Optional[str] = None
     migration_limitations: List[str] = Field(default_factory=list)
@@ -543,6 +560,23 @@ async def diagnostic_trace(state_id: str, viewer_role: str = Query("student")):
         "diagnostic_notice": state.last_diagnostic_notice,
         "applicable_requirement_ids": (last_audit[0]["requirement_ids"] if last_audit else []),
         "version": state.version,
+        # --- Sprint 3 decision block ---
+        "demonstrated_strength": state.demonstrated_strengths,
+        "strength_status": state.strength_status,
+        "candidate_targets": state.candidate_instructional_objects,
+        "selected_target": state.selected_instructional_object,
+        "selected_object_definition": state.selected_object_definition,
+        "structural_prerequisite_status": state.structural_prerequisite_status,
+        "conceptual_prerequisite_status": state.conceptual_prerequisite_status,
+        "observed_selection_evidence": state.observed_selection_evidence,
+        "priority_rationale": state.priority_rationale,
+        "deferred_targets": state.deferred_targets,
+        "decision_status": state.decision_status,
+        "decision_confidence": state.decision_confidence,
+        "decision_uncertainty": state.decision_uncertainty,
+        "engine_recommendation": state.engine_recommendation,
+        "decision_requirement_ids": state.decision_requirement_ids,
+        "decision_timestamp": state.decision_timestamp,
     }
 
 
@@ -568,6 +602,19 @@ async def correct_audit(state_id: str, supersedes_id: str = Query(...), rational
     # mark the original as superseded WITHOUT erasing it
     await AUDIT.update_one({"id": supersedes_id}, {"$set": {"superseded_by": new_evt.id}})
     return {"superseding_event": new_evt.model_dump()}
+
+
+@foundation_router.post("/instructional-state/{state_id}/target-override")
+async def teacher_target_override(state_id: str, teacher_id: str = Query(...),
+                                  to_object: str = Query(...), reason: str = Query(""),
+                                  viewer_role: str = Query("student")):
+    """TC-02 — explicit teacher target override; preserves the engine recommendation."""
+    _authorize(viewer_role)
+    import compass_decision_engine as _de
+    try:
+        return await _de.apply_teacher_target_override(state_id, teacher_id, to_object, reason)
+    except ValueError:
+        raise HTTPException(status_code=404, detail="Instructional state not found.")
 
 
 @foundation_router.post("/admin/foundation/migrate")

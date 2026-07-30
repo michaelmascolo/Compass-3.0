@@ -107,7 +107,51 @@ export default function DiagnosticTrace() {
       <Row label="Applicable requirement IDs" testid="trace-requirement-ids">
         <List items={data.applicable_requirement_ids} empty="none" />
       </Row>
-      <div style={styles.footer} data-testid="trace-version">state version {data.version}</div>
+
+      <div style={styles.sectionHead} data-testid="trace-decision-section">Instructional Decision (Sprint 3)</div>
+      <Row label="Decision status" testid="trace-decision-status">
+        {data.decision_status || <span style={styles.muted}>—</span>}
+        {data.decision_confidence ? <span style={styles.badge}> · confidence {data.decision_confidence}</span> : null}
+      </Row>
+      <Row label="Demonstrated strength" testid="trace-demonstrated-strength">
+        <List items={data.demonstrated_strength} empty={`none (${data.strength_status || "UNKNOWN"})`} />
+      </Row>
+      <Row label="Candidate targets" testid="trace-candidate-targets">
+        <List items={data.candidate_targets} empty="none" />
+      </Row>
+      <Row label="Selected target" testid="trace-selected-target">
+        {data.selected_target ? (
+          <span><strong>{data.selected_target}</strong>{data.selected_object_definition ? <span style={styles.muted}> — {data.selected_object_definition}</span> : null}</span>
+        ) : (
+          <span style={styles.muted}>no active target</span>
+        )}
+      </Row>
+      <Row label="Observed evidence (selection)" testid="trace-selection-evidence">
+        <List items={data.observed_selection_evidence} empty="none" />
+      </Row>
+      <Row label="Prerequisite status" testid="trace-prereq-status">
+        structural: {data.structural_prerequisite_status} · conceptual: {data.conceptual_prerequisite_status}
+      </Row>
+      <Row label="Priority rationale" testid="trace-priority-rationale">
+        {data.priority_rationale || <span style={styles.muted}>—</span>}
+      </Row>
+      <Row label="Deferred targets" testid="trace-deferred-targets">
+        <List items={data.deferred_targets} empty="none" />
+      </Row>
+      <Row label="Uncertainty (decision)" testid="trace-decision-uncertainty">
+        <List items={data.decision_uncertainty} empty="none" />
+      </Row>
+      {data.engine_recommendation ? (
+        <Row label="Engine recommendation (pre-override)" testid="trace-engine-recommendation">
+          {data.engine_recommendation}
+        </Row>
+      ) : null}
+      <Row label="Decision requirement IDs" testid="trace-decision-req-ids">
+        <List items={data.decision_requirement_ids} empty="none" />
+      </Row>
+      <div style={styles.footer} data-testid="trace-version">
+        state version {data.version}{data.decision_timestamp ? ` · decided ${data.decision_timestamp}` : ""}
+      </div>
     </div>
   );
 }
@@ -118,6 +162,7 @@ const styles = {
   kicker: { fontSize: 18, fontWeight: 700, letterSpacing: "0.01em" },
   badge: { fontSize: 11, fontFamily: "ui-monospace, monospace", color: "#6b5f4b", background: "#efe9dd", padding: "3px 8px", borderRadius: 999 },
   note: { fontSize: 13, color: "#6b5f4b", marginTop: 0, marginBottom: 18 },
+  sectionHead: { marginTop: 26, marginBottom: 4, fontSize: 13, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "#8a5a2b", borderTop: "2px solid #e0c9a6", paddingTop: 12 },
   notice: { fontSize: 13, color: "#7a2e12", background: "#fdeee6", border: "1px solid #f0c9b6", padding: "10px 12px", borderRadius: 8, marginBottom: 16 },
   row: { display: "grid", gridTemplateColumns: "230px 1fr", gap: 16, padding: "10px 0", borderTop: "1px solid #ece5d8" },
   label: { fontSize: 12, textTransform: "uppercase", letterSpacing: "0.06em", color: "#8a7d67", paddingTop: 2 },

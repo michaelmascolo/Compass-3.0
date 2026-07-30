@@ -3453,6 +3453,14 @@ async def _run_reasoning(session_id: str, ai_turn_id: str, req: InteractRequest)
             )
         except Exception as _we:  # noqa: BLE001
             logger.error(f"[bridge] record_instructional_turn failed: {_we}")
+        # Sprint 3 — Instructional Decision Engine: run the explicit evidence-based
+        # target selection and persist the structured decision BEFORE presentation.
+        try:
+            import compass_decision_engine as _de
+            await _de.decide_for_session(session2.id, session2.theory.model_dump(),
+                                         result.get("invitation", ""))
+        except Exception as _de_e:  # noqa: BLE001
+            logger.error(f"[decision-engine] decide_for_session failed: {_de_e}")
         if session2.is_preview:
             _update_preview_analytics(session2, req, result)
         _t_w0 = time.perf_counter()

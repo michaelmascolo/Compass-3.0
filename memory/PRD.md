@@ -845,3 +845,21 @@ Recorded 2026-07-30 (owner note; NOT authorized for implementation).
   render a partial invitation before the finalize-time structured write; that path is non-production.)
 - No further implementation sprints are authorized until Compass Canonical Specification v2.1 is completed
   and frozen. Effort returns to architecture, not implementation.
+
+## SPRINT 3 — Instructional Decision Engine (2026-07-30, VERIFIED; recommend ACCEPT/FREEZE)
+- New isolated `backend/compass_decision_engine.py`: each live turn runs an explicit evidence-based A–F
+  selection over the frozen engine's structural reasoning, selects exactly ONE target (or explicit
+  blocked/NO_TARGET_SUFFICIENT), records strengths/candidates/prereqs/priority-rationale/deferred/
+  confidence/uncertainty, and writes it to persistent state BEFORE the learner response (one additive call
+  in server.py after the Sprint-2 bridge). No new dialogue/scaffolding; CIO KB untouched; Stage B frozen
+  (1c485e2c13d7b8ff).
+- Guards DE-01 (one active target or explicit blocked), DE-02 (OBSERVED support), DE-03 (no HYP/UNK as
+  fact), DE-04 (block not invent), DE-05 (no prohibited attribution influences selection), TC-02 (teacher
+  override honored + engine recommendation preserved separately + audited).
+- Additive optional state fields (demonstrated_strengths, strength_status, candidate_instructional_objects,
+  selected_instructional_object, selected_object_definition, structural/conceptual_prerequisite_status,
+  observed_selection_evidence, priority_rationale, deferred_targets, decision_status, decision_confidence,
+  decision_uncertainty, engine_recommendation, decision_requirement_ids, decision_timestamp). Trace panel
+  extended (teacher/admin-only, no scores). New endpoint POST /api/instructional-state/{id}/target-override.
+- Tests: sprint3_decision_tests.py 16/16 (T1–T12 + guards + TC-02 live). Regression Sprint1 11/11,
+  Sprint2 12/12. Details: SPRINT3_CLOSURE_REPORT.md. Sprint 4 NOT begun.
