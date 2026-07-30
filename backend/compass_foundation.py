@@ -145,6 +145,16 @@ class InstructionalState(BaseModel):
     # decision
     advancement_decision: str = "hold"                   # advance|hold|blocked
     last_diagnostic_notice: str = ""                     # visible to authorized users only
+    # --- Sprint 2 (Engine Bridge) additive fields: homes for live-engine decision
+    # state the Sprint-1 model did not yet carry. Optional/defaulted → backward
+    # compatible with every existing record and the Sprint-1 tests. ---
+    reason_for_selection: str = ""                       # why the current object was selected
+    prerequisite_status: Dict[str, Any] = Field(default_factory=dict)  # structural/conceptual prerequisites
+    current_learner_task: str = ""                       # the task/invitation presented this turn
+    last_learner_response: str = ""                      # the learner action that drove this turn
+    last_revision_produced: str = ""                     # revision text produced this turn, if any
+    exit_criterion_description: str = ""                 # the exit criterion text under instruction
+    turns_recorded: int = 0                              # count of live engine turns bridged
     # provenance
     migrated_from_session_id: Optional[str] = None
     migration_limitations: List[str] = Field(default_factory=list)
@@ -353,6 +363,13 @@ async def lookup_state(student_id: str = Query(...), assignment_id: str = Query(
 @foundation_router.get("/instructional-state/{state_id}", response_model=InstructionalState)
 async def get_state(state_id: str):
     return await _load_state(state_id)
+
+
+@foundation_router.get("/instructional-state-by-session/{session_id}",
+                       response_model=Optional[InstructionalState])
+async def get_state_by_session(session_id: str):
+    doc = await STATES.find_one({"session_id": session_id}, {"_id": 0})
+    return InstructionalState(**doc) if doc else None
 
 
 @foundation_router.post("/instructional-state/{state_id}/revision", response_model=InstructionalState)
@@ -613,3 +630,224 @@ async def migrate_existing(viewer_role: str = Query("student"), limit: int = Que
         created += 1
     return {"created": created, "skipped_already_migrated": skipped,
             "total_migration_limitations_logged": limitations_total}
+
+
+# ===========================================================================
+# SPRINT 2 — ENGINE BRIDGE
+# The live coaching engine becomes both CONSUMER and PRODUCER of persistent
+# instructional state. `begin_instructional_turn` = read (turn start);
+# `record_instructional_turn` = write (turn end, BEFORE the learner sees the
+# response). No new instructional logic — this maps the frozen engine's output
+# into structured, auditable state so that no instructional decision exists only
+# in generated text.
+# ===========================================================================
+async def get_or_create_state_for_session(session: Dict[str, Any]) -> InstructionalState:
+    """One persistent instructional state per live engine session (keyed by session_id)."""
+    sid = session.get("id")
+    doc = await STATES.find_one({"session_id": sid}, {"_id": 0})
+    if doc:
+        return InstructionalState(**doc)
+    telos = session.get("telos") or {}
+    state = InstructionalState(
+        student_id=session.get("student_name") or sid,
+        teacher_id=session.get("teacher_id") or "",
+        assignment_id=(session.get("config_id") or session.get("assignment_code")
+                       or session.get("assignment") or sid),
+        session_id=sid,
+        assignment_purpose=(telos.get("governing_pedagogical_purpose")
+                            or session.get("pedagogical_purpose") or ""),
+        intended_reader=telos.get("audience_or_communicative_purpose") or "",
+        genre=session.get("current_writing_task") or "",
+        grade_level="",
+    )
+    await _save_state(state)
+    await _write_audit(AuditEvent(
+        state_id=state.id, event_type="state_created_from_session", requirement_ids=["VA-05"],
+        decision="created", rationale="instructional state bootstrapped for live engine session",
+        input_state={"session_id": sid}, output_state={"version": state.version},
+        validation_results=[guard_va05(state).model_dump()],
+    ))
+    return state
+
+
+async def begin_instructional_turn(session: Dict[str, Any], learner_content: str, kind: str) -> InstructionalState:
+    """CONSUMER step — every interaction BEGINS by reading the current instructional
+    state. Logs a turn_started audit event capturing the state that was read."""
+    state = await get_or_create_state_for_session(session)
+    await _write_audit(AuditEvent(
+        state_id=state.id, event_type="turn_started", requirement_ids=["VA-05"],
+        input_state={
+            "current_instructional_object": state.current_instructional_object,
+            "exit_criterion_status": state.exit_criterion_status,
+            "advancement_decision": state.advancement_decision,
+            "version": state.version,
+        },
+        learner_action=f"{kind}: {(learner_content or '')[:280]}",
+        decision="state_read", rationale="engine read persistent instructional state before reasoning",
+        validation_results=[guard_va05(state).model_dump()],
+    ))
+    return state
+
+
+def _first_nonempty(*vals) -> str:
+    for v in vals:
+        if v:
+            return v if isinstance(v, str) else str(v)
+    return ""
+
+
+async def record_instructional_turn(
+    session: Dict[str, Any],
+    theory: Dict[str, Any],
+    invitation: str,
+    learner_content: str,
+    kind: str,
+) -> Optional[InstructionalState]:
+    """PRODUCER step — every interaction ENDS by writing the updated instructional
+    state (+ evidence + a comprehensive audit event) BEFORE the response is presented.
+    Pure mapping of the frozen engine's `theory` output; no instructional logic."""
+    state = await get_or_create_state_for_session(session)
+    sc = theory.get("scaffolding_control") or {}
+    ir = theory.get("instructional_reasoning") or {}
+    sr = theory.get("structural_reasoning") or {}
+    rd = theory.get("revision_development") or {}
+
+    draft_before = state.current_student_text
+    is_revision = (kind == "revise") and bool(learner_content) and (learner_content.strip() != (draft_before or "").strip())
+
+    # ---- current writing snapshot / revision produced ----
+    if learner_content:
+        state.revision_history.append(RevisionEntry(text=learner_content))
+        state.current_student_text = learner_content
+    state.last_revision_produced = learner_content if is_revision else ""
+    state.last_learner_response = f"{kind}: {learner_content}" if learner_content else ""
+
+    # ---- selected canonical instructional object + reason ----
+    obj = _first_nonempty(sc.get("primary_target"), ir.get("active_instructional_element")) or None
+    state.current_instructional_object = obj
+    state.reason_for_selection = _first_nonempty(
+        sc.get("prioritization_rationale"), ir.get("resource_selection_rationale"))
+
+    # ---- structural & conceptual prerequisite status ----
+    state.prerequisite_status = {
+        "required_dependency": ir.get("required_dependency") or "",
+        "dependency_status": ir.get("dependency_status") or "",
+        "dependency_rationale": ir.get("dependency_rationale") or "",
+        "developmental_dependencies": sr.get("developmental_dependencies") or [],
+        "continue_consolidate_release_or_shift": ir.get("continue_consolidate_release_or_shift") or "",
+    }
+
+    # ---- dialogue state / support level / learner task ----
+    state.dialogue_state = _first_nonempty(sc.get("cycle_status"), "in_progress")
+    state.scaffolding_level = _first_nonempty(
+        ir.get("degree_of_student_control"), sc.get("instructional_mode"), "UNKNOWN")
+    state.current_learner_task = _first_nonempty(invitation, ir.get("next_student_act"))
+
+    # ---- exit criterion status + description ----
+    suff = (ir.get("sufficiency_for_next_step") or "").lower()
+    state.exit_criterion_status = "met" if suff == "sufficient" else ("not_met" if suff == "not_yet" else "UNKNOWN")
+    state.exit_criterion_description = _first_nonempty(
+        ir.get("next_developmental_step"), sr.get("active_exit_criterion"), ir.get("active_instructional_element"))
+
+    # ---- advancement decision (RECORD the engine's decision; not a new gate) ----
+    release = (ir.get("continue_consolidate_release_or_shift") or "").lower()
+    cycle = (sc.get("cycle_status") or "").lower()
+    if state.exit_criterion_status == "met" or release == "release" or cycle in ("stop", "consolidate_and_return"):
+        state.advancement_decision = "advance"
+    else:
+        state.advancement_decision = "hold"
+
+    # ---- evidence (OBSERVED / HYPOTHESIZED / UNKNOWN), append-only records ----
+    # reset the per-turn interpretation lists (state reflects the CURRENT turn);
+    # the evidence_records collection retains the full append-only history.
+    state.observed_strengths, state.observed_evidence = [], []
+    state.provisional_hypotheses, state.unknowns = [], []
+
+    async def _emit(category: str, description: str, source: str, span: Optional[str] = None):
+        if not description:
+            return
+        if category == "OBSERVED" and not guard_ds02(description, "OBSERVED").passed:
+            # DS-02: never store a prohibited personal attribution as an OBSERVED fact.
+            await _write_audit(AuditEvent(
+                state_id=state.id, event_type="evidence_suppressed", requirement_ids=["DS-02"],
+                decision="suppressed", rationale=f"DS-02: '{description[:80]}' not stored as OBSERVED fact",
+                validation_results=[guard_ds02(description, "OBSERVED").model_dump()]))
+            return
+        ev = EvidenceRecord(state_id=state.id, assignment_id=state.assignment_id, category=category,
+                            description=description, candidate_instructional_object=obj,
+                            source=source, text_span=span, confidence="engine")
+        await EVIDENCE.insert_one(ev.model_dump())
+        if category == "OBSERVED":
+            state.observed_evidence.append(ev.id)
+            state.observed_strengths.append(description)
+        elif category == "HYPOTHESIZED":
+            state.provisional_hypotheses.append(description)
+        else:
+            state.unknowns.append(description)
+        return ev.id
+
+    # OBSERVED — demonstrated strengths / what the text actually does
+    for el in (sr.get("elements_present") or [])[:6]:
+        await _emit("OBSERVED", f"Element present: {el}", "student_text")
+    for k in ("observed_differentiations", "observed_integrations", "observed_coordinations"):
+        for item in (theory.get(k) or [])[:4]:
+            await _emit("OBSERVED", item, "student_text")
+    await _emit("OBSERVED", ir.get("student_current_organization"), "student_text")
+    await _emit("OBSERVED", ir.get("evidence_of_developmental_movement"), "student_response")
+    if rd.get("applies") and rd.get("development_detected"):
+        await _emit("OBSERVED", f"Revision: {rd.get('development_detected')}", "student_response")
+
+    # HYPOTHESIZED — developmental needs / interpretations (never asserted as fact)
+    await _emit("HYPOTHESIZED", ir.get("primary_developmental_tension"), "system_state")
+    if ir.get("required_dependency"):
+        await _emit("HYPOTHESIZED", f"Prerequisite need: {ir.get('required_dependency')}", "system_state")
+    for el in (sr.get("elements_absent") or [])[:4]:
+        await _emit("HYPOTHESIZED", f"Element not yet present: {el}", "system_state")
+
+    # UNKNOWN — unresolved uncertainty / missing state marked, never invented (VA-07)
+    if not obj:
+        await _emit("UNKNOWN", "No single instructional object selected this turn.", "system_state")
+    if state.exit_criterion_status == "UNKNOWN":
+        await _emit("UNKNOWN", "Readiness to advance (exit criterion) not yet determinable.", "system_state")
+    for t in (theory.get("unresolved_tensions") or [])[:3]:
+        await _emit("UNKNOWN", t, "system_state")
+
+    state.turns_recorded += 1
+    state.version += 1
+    await _save_state(state)
+
+    # ---- validation guards (non-blocking here: recorded, do not interrupt the
+    # frozen live turn — the live engine already produced the decision) ----
+    observed_ev = [EvidenceRecord(state_id=state.id, category="OBSERVED", description=d)
+                   for d in state.observed_strengths]
+    checks = [guard_va05(state), guard_ds01(observed_ev), guard_ds02_state(state, observed_ev),
+              guard_va07(state, observed_ev), guard_va06(["VA-05", "DS-01", "DS-02", "VA-07", "VA-06"])]
+
+    latest_override = state.teacher_overrides[-1].model_dump() if state.teacher_overrides else None
+    req_ids = ["VA-05", "DS-01", "DS-02", "VA-06", "VA-07"] + (["TC-01"] if latest_override else [])
+
+    await _write_audit(AuditEvent(
+        state_id=state.id, event_type="instructional_turn", requirement_ids=req_ids,
+        input_state={"draft_before": (draft_before or "")[:400]},
+        evidence_reviewed=state.observed_evidence,
+        decision=f"object={obj}; advancement={state.advancement_decision}; exit={state.exit_criterion_status}",
+        rationale=state.reason_for_selection,
+        generated_response=(invitation or "")[:2000],   # ties the generated text to the structured decision
+        learner_action=state.last_learner_response,
+        teacher_override=latest_override,
+        output_state={
+            "current_instructional_object": obj,
+            "reason_for_selection": state.reason_for_selection,
+            "prerequisite_status": state.prerequisite_status,
+            "dialogue_state": state.dialogue_state,
+            "support_level": state.scaffolding_level,
+            "current_learner_task": state.current_learner_task,
+            "exit_criterion_status": state.exit_criterion_status,
+            "exit_criterion_description": state.exit_criterion_description,
+            "advancement_decision": state.advancement_decision,
+            "revision_produced": bool(state.last_revision_produced),
+            "version": state.version,
+        },
+        validation_results=[c.model_dump() for c in checks],
+    ))
+    return state

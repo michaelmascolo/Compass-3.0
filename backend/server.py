@@ -3394,6 +3394,13 @@ async def _run_reasoning(session_id: str, ai_turn_id: str, req: InteractRequest)
             return
         session = Session(**doc)
         _t_read = time.perf_counter() - _t_r0
+        # Sprint 2 — Engine Bridge (CONSUMER): every interaction begins by reading
+        # the persistent instructional state. Best-effort; never blocks coaching.
+        try:
+            import compass_foundation as _fb
+            await _fb.begin_instructional_turn(session.model_dump(), req.content, req.kind)
+        except Exception as _be:  # noqa: BLE001
+            logger.error(f"[bridge] begin_instructional_turn failed: {_be}")
         # reason against the session WITHOUT the placeholder AI turn so previous-draft
         # detection and history behave exactly as before.
         reason_session = session.model_copy(deep=True)
@@ -3435,6 +3442,17 @@ async def _run_reasoning(session_id: str, ai_turn_id: str, req: InteractRequest)
             logger.info(f"[reason] turn {ai_turn_id} no longer active; discarding result")
             return
         _finalize_turn(session2, ai_turn_id, req, result)
+        # Sprint 2 — Engine Bridge (PRODUCER): persist the instructional decision in
+        # structured state (evidence + audit) BEFORE the completed turn is written and
+        # presented to the learner. Best-effort; never blocks coaching.
+        try:
+            import compass_foundation as _fb
+            await _fb.record_instructional_turn(
+                session2.model_dump(), session2.theory.model_dump(),
+                result.get("invitation", ""), req.content, req.kind,
+            )
+        except Exception as _we:  # noqa: BLE001
+            logger.error(f"[bridge] record_instructional_turn failed: {_we}")
         if session2.is_preview:
             _update_preview_analytics(session2, req, result)
         _t_w0 = time.perf_counter()

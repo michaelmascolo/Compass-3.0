@@ -808,3 +808,24 @@ Build Milestone 1 ONLY of an AI writing app that develops students as writers th
 - NOTE: Stage B optimization thread (F1 reword) was benchmarked + ROLLED BACK before this sprint; F1
   destabilized borderline TC37/TC49 (same cases as G2F1). Open methodology question (perturbation noise
   floor vs sampling noise floor) is PARKED pending owner direction — see MIGRATION_LOG.md ATTEMPT #3.
+
+## SPRINT 2 — Engine Bridge (2026-07-30, VERIFIED)
+- The live coaching engine is now both CONSUMER and PRODUCER of the Sprint-1 persistent instructional
+  state: every turn READS state at start (audit `turn_started`) and WRITES the full structured decision +
+  evidence + audit at end, BEFORE the learner-visible turn is persisted. No new instructional logic;
+  frozen Stage B/C untouched (SYSTEM_MESSAGE still 1c485e2c13d7b8ff).
+- New architectural rule implemented: "No instructional decision may exist only in generated text; it must
+  be in persistent structured state before presentation." Enforced by ordering the producer write before
+  the session DB write; audit `instructional_turn.generated_response` ties the invitation to the decision.
+- Bridge in `compass_foundation.py`: `begin_instructional_turn` (read), `record_instructional_turn`
+  (write, maps theory→state/evidence/audit), `get_or_create_state_for_session`, plus
+  GET `/api/instructional-state-by-session/{session_id}`. Added optional backward-compatible state fields
+  (reason_for_selection, prerequisite_status, current_learner_task, last_learner_response,
+  last_revision_produced, exit_criterion_description, turns_recorded).
+- server.py: two best-effort hooks in `_run_reasoning` (consumer read + producer write); never blocks a
+  live turn. All 18 required per-turn fields persisted; evidence kept OBSERVED/HYPOTHESIZED/UNKNOWN;
+  requirement IDs VA-05/DS-01/DS-02/VA-06/VA-07 (+TC-01) recorded per turn.
+- Tests: sprint2_bridge_test.py 12/12 on a REAL live turn; Sprint-1 suite still 11/11. Trace renders real
+  bridged data. Details: SPRINT2_CLOSURE_REPORT.md.
+- DEFERRED per owner: Wire-Trace-into-nav; full spec reconciliation (until Canonical Spec v2.1 frozen);
+  Stage B perturbation methodology (research). ONLY Sprint 2 was authorized.
