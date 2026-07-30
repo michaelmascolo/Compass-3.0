@@ -1,0 +1,126 @@
+{
+  "provenance": {
+    "captured_at": "2026-07-30T02:49:10",
+    "git_commit": "eb6bc32219e52b1a92bce79806fb6380593f4251",
+    "git_short": "eb6bc32",
+    "git_working_tree_dirty": true,
+    "git_dirty_files": [
+      "M backend/server.py",
+      "M memory/COMPASS_StageB_F1_Reconciliation_Proposal.md",
+      "?? backend/tests/m14_run.log",
+      "?? backend/tests/phase3_run.log",
+      "?? backend/tests/phase3a_run.log",
+      "?? frontend/yarn.lock",
+      "?? memory/phase2_baseline/log_baseline_run1.log",
+      "?? memory/phase2_baseline/log_baseline_run2.log",
+      "?? memory/phase2_baseline/log_baseline_run3.log",
+      "?? memory/phase2_baseline/log_baseline_run4.log",
+      "?? memory/phase2_baseline/log_baseline_run5.log",
+      "?? memory/phase2_baseline/log_cand_run1.log",
+      "?? memory/phase2_baseline/log_cand_run2.log",
+      "?? memory/phase2_baseline/log_cand_run3.log",
+      "?? memory/phase2_baseline/log_cand_run4.log",
+      "?? memory/phase2_baseline/log_cand_run5.log",
+      "?? memory/phase2_baseline/log_f1_cand_run1.log",
+      "?? memory/phase2_baseline/log_f1_cand_run2.log",
+      "?? memory/phase2_baseline/log_f1_cand_run3.log",
+      "?? memory/phase2_baseline/log_f1_cand_run4.log",
+      "?? memory/phase2_baseline/log_f1_cand_run5.log",
+      "?? memory/phase2_baseline/stage_b_f1_candidate_run1.json",
+      "?? memory/phase2_baseline/stage_b_f1_candidate_run2.json",
+      "?? test_reports/leakage_dryrun.log",
+      "?? yarn.lock"
+    ],
+    "server_py_sha256": "1e15c37f5e585b8be0f960458aaf5edbcae745f554e2e9b726abf9977fb8eb8e",
+    "system_message_sha256_16": "0208ae9f5ffa1209"
+  },
+  "results": [
+    {
+      "id": "TC37",
+      "name": "Compare/contrast — no organizing scheme",
+      "object": "overall_organization",
+      "object_raw": "Overall Organization — choosing a comparison structure",
+      "bottleneck": "no organizing plan chosen; ideas ordered by occurrence, not by reader need or comparison logic.",
+      "diagnosed": [
+        "no organizing structure chosen (block vs. point-by-point)",
+        "no controlling idea or thesis",
+        "sentences not grouped into paragraphs"
+      ],
+      "evidence": [
+        "five sentences do address both approaches — material for comparison exists"
+      ],
+      "strategy": [
+        "brief direct explanation",
+        "contrastive example",
+        "focused question"
+      ],
+      "dependency": "overall_organization",
+      "dependency_status": "none",
+      "sequence": "continue",
+      "sufficiency": "not_yet",
+      "exit": "can the reader reasonably follow the intended progression of ideas? (overall organization exit criterion)",
+      "next": "once structure is chosen, group existing observations into sections and develop a controlling idea.",
+      "coaching": "You've already identified two real approaches — congestion pricing and public transit investment — and noticed genuine things about each one: cost, fairness, speed. That's the raw material a comparison essay needs. Now let's work on **overall organization**, which is the order that lets your reader follow your ideas from start to finish; without a clear structure, even good observations sit in a pile rather than building toward something. In a comparison essay, organization is the backbone everything else — your paragraphs, transitions, and eventually your central claim — depends on. One strategy writers use is to ask: what are the major jobs my essay must do, and what order does my reader need them in? For a comparison, two patterns answer that question: you can cover one approach fully and then the other (block structure), or you can move back and forth on each point — fairness, cost, effectiveness — for both approaches together (point-by-point). Look at the observations you've already written and ask yourself which pattern would let a reader most clearly see what you're comparing and why it matters — then try sketching that order out. Once your structure is in place, we'll come back and group your existing observations into sections and build a controlling idea that ties the whole comparison together.",
+      "coaching_words": 216,
+      "_secs": 76.6
+    },
+    {
+      "id": "TC49",
+      "name": "Annotated bibliography — describes, doesn't evaluate",
+      "object": null,
+      "object_raw": "Evaluative claim — moving from description to judgment about the source's value/reliability",
+      "bottleneck": "draft reports facts about the source rather than asserting a judgment; no claim that a reader could agree or disagree with.",
+      "diagnosed": [
+        "no evaluative claim — draft is purely descriptive",
+        "no reliability judgment (author credentials, source type, publication context absent)",
+        "no relevance judgment (no connection to the student's research purpose)"
+      ],
+      "evidence": [
+        "draft contains only descriptive, factual sentences — no judgment language."
+      ],
+      "strategy": [
+        "brief direct explanation",
+        "focused question",
+        "ordinary-language restatement"
+      ],
+      "dependency": null,
+      "dependency_status": "being_taught",
+      "sequence": "continue",
+      "sufficiency": "not_yet",
+      "exit": "can the remaining sentences develop one identifiable evaluative purpose? (central claim exit: is there a genuine assertion the reader is asked to accept?)",
+      "next": "once an evaluative claim exists, develop the reasoning that supports it (why is it reliable/relevant?).",
+      "coaching": "You've already done something useful here — you've identified concrete, findable details about your source: its topic, the fact that it includes statistics, its date, and its length. That's a real start, because a reader now knows *what* the source contains. Today we're working on the evaluative claim — the part of an annotation where you tell your reader what you *think* about the source, not just what's in it. An evaluative claim is a judgment: a writer's assertion about whether a source is reliable, relevant, or useful, and why — it's the move that turns a description into an actual evaluation. An annotation is built from a few working parts — the description you already have, the evaluative claim we're focusing on now, and the reasoning that backs that claim up — and the evaluative claim is the heart of it, because without it a reader only knows the source exists, not whether it's worth trusting or using. One strategy writers use when building an evaluative claim is to shift from asking *what does this source contain?* to asking *what does this source do for my specific research?* — that question forces a judgment rather than a summary. Try writing one or two sentences that answer this: what makes this source worth using — or not — for your particular research project? Once you have a clear evaluative claim on the page, we'll work on the reasoning that supports it — the *why* behind your judgment.",
+      "coaching_words": 247,
+      "_secs": 80.6
+    },
+    {
+      "id": "TC66",
+      "name": "Perfectionist stuck — won't commit anything",
+      "object": "communicative_purpose",
+      "object_raw": "Communicative Purpose — surfacing the student's raw opinion as a starting point",
+      "bottleneck": "purpose has collapsed into 'avoid getting it wrong' rather than 'communicate something to a reader'; no raw opinion has been articulated.",
+      "diagnosed": [
+        "no draft exists — blocking pattern prevents any structural instruction",
+        "communicative purpose (persuade) is implied but student has not articulated a position",
+        "no thesis candidate yet"
+      ],
+      "evidence": [
+        "'i keep deleting everything' suggests repeated attempts — opinion likely exists but is being suppressed."
+      ],
+      "strategy": [
+        "focused question",
+        "ordinary-language restatement",
+        "decomposition into a smaller act"
+      ],
+      "dependency": "thesis",
+      "dependency_status": "identified",
+      "sequence": "continue",
+      "sufficiency": "not_yet",
+      "exit": "can the remainder of the composition be organized around a reasonably clear communicative purpose? — not yet; no opinion stated.",
+      "next": "use the raw opinion sentence to distinguish topic from contestable claim.",
+      "coaching": "The fact that you're deleting things actually tells me something real: you already have opinions forming — you're just holding them to a standard before they've had a chance to exist on the page yet. Let's work on something writers call communicative purpose, which is the foundation everything else in your essay will grow from — it's simply what you want your reader to understand or believe by the end. An essay is built from a few elements that work together — a thesis, evidence, organization, tone — and all of them depend on this one thing: knowing what you want to change in your reader's mind. A strategy writers use to find that is to ask, \"After someone reads this, what should they think or feel differently about?\" — and let that answer guide every choice that follows. So before we worry about getting anything \"right,\" try this: in one sentence, even a rough and imperfect one, just say what you actually think about standardized testing. Once you have that raw opinion down, we'll use it to start shaping a real thesis — the part that tells your reader exactly what your essay is arguing.",
+      "coaching_words": 196,
+      "_secs": 69.4
+    }
+  ]
+}

@@ -94,3 +94,26 @@ each turned out to be reasoning-active. Working hypothesis: the STRUCTURAL-RELAT
 Before spending runs on `developmental_dependencies` / `active_exit_criterion`, expect the same result;
 test one at a time against the CLEAN provenance-stamped noise floor, and apply the per-case rule
 (destabilization of a frozen-stable case = fail), not aggregate percentage.
+
+---
+
+## ATTEMPT #3 — Architectural reconciliation F1 (prompt reword, NOT a field removal)
+- **Change:** reworded ONLY the L908 "domain-independence" paragraph to reconcile it with the Constitution
+  (make the HOW-vs-WHAT distinction explicit; remove the two now-false claims). Output contract UNCHANGED.
+- **Controls (provenance-stamped):** FROZEN sys-msg `1c485e2c13d7b8ff` (server.py `2cc4bdcb…`); reused the
+  5 byte-identical baseline runs `stage_b_g2f1_baseline_d5686a0_run{1..5}.json`. CANDIDATE sys-msg
+  `0208ae9f5ffa1209` (server.py `1e15c37f…`), runs `stage_b_f1_candidate_run{1..5}.json`.
+- **Result (object):** 9/12 cases preserved; TC55/TC61/TC66 within the (already-noisy) frozen floor.
+  **TC37**: frozen `thesis` 5/5 → candidate `thesis` 1/5 (overall_organization 3/5, cp 1/5).
+  **TC49**: frozen `thesis` 5/5 → candidate `thesis` 1/5 (cp 2/5, None 2/5).
+- **VERDICT: NOT CERTIFIED → ROLLED BACK** (sys-msg restored to `1c485e2c13d7b8ff`, backend 200).
+- **META-FINDING (important):** TC37 & TC49 are the SAME two cases ATTEMPT #2 (G2F1) destabilized. TWO
+  UNRELATED changes — one an output-contract REMOVAL, one a pure FRAMING REWORD — both tip exactly these
+  two frozen-stable cases off `thesis` (toward overall_organization / communicative_purpose). This
+  indicates TC37/TC49 sit on a thesis↔organization/purpose decision BOUNDARY and are sensitive to ANY
+  prompt perturbation, not to the specific semantics of a change. Implication for methodology: the
+  same-bytes "noise floor" measures SAMPLING noise only; it does not bound PERTURBATION noise (a
+  behavior-neutral reword still shifts token attention). For prompt REWORDINGS (vs field removals) the
+  per-case rule may be near-unpassable on these borderline cases. Candidate remedy: establish a
+  "perturbation noise floor" (measure TC37/TC49 jitter under a KNOWN-neutral cosmetic edit) before judging
+  a reword, OR require reword candidates to be minimal-delta. DECISION DEFERRED TO OWNER.

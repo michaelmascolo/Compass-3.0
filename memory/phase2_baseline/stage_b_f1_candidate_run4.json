@@ -1,0 +1,127 @@
+{
+  "provenance": {
+    "captured_at": "2026-07-30T02:49:10",
+    "git_commit": "eb6bc32219e52b1a92bce79806fb6380593f4251",
+    "git_short": "eb6bc32",
+    "git_working_tree_dirty": true,
+    "git_dirty_files": [
+      "M backend/server.py",
+      "M memory/COMPASS_StageB_F1_Reconciliation_Proposal.md",
+      "?? backend/tests/m14_run.log",
+      "?? backend/tests/phase3_run.log",
+      "?? backend/tests/phase3a_run.log",
+      "?? frontend/yarn.lock",
+      "?? memory/phase2_baseline/log_baseline_run1.log",
+      "?? memory/phase2_baseline/log_baseline_run2.log",
+      "?? memory/phase2_baseline/log_baseline_run3.log",
+      "?? memory/phase2_baseline/log_baseline_run4.log",
+      "?? memory/phase2_baseline/log_baseline_run5.log",
+      "?? memory/phase2_baseline/log_cand_run1.log",
+      "?? memory/phase2_baseline/log_cand_run2.log",
+      "?? memory/phase2_baseline/log_cand_run3.log",
+      "?? memory/phase2_baseline/log_cand_run4.log",
+      "?? memory/phase2_baseline/log_cand_run5.log",
+      "?? memory/phase2_baseline/log_f1_cand_run1.log",
+      "?? memory/phase2_baseline/log_f1_cand_run2.log",
+      "?? memory/phase2_baseline/log_f1_cand_run3.log",
+      "?? memory/phase2_baseline/log_f1_cand_run4.log",
+      "?? memory/phase2_baseline/log_f1_cand_run5.log",
+      "?? memory/phase2_baseline/stage_b_f1_candidate_run1.json",
+      "?? memory/phase2_baseline/stage_b_f1_candidate_run2.json",
+      "?? test_reports/leakage_dryrun.log",
+      "?? yarn.lock"
+    ],
+    "server_py_sha256": "1e15c37f5e585b8be0f960458aaf5edbcae745f554e2e9b726abf9977fb8eb8e",
+    "system_message_sha256_16": "0208ae9f5ffa1209"
+  },
+  "results": [
+    {
+      "id": "TC37",
+      "name": "Compare/contrast — no organizing scheme",
+      "object": "overall_organization",
+      "object_raw": "Overall organization — choosing a comparison structure",
+      "bottleneck": "no organizing principle chosen; sentences are random rather than structured around shared comparison dimensions.",
+      "diagnosed": [
+        "no organizing structure chosen (block vs. point-by-point)",
+        "no controlling idea / thesis",
+        "sentences are isolated facts/impressions with no comparison logic"
+      ],
+      "evidence": [
+        "two subjects consistently present in all five sentences"
+      ],
+      "strategy": [
+        "brief direct explanation",
+        "focused question",
+        "contrastive example"
+      ],
+      "dependency": "overall_organization",
+      "dependency_status": "none",
+      "sequence": "continue",
+      "sufficiency": "not_yet",
+      "exit": "can the reader reasonably follow the intended progression of ideas? (overall organization exit criterion)",
+      "next": "once a structure is chosen, develop a controlling idea / thesis that the organization will support.",
+      "coaching": "You've already identified two real, distinct approaches — congestion pricing and public transit investment — and you've noticed something worth saying about each one, including trade-offs like cost and fairness. That's the raw material a comparison essay needs. Today we're working on overall organization, specifically choosing a comparison structure — the order that lets your reader follow your ideas from start to finish, and the backbone that holds your thesis, paragraphs, and transitions together. One transferable strategy writers use at this stage is to ask: what are the major jobs this essay needs to do, and what order does my reader need them in? For a comparison essay, that usually comes down to a key structural choice: do you handle one approach fully before turning to the other (block structure), or do you move back and forth between both approaches on each dimension — like cost, then fairness, then effectiveness (point-by-point)? Look at the ideas you've already written down and ask yourself which of those two patterns would make it easier for a reader to follow your comparison of congestion pricing and public transit. Once you've chosen a structure, we'll come back and build a thesis — a central claim that your whole organization can support.",
+      "coaching_words": 206,
+      "_secs": 82.8
+    },
+    {
+      "id": "TC49",
+      "name": "Annotated bibliography — describes, doesn't evaluate",
+      "object": "thesis",
+      "object_raw": "Evaluative central claim (relevance/reliability judgment)",
+      "bottleneck": "draft performs description; the annotation genre requires an evaluative claim. student has not yet made the move from reporting to judging.",
+      "diagnosed": [
+        "no evaluative claim — draft is purely descriptive",
+        "communicative purpose of the genre (evaluate) not yet enacted",
+        "no reliability judgment",
+        "no relevance judgment"
+      ],
+      "evidence": [
+        "all four sentences are purely descriptive — consistent pattern, not accidental"
+      ],
+      "strategy": [
+        "brief direct explanation",
+        "reminder of the assignment",
+        "focused question"
+      ],
+      "dependency": null,
+      "dependency_status": "being_taught",
+      "sequence": "continue",
+      "sufficiency": "not_yet",
+      "exit": "can the student state a clear, supportable evaluative position about this source?",
+      "next": "produce an evaluative claim, then develop supporting reasoning.",
+      "coaching": "You've already done something real here: you've identified the source's topic, its date, and its length — and that kind of basic information-gathering is exactly where a writer starts before evaluating anything. Now we're going to work on the heart of an annotation, which is its **evaluative central claim** — the part that tells your reader what you actually *think* about this source. An annotation isn't a summary; it's a judgment, and the central claim is the single main idea the whole annotation exists to establish — whether this source is reliable, relevant to your project, or both. One strategy writers use when building this kind of claim is to ask themselves: \"What is the most important thing I want my reader to understand or accept about this source?\" — and then turn that answer into one focused, supportable statement rather than a list of facts. So try this: look back at what you know about this article, and write one sentence that makes a judgment about whether it's useful for your specific research project and why. Once that evaluative claim is clear, we'll come back to develop the reasoning and evidence that support it.",
+      "coaching_words": 195,
+      "_secs": 77.0
+    },
+    {
+      "id": "TC66",
+      "name": "Perfectionist stuck — won't commit anything",
+      "object": "communicative_purpose",
+      "object_raw": "Communicative Purpose — surface a rough position/stance as the entry point",
+      "bottleneck": "purpose has collapsed into 'don't write the wrong thing' — no reader-effect has been named.",
+      "diagnosed": [
+        "no communicative purpose articulated",
+        "no candidate thesis or position",
+        "student blocked by perfectionism before writing begins"
+      ],
+      "evidence": [
+        "'nothing i write is good enough' signals implicit quality standards → student has a sense of what they want"
+      ],
+      "strategy": [
+        "focused question",
+        "ordinary-language restatement",
+        "decomposition into a smaller act"
+      ],
+      "dependency": "",
+      "dependency_status": "none",
+      "sequence": "continue",
+      "sufficiency": "not_yet",
+      "exit": "can the remainder of the composition be organized around a reasonably clear communicative purpose?",
+      "next": "surface a candidate position; then move to making it a contestable thesis.",
+      "coaching": "The fact that you're deleting things because they don't feel right actually tells me something important: you already have a sense of what you *want* to say — you just haven't let yourself say it yet. Today we're going to work on your communicative purpose, which is the starting point for everything else in an argument. Your communicative purpose is simply what you want your reader to understand or believe by the end — and once you know that, it coordinates every other choice you'll make: your thesis, how you organize your paragraphs, even your tone. One strategy writers use is to ask themselves, \"What should be *different* for my reader after they read this?\" — and then use that answer as a compass for everything they write. So here's your only task right now: write one sentence about what you think about standardized testing — not a perfect sentence, not a final one, just an honest one. Once we have that rough position on the page, we'll shape it into a contestable thesis that your whole essay can build from.",
+      "coaching_words": 181,
+      "_secs": 65.4
+    }
+  ]
+}
