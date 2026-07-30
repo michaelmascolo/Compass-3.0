@@ -111,7 +111,14 @@ export default function DiagnosticTrace() {
       <div style={styles.sectionHead} data-testid="trace-decision-section">Instructional Decision (Sprint 3)</div>
       <Row label="Decision status" testid="trace-decision-status">
         {data.decision_status || <span style={styles.muted}>—</span>}
+        {data.instructional_need ? <span style={styles.badge}> · {data.instructional_need}</span> : null}
         {data.decision_confidence ? <span style={styles.badge}> · confidence {data.decision_confidence}</span> : null}
+      </Row>
+      <Row label="Coaching path (RP4)" testid="trace-coaching-path">
+        {data.coaching_path ? (
+          <span><strong>{data.coaching_path}</strong>
+          {data.dialogue_consistent_with_decision === false ? <span style={styles.badge}> · INCONSISTENT</span> : null}</span>
+        ) : (<span style={styles.muted}>no coaching turn yet</span>)}
       </Row>
       <Row label="Demonstrated strength" testid="trace-demonstrated-strength">
         <List items={data.demonstrated_strength} empty={`none (${data.strength_status || "UNKNOWN"})`} />

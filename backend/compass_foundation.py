@@ -166,7 +166,8 @@ class InstructionalState(BaseModel):
     observed_selection_evidence: List[str] = Field(default_factory=list)
     priority_rationale: str = ""
     deferred_targets: List[str] = Field(default_factory=list)
-    decision_status: str = ""                            # READY|BLOCKED_*|TEACHER_OVERRIDE|NO_TARGET_SUFFICIENT
+    decision_status: str = ""                            # READY|BLOCKED_*|TEACHER_OVERRIDE
+    instructional_need: str = ""                         # NEEDS_INSTRUCTION|NO_CURRENT_INSTRUCTIONAL_TARGET
     decision_confidence: str = ""                        # high|medium|low
     decision_uncertainty: List[str] = Field(default_factory=list)
     engine_recommendation: Optional[str] = None          # preserved original when a teacher overrides
@@ -547,6 +548,9 @@ async def diagnostic_trace(state_id: str, viewer_role: str = Query("student")):
     observed = [e["description"] for e in await EVIDENCE.find(
         {"state_id": state.id, "category": "OBSERVED"}, {"_id": 0, "description": 1}).to_list(200)]
     last_audit = await AUDIT.find({"state_id": state.id}, {"_id": 0}).sort("created_at", -1).to_list(1)
+    coaching = await AUDIT.find({"state_id": state.id, "event_type": "coaching_dialogue"},
+                                {"_id": 0}).sort("created_at", -1).to_list(1)
+    coaching_os = (coaching[0].get("output_state") if coaching else {}) or {}
     return {
         "current_target": state.current_instructional_object,
         "observed_strength": state.observed_strengths,
@@ -572,11 +576,16 @@ async def diagnostic_trace(state_id: str, viewer_role: str = Query("student")):
         "priority_rationale": state.priority_rationale,
         "deferred_targets": state.deferred_targets,
         "decision_status": state.decision_status,
+        "instructional_need": state.instructional_need,
         "decision_confidence": state.decision_confidence,
         "decision_uncertainty": state.decision_uncertainty,
         "engine_recommendation": state.engine_recommendation,
         "decision_requirement_ids": state.decision_requirement_ids,
         "decision_timestamp": state.decision_timestamp,
+        # --- Revision Package 4 coaching path ---
+        "coaching_path": coaching_os.get("coaching_path"),
+        "instructional_target_presented": coaching_os.get("instructional_target_presented"),
+        "dialogue_consistent_with_decision": coaching_os.get("consistent_with_decision"),
     }
 
 

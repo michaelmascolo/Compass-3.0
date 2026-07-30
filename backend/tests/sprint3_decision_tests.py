@@ -56,8 +56,9 @@ d = DE.decide([obs("Thesis", "present", "Strong contestable claim."),
                obs("Explanation", "present", "Clear reasoning."),
                obs("Conclusion", "present", "Effective conclusion.")])
 rec("T6_strong_writing_no_invented_weakness",
-    d.selected_instructional_object is None and d.decision_status == "NO_TARGET_SUFFICIENT",
-    f"selected={d.selected_instructional_object} status={d.decision_status}")
+    d.selected_instructional_object is None and d.decision_status == "READY"
+    and d.instructional_need == "NO_CURRENT_INSTRUCTIONAL_TARGET",
+    f"selected={d.selected_instructional_object} status={d.decision_status} need={d.instructional_need}")
 
 # T7 — insufficient evidence -> block, record UNKNOWN
 d = DE.decide([hyp("Student may not understand thesis contestability."), unk("Audience awareness not observable.")])

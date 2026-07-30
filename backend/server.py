@@ -3455,12 +3455,51 @@ async def _run_reasoning(session_id: str, ai_turn_id: str, req: InteractRequest)
             logger.error(f"[bridge] record_instructional_turn failed: {_we}")
         # Sprint 3 — Instructional Decision Engine: run the explicit evidence-based
         # target selection and persist the structured decision BEFORE presentation.
+        # Revision Package 4 — the coaching turn CONSUMES that decision: it selects a
+        # response path (CASE 1-4) and gates/adjusts the learner-facing text so the
+        # dialogue no longer independently infers what to teach.
         try:
             import compass_decision_engine as _de
-            await _de.decide_for_session(session2.id, session2.theory.model_dump(),
-                                         result.get("invitation", ""))
+            import compass_coaching_controller as _cc
+            import compass_foundation as _cf
+            _decision = await _de.decide_for_session(
+                session2.id, session2.theory.model_dump(), result.get("invitation", ""))
+            if _decision:
+                _coaching = _cc.select_response(_decision, result.get("invitation", ""))
+                # gate/adjust the learner-facing text per the selected decision path
+                for _t in session2.turns:
+                    if _t.id == ai_turn_id:
+                        _t.content = _coaching["learner_text"]
+                        break
+                # diagnostic trace: decision loaded, path, target, consistency
+                _st = await _cf.STATES.find_one({"session_id": session2.id}, {"_id": 0})
+                if _st:
+                    await _cf._write_audit(_cf.AuditEvent(
+                        state_id=_st["id"], event_type="coaching_dialogue",
+                        requirement_ids=["DE-01", "TC-02"],
+                        input_state={"decision_status": _decision.get("decision_status"),
+                                     "instructional_need": _decision.get("instructional_need"),
+                                     "selected_instructional_object": _decision.get("selected_instructional_object")},
+                        decision=_coaching["coaching_path"],
+                        rationale="coaching dialogue driven by stored instructional decision",
+                        generated_response=(_coaching["learner_text"] or "")[:1500],
+                        learner_action=f"{req.kind}: {(req.content or '')[:200]}",
+                        output_state={
+                            "coaching_path": _coaching["coaching_path"],
+                            "instructional_target_presented": _coaching["instructional_target_presented"],
+                            "one_target": _coaching["one_target"],
+                            "consistent_with_decision": _coaching["consistent_with_decision"],
+                            "cognitive_ownership_ok": _coaching["cognitive_ownership_ok"],
+                        },
+                        validation_results=[
+                            {"requirement_id": "DE-01", "passed": _coaching["one_target"],
+                             "detail": "exactly one learner-facing target (or none for CASE 2/3)"},
+                            {"requirement_id": "RP4-NO-REDIAGNOSIS", "passed": _coaching["consistent_with_decision"],
+                             "detail": "dialogue consumed the stored decision without re-diagnosis"},
+                        ],
+                    ))
         except Exception as _de_e:  # noqa: BLE001
-            logger.error(f"[decision-engine] decide_for_session failed: {_de_e}")
+            logger.error(f"[decision-engine/coaching] failed: {_de_e}")
         if session2.is_preview:
             _update_preview_analytics(session2, req, result)
         _t_w0 = time.perf_counter()

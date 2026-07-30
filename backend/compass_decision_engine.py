@@ -66,8 +66,9 @@ DECISION_STATUSES = (
     "BLOCKED_CONTRADICTORY_EVIDENCE",
     "BLOCKED_PREREQUISITE_UNKNOWN",
     "TEACHER_OVERRIDE",
-    "NO_TARGET_SUFFICIENT",  # additive: Test 6 "no-current-target" honest state (writing meets objectives)
 )
+# v2.1 orthogonality: decision VALIDITY (above) is separate from instructional NECESSITY (below).
+INSTRUCTIONAL_NEEDS = ("NEEDS_INSTRUCTION", "NO_CURRENT_INSTRUCTIONAL_TARGET")
 DE_REQS = ["DE-01", "DE-02", "DE-03", "DE-04", "DE-05"]
 
 # structural / conceptual prerequisites. "A|B" = satisfied if A OR B present.
@@ -155,6 +156,7 @@ class Decision:
         self.priority_rationale: str = ""
         self.deferred_targets: List[str] = []
         self.decision_status: str = "BLOCKED_INSUFFICIENT_EVIDENCE"
+        self.instructional_need: str = "NEEDS_INSTRUCTION"
         self.decision_confidence: str = "low"
         self.decision_uncertainty: List[str] = []
         self.engine_recommendation: Optional[str] = None   # preserved when a teacher overrides
@@ -166,7 +168,7 @@ class Decision:
             "selected_instructional_object", "selected_object_definition",
             "structural_prerequisite_status", "conceptual_prerequisite_status",
             "observed_selection_evidence", "priority_rationale", "deferred_targets",
-            "decision_status", "decision_confidence", "decision_uncertainty",
+            "decision_status", "instructional_need", "decision_confidence", "decision_uncertainty",
             "engine_recommendation", "decision_requirement_ids")}
 
 
@@ -253,7 +255,8 @@ def decide(evidence: List[EvidenceView], teacher_override: Optional[Dict[str, An
     # Test-6 branch: no OBSERVED gap. Prefer a justified advanced target from an OBSERVED
     # 'emerging/weak' higher structure; else an honest no-current-target state (never invent).
     if not candidates:
-        d.decision_status = "NO_TARGET_SUFFICIENT"
+        d.decision_status = "READY"
+        d.instructional_need = "NO_CURRENT_INSTRUCTIONAL_TARGET"
         d.priority_rationale = ("No OBSERVED structural gap; writing meets current objectives. "
                                 "No weakness invented.")
         d.decision_confidence = "high" if d.demonstrated_strengths else "medium"
@@ -348,16 +351,21 @@ def _finalize(d: Decision, observed: List[EvidenceView],
 # ---- machine-checkable guards -----------------------------------------------
 def run_guards(d: Decision, observed: List[EvidenceView]) -> List[Dict[str, Any]]:
     results = []
-    blocked = d.decision_status.startswith("BLOCKED") or d.decision_status == "NO_TARGET_SUFFICIENT"
+    blocked = d.decision_status.startswith("BLOCKED")
+    no_target = (d.decision_status == "READY"
+                 and d.instructional_need == "NO_CURRENT_INSTRUCTIONAL_TARGET")
     active_targets = 1 if d.selected_instructional_object else 0
 
-    # DE-01: exactly one active target OR an explicit blocked/no-target status.
-    de01 = (active_targets == 1) ^ (blocked and active_targets == 0)
-    # teacher override also counts as exactly-one active target
+    # DE-01: exactly one active target, OR an explicit blocked status, OR an explicit
+    # READY + NO_CURRENT_INSTRUCTIONAL_TARGET (no invented weakness).
     if d.decision_status == "TEACHER_OVERRIDE":
         de01 = active_targets == 1
+    elif blocked or no_target:
+        de01 = active_targets == 0
+    else:
+        de01 = active_targets == 1
     results.append({"requirement_id": "DE-01", "passed": de01,
-                    "detail": f"status={d.decision_status} active_targets={active_targets}"})
+                    "detail": f"status={d.decision_status} need={d.instructional_need} active_targets={active_targets}"})
 
     # DE-02: selection supported by >=1 OBSERVED evidence record.
     de02 = (not d.selected_instructional_object) or len(d.observed_selection_evidence) >= 1
@@ -476,6 +484,7 @@ def _write_decision_onto_state(state: InstructionalState, d: Decision) -> None:
     state.priority_rationale = d.priority_rationale
     state.deferred_targets = d.deferred_targets
     state.decision_status = d.decision_status
+    state.instructional_need = d.instructional_need
     state.decision_confidence = d.decision_confidence
     state.decision_uncertainty = d.decision_uncertainty
     state.engine_recommendation = d.engine_recommendation
@@ -499,6 +508,7 @@ async def apply_teacher_target_override(state_id: str, teacher_id: str, to_objec
     state.selected_instructional_object = to_object  # honor teacher selection
     state.selected_object_definition = OBJECT_DEFINITIONS.get(to_object, "")
     state.decision_status = "TEACHER_OVERRIDE"
+    state.instructional_need = "NEEDS_INSTRUCTION"
     state.decision_requirement_ids = list(DE_REQS) + ["TC-02"]
     state.decision_timestamp = now_iso()
     state.version += 1
