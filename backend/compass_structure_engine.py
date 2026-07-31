@@ -387,7 +387,8 @@ _DLG_SYS = (
 
 async def generate_dialogue(session_id: str, assignment: str, unit: str, student_text: str,
                             structure: str, obj: Dict[str, Any], status: str,
-                            kind: str, action: str = "scaffold") -> str:
+                            kind: str, action: str = "scaffold",
+                            mode: str = "first_turn", sufficiency: str = "continue") -> str:
     ind = obj.get("observable_indicators", {})
     _action_hint = {
         "teach": "Explain the structure plainly and show what it does, then hand the doing back to the writer.",
@@ -396,29 +397,47 @@ async def generate_dialogue(session_id: str, assignment: str, unit: str, student
         "model": "Briefly model the KIND of move on a neutral example, never on their content, then have them do theirs.",
         "encourage_revision": "Point to the one place to revise and invite them to try it in their own words.",
     }.get(action, "Give one concrete scaffold the writer completes themselves.")
+    is_cont = (mode == "continuation")
+    _mode_block = (
+        "MODE = CONTINUATION TURN. The learner is revising or responding WITHIN the SAME active "
+        "structure they have already been taught. Do NOT repeat the first-turn lesson (no strength+name+"
+        "teach preamble). Instead: (1) briefly recognize what actually changed in their latest attempt; "
+        "(2) if useful, re-anchor the requirement in one short phrase; (3) compare the new attempt "
+        "against what the structure must accomplish; (4) give the MINIMUM next scaffold; (5) judge "
+        "developmental sufficiency. Be transparent so the learner never feels you are withholding a "
+        "hidden right answer: if more work is needed, state clearly what has IMPROVED, what still "
+        "REMAINS, why it matters, and what would count as ENOUGH. If the requirement is now met, say so "
+        "explicitly, name what they accomplished, and recommend moving forward. Then STOP.\n"
+        f"WHAT COUNTS AS ENOUGH (the requirement to compare against): {obj.get('exit_criterion','')}\n"
+        f"INTERNAL sufficiency read (informs you; do not quote): {sufficiency}\n"
+    ) if is_cont else (
+        "MODE = FIRST TURN on a newly active structure. Perform the six functions in order, woven into "
+        "one short natural message: (1) name ONE genuine, specific strength in their attempt at THIS "
+        "structure; (2) name the canonical structure in learner-friendly language; (3) teach its "
+        "integrated meaning in one concise act (what it is + the communicative work it does + what it "
+        "must accomplish); (4) locate their current attempt relative to that requirement (one located "
+        "observation, not a diagnosis list); (5) give ONE developmental invitation; (6) STOP.\n"
+        f"WHAT COUNTS AS ENOUGH (the requirement, for locating step 4): {obj.get('exit_criterion','')}\n"
+    )
     prompt = (
         f"ASSIGNMENT: {assignment or '(not specified)'}\n"
         f"UNIT: {unit or 'one paragraph'}\n"
         f"THE WRITER JUST {('REVISED' if kind == 'revise' else 'WROTE' if kind in ('writing','continue') else 'RESPONDED')}:\n"
         f"\"\"\"\n{student_text}\n\"\"\"\n\n"
+        f"{_mode_block}\n"
         f"THE INSTRUCTIONAL DECISION IS ALREADY MADE. Help the writer build exactly this — do not "
         f"reconsider or broaden it:\n"
-        f"- FOCUS (the one thing to work on this turn): {structure}\n"
-        f"- WHY IT MATTERS (use this to explain the payoff in your OWN plain words; do not recite it): "
-        f"{obj.get('essence','')}\n"
+        f"- FOCUS (the one canonical structure to work on this turn): {structure}\n"
+        f"- WHAT IT IS / WHY IT MATTERS (use in your OWN plain words; do not recite): {obj.get('essence','')}\n"
         f"- WHAT IT LOOKS LIKE ONCE BUILT (the goal to move toward — NOT a verdict to read back): "
         f"{ind.get('present','')}\n"
         f"- HOW TO SCAFFOLD IT (private guidance for you; do not quote): {obj.get('teaching_strategy','')}\n"
         f"- DECIDED ACTION (shapes HOW you deliver the one invitation): {action} — {_action_hint}\n\n"
-        f"INTERNAL ANALYSIS — informs which invitation you choose; it is NOT for the learner. Never "
-        f"voice, quote, paraphrase, summarize, or evaluate the draft with any of it. Do not tell the "
-        f"learner what their writing currently does, what is missing, weak, or strong, or that a "
-        f"status/decision exists:\n"
+        f"INTERNAL ANALYSIS — informs your choices; NOT for the learner. Never voice, quote, "
+        f"paraphrase, or expose internal labels/status words. Locating the attempt (allowed) is a plain "
+        f"observation in the learner's own terms, never a weakness list or status readout:\n"
         f"  internal_status={status}; internal_indicator={ind.get(status,'')}; "
-        f"internal_developmental_forms={', '.join(obj.get('developmental_variations', []))}\n\n"
-        f"Now write the coaching turn that launches the work: FOCUS -> WHY THIS FIRST -> ONE "
-        f"INVITATION -> STOP. Do not open by describing, diagnosing, praising, or criticizing the "
-        f"draft; the first sentence names the work and invites the writer into it."
+        f"internal_developmental_forms={', '.join(obj.get('developmental_variations', []))}\n"
     )
     chat = LlmChat(api_key=_KEY, session_id=f"rp5-dlg-{session_id}",
                    system_message=_DLG_SYS).with_model(*DLG_MODEL)
@@ -476,6 +495,7 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
     state = await F.get_or_create_state_for_session(session)
     assignment = session.get("assignment") or state.assignment_purpose or ""
     unit = _unit_hint(session)
+    prior_target = state.selected_instructional_object  # prior turn's target (for first/continuation mode)
 
     # current writing snapshot
     if learner_content:
@@ -658,8 +678,12 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
     if instructional_need == "NO_CURRENT_INSTRUCTIONAL_TARGET":
         invitation, dlg_bytes = await generate_closure(state.id, assignment, student_text, established)
     else:
+        # FIRST-TURN vs CONTINUATION: continuation only when the SAME object stayed active
+        # from the prior turn (instruction already presented on it); otherwise first turn.
+        dialogue_mode = "continuation" if (prior_target and prior_target == target) else "first_turn"
         invitation, dlg_bytes = await generate_dialogue(state.id, assignment, unit, student_text,
-                                                        target, obj, status, kind, instructional_action)
+                                                        target, obj, status, kind, instructional_action,
+                                                        mode=dialogue_mode, sufficiency=developmental_sufficiency)
     t_dialogue = time.perf_counter() - t_d0
 
     ownership_ok = not bool(_DOES_WORK.search(invitation or ""))
