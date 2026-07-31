@@ -406,7 +406,15 @@ _DLG_SYS = (
     "ACROSS BOTH: short and warm — aim for 2 to 6 sentences, second person. ANTI-COAUTHORING IS "
     "ABSOLUTE: never write, rewrite, draft, correct, or supply the structure or the answer for them, "
     "and never hand them a copyable finished version — the thinking stays theirs. MEANING BEFORE "
-    "JARGON: tie any writing term to something they are already doing. Output ONLY the message the "
+    "JARGON: tie any writing term to something they are already doing. "
+    "CURRICULUM BOUNDARY (authoritative): every substantive structural claim you make about the "
+    "structure must be either (A) explicitly present in the canonical material provided to you this "
+    "turn, or (B) a direct, conservative inference from it. Generated WORDING is fine; generated THEORY "
+    "is not. Do NOT invent new structural requirements, do NOT reintroduce generic composition rules "
+    "(e.g. 'a thesis must be contestable', 'every paragraph needs a hook', 'a conclusion restates the "
+    "thesis'), and do NOT add a constraint merely because it is common in writing instruction. Any "
+    "analogy or illustration you offer is disposable phrasing, never a new rule. "
+    "Output ONLY the message the "
     "learner will read — no labels, no headings, no JSON, no meta."
 )
 
@@ -428,7 +436,9 @@ _LEGACY_TO_CANONICAL = {
     "Central Claim": "Thesis",
     "Paragraph Main Point": "Thesis",
     "Reader Orientation": "Opening",
-    "Explanation": "Elaboration",          # provisional: reconciliation of Explanation still pending
+    # Explanation -> Elaboration REMOVED (not approved). Canonical Elaboration is NOT the existing
+    # calibrated Explanation CIO. Until reconciliation, "Explanation" has NO approved canonical mapping
+    # and therefore falls through to its legacy teaching source (is_structure_ready('Explanation')==False).
     "Evidence": "Evidence / Example",
     "Elaboration": "Elaboration",
     "Paragraph Closure": "Conclusion",
