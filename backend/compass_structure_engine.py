@@ -237,18 +237,26 @@ def retrieve_object(structure: str) -> Dict[str, Any]:
 # STEP 1 — highest-priority structure selection (ONE focused LLM call)
 # ---------------------------------------------------------------------------
 _SEL_SYS = (
-    "You are the Compass Structure Selector. Your ONLY job is to identify the single "
-    "writing STRUCTURE with the greatest developmental leverage for this writer right now. "
-    "You are NOT diagnosing errors and NOT listing problems. You walk a fixed priority list "
-    "from the top and choose the FIRST structure that is not yet solidly established for the "
-    "unit the writer is producing (status missing, partial, or misleading) AND is applicable "
-    "to that unit. Higher-priority structures come first because everything below depends on "
-    "them. If the writer is producing a single paragraph, whole-piece structures (Reader "
-    "Orientation as an introduction, Conclusion) are usually NOT applicable and the governing "
-    "structure is the Central Claim, then its Evidence and Explanation. If EVERY applicable "
-    "structure is already present and solid, select null — never invent a weakness to have "
-    "something to teach. Ground your judgment in the actual words on the page. Respond with "
-    "ONLY a JSON object and nothing else."
+    "You are the Compass Instructional Decision layer. Before any student-facing response is "
+    "written, you perform an internal instructional analysis (never shown to the student) that "
+    "becomes the basis for the whole coaching cycle and later for Teacher Review. Your central "
+    "job is to identify the single writing STRUCTURE with the greatest developmental leverage "
+    "for this writer right now (the One Thing Rule). You are NOT diagnosing errors and NOT "
+    "listing problems. You walk a fixed priority list from the top and choose the FIRST "
+    "structure that is not yet solidly established for the unit the writer is producing (status "
+    "missing, partial, or misleading) AND is applicable to that unit. Higher-priority structures "
+    "come first because everything below depends on them. If the writer is producing a single "
+    "paragraph, whole-piece structures (Reader Orientation as an introduction, Conclusion) are "
+    "usually NOT applicable and the governing structure is the Central Claim, then its Evidence "
+    "and Explanation. A Central Claim counts as PRESENT only when it takes a contestable position "
+    "that ANSWERS the assignment's question — a claim-shaped sentence that does not answer the "
+    "task is NOT yet present. If EVERY applicable structure is already present and solid, select "
+    "null — never invent a weakness to have something to teach. You must also record: the "
+    "writer's estimated developmental level, the candidate developmental objects you considered, "
+    "why you chose this object instead of the others, the instructional action to take, whether "
+    "developmental sufficiency has been reached for this objective and why, your confidence, and "
+    "the most appropriate objective to address next. Ground every judgment in the actual words on "
+    "the page. Respond with ONLY a JSON object and nothing else."
 )
 
 
@@ -284,10 +292,18 @@ async def select_structure(session_id: str, assignment: str, unit: str,
         '  "selected": "<exact structure name from the list, or null>",\n'
         '  "status": "missing|partial|misleading|present",\n'
         '  "developmental_variation": "which common developmental form the writer is at for the selected structure (or empty)",\n'
+        '  "estimated_developmental_level": "emerging|developing|approaching|proficient — the writer\'s overall level on this task",\n'
+        '  "candidate_objects": [{"object":"<structure>","status":"missing|partial|misleading|present","note":"one phrase"}],\n'
         '  "established": ["structures already solid in this writing"],\n'
         '  "not_applicable": ["structures that do not apply to this unit"],\n'
         '  "justification": "one sentence, grounded in the writing, on why this is the highest-leverage structure now",\n'
+        '  "selection_contrast": "one sentence: why this object was chosen INSTEAD of the other candidates",\n'
+        '  "instructional_action": "teach|scaffold|ask_question|model|encourage_revision",\n'
         '  "instructional_intent": "one concise sentence naming what this coaching cycle should help the writer build",\n'
+        '  "developmental_sufficiency": "continue|reached — has the writer met the objective for the selected structure?",\n'
+        '  "sufficiency_reasoning": "one sentence on why sufficiency has or has not been reached",\n'
+        '  "next_objective": "<the structure to address AFTER this one is complete, or null>",\n'
+        '  "next_objective_reasoning": "one phrase on why that comes next",\n'
         '  "confidence": "high|medium|low"\n'
         "}"
     )
@@ -326,14 +342,22 @@ _DLG_SYS = (
 
 async def generate_dialogue(session_id: str, assignment: str, unit: str, student_text: str,
                             structure: str, obj: Dict[str, Any], status: str,
-                            kind: str) -> str:
+                            kind: str, action: str = "scaffold") -> str:
     ind = obj.get("observable_indicators", {})
+    _action_hint = {
+        "teach": "Explain the structure plainly and show what it does, then hand the doing back to the writer.",
+        "scaffold": "Give one concrete scaffold (a question or sentence frame) the writer completes themselves.",
+        "ask_question": "Ask one focused question that makes the writer do the thinking; do not explain much.",
+        "model": "Briefly model the KIND of move on a neutral example, never on their content, then have them do theirs.",
+        "encourage_revision": "Point to the one place to revise and invite them to try it in their own words.",
+    }.get(action, "Give one concrete scaffold the writer completes themselves.")
     prompt = (
         f"ASSIGNMENT: {assignment or '(not specified)'}\n"
         f"UNIT: {unit or 'one paragraph'}\n"
         f"THE WRITER JUST {('REVISED' if kind == 'revise' else 'WROTE' if kind in ('writing','continue') else 'RESPONDED')}:\n"
         f"\"\"\"\n{student_text}\n\"\"\"\n\n"
         f"FIXED INSTRUCTIONAL TARGET (do not change it): {structure}\n"
+        f"DECIDED INSTRUCTIONAL ACTION (follow it): {action} — {_action_hint}\n"
         f"- What it is / why readers need it: {obj.get('essence','')}\n"
         f"- What it looks like when present: {ind.get('present','')}\n"
         f"- Current status in this writing: {status} — {ind.get(status, '')}\n"
@@ -421,9 +445,17 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
     t_select = time.perf_counter() - t_s0
     engine_structure = sel.get("selected")
     established = sel.get("established") or []
+    not_applicable = sel.get("not_applicable") or []
     justification = sel.get("justification") or ""
     developmental_variation = sel.get("developmental_variation") or ""
     instructional_intent = sel.get("instructional_intent") or ""
+    estimated_level = sel.get("estimated_developmental_level") or ""
+    candidate_objects = sel.get("candidate_objects") or []
+    selection_contrast = sel.get("selection_contrast") or ""
+    instructional_action = (sel.get("instructional_action") or "").lower()
+    sufficiency_reasoning = sel.get("sufficiency_reasoning") or ""
+    next_objective = resolve_structure(sel.get("next_objective")) or ""
+    next_objective_reasoning = sel.get("next_objective_reasoning") or ""
     status = (sel.get("status") or "missing").lower()
     if status not in ("missing", "partial", "misleading", "present"):
         status = "missing"
@@ -462,12 +494,58 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
         instructional_intent = (obj.get("exit_criterion", "") if target
                                 else "Acknowledge the writing and offer an optional extension.")
 
+    # --- complete the internal Instructional Decision analysis (never shown to student) ---
+    # instructional action
+    if not instructional_action:
+        instructional_action = "encourage_revision" if instructional_need == "NO_CURRENT_INSTRUCTIONAL_TARGET" else "scaffold"
+    if instructional_action not in ("teach", "scaffold", "ask_question", "model", "encourage_revision"):
+        instructional_action = "scaffold"
+    # developmental sufficiency (has the objective for the selected structure been met?)
+    developmental_sufficiency = (sel.get("developmental_sufficiency") or "").lower()
+    if instructional_need == "NO_CURRENT_INSTRUCTIONAL_TARGET":
+        developmental_sufficiency = "reached"
+        sufficiency_reasoning = sufficiency_reasoning or "All applicable structures meet their objective for this task."
+    else:
+        developmental_sufficiency = "continue"
+        sufficiency_reasoning = sufficiency_reasoning or f"{target} is {status}; the objective is not yet met."
+    # next developmental objective (deterministic fallback: next applicable unmet structure)
+    if not next_objective and target:
+        _skip = set(established) | set(not_applicable) | {target}
+        try:
+            _start = PRIORITY_ORDER.index(target) + 1
+        except ValueError:
+            _start = len(PRIORITY_ORDER)
+        for _s in PRIORITY_ORDER[_start:]:
+            if _s not in _skip:
+                next_objective = _s
+                next_objective_reasoning = next_objective_reasoning or "next dependent structure once the current one is solid"
+                break
+    if not estimated_level:
+        estimated_level = "developing" if target else "proficient"
+
+    instructional_analysis = {
+        "assignment": assignment,
+        "current_submission": student_text,
+        "estimated_developmental_level": estimated_level,
+        "candidate_objects": candidate_objects,
+        "selected_object": target,
+        "one_thing_rule": target,
+        "selection_rationale": priority_rationale,
+        "selection_contrast": selection_contrast,
+        "instructional_action": instructional_action,
+        "developmental_sufficiency": developmental_sufficiency,
+        "sufficiency_reasoning": sufficiency_reasoning,
+        "confidence": sel.get("confidence") or ("high" if target else "medium"),
+        "next_objective": next_objective,
+        "next_objective_reasoning": next_objective_reasoning,
+    }
+
     # write the authoritative decision onto persistent state (Sprint 1-4 fields reused)
     state.selected_instructional_object = target
     state.current_instructional_object = target
     state.selected_object_definition = obj.get("essence", "")
-    state.candidate_instructional_objects = [target] if target else []
-    state.deferred_targets = []
+    state.candidate_instructional_objects = [c.get("object") for c in candidate_objects if isinstance(c, dict) and c.get("object")] or ([target] if target else [])
+    state.deferred_targets = [c.get("object") for c in candidate_objects if isinstance(c, dict) and c.get("object") and c.get("object") != target]
     state.structural_prerequisite_status = "NOT_APPLICABLE"
     state.conceptual_prerequisite_status = "NOT_APPLICABLE"
     state.decision_status = decision_status
@@ -488,6 +566,7 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
     state.current_learner_task = obj.get("exit_criterion", "") or "acknowledge and extend"
     state.developmental_variation = developmental_variation
     state.instructional_intent = instructional_intent
+    state.instructional_analysis = instructional_analysis
     state.decision_requirement_ids = ["DE-01", "DE-04", "DE-06"]
     state.decision_timestamp = now_iso()
     state.turns_recorded += 1
@@ -509,6 +588,7 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
             "established_structures": established,
             "engine_recommendation": engine_recommendation,
             "minimal_object_retrieved": bool(obj),
+            "instructional_analysis": instructional_analysis,
         },
         validation_results=[
             {"requirement_id": "DE-01",
@@ -525,7 +605,7 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
         invitation, dlg_bytes = await generate_closure(state.id, assignment, student_text, established)
     else:
         invitation, dlg_bytes = await generate_dialogue(state.id, assignment, unit, student_text,
-                                                        target, obj, status, kind)
+                                                        target, obj, status, kind, instructional_action)
     t_dialogue = time.perf_counter() - t_d0
 
     ownership_ok = not bool(_DOES_WORK.search(invitation or ""))

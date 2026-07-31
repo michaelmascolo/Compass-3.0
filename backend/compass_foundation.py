@@ -176,6 +176,8 @@ class InstructionalState(BaseModel):
     # --- Decision Engine V2 (RP5 consolidated) authoritative-output fields (additive) ---
     developmental_variation: str = ""                    # which common developmental form the writer is at
     instructional_intent: str = ""                       # what this coaching cycle intends the writer to build
+    # --- Internal Instructional Decision analysis (never shown to the student; drives Teacher Review) ---
+    instructional_analysis: Dict[str, Any] = Field(default_factory=dict)
     # provenance
     migrated_from_session_id: Optional[str] = None
     migration_limitations: List[str] = Field(default_factory=list)
@@ -587,6 +589,7 @@ async def diagnostic_trace(state_id: str, viewer_role: str = Query("student")):
         "decision_timestamp": state.decision_timestamp,
         "developmental_variation": state.developmental_variation,
         "instructional_intent": state.instructional_intent,
+        "instructional_analysis": state.instructional_analysis,
         # --- Revision Package 4 coaching path ---
         "coaching_path": coaching_os.get("coaching_path"),
         "instructional_target_presented": coaching_os.get("instructional_target_presented"),
