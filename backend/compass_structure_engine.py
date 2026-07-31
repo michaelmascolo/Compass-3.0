@@ -91,16 +91,16 @@ MINIMAL_OBJECTS: Dict[str, Dict[str, Any]] = {
         "exit_criterion": "A single, scoped, contestable claim is on the page that the rest of the writing can organize itself around.",
     },
     "Paragraph Main Point": {
-        "essence": "The one idea a paragraph exists to make, so the reader can see what work this stretch of text is doing for the argument.",
+        "essence": "Whether a paragraph develops ONE controlling idea, so every sentence contributes to a single point and the reader is never pulled toward a competing or tangential one.",
         "observable_indicators": {
-            "present": "Every sentence in the paragraph serves one identifiable point.",
-            "partial": "A main point exists but the paragraph drifts into a second one.",
-            "missing": "Sentences accumulate with no controlling idea.",
-            "misleading": "The stated topic sentence is not the point the paragraph actually develops.",
+            "present": "Every sentence serves one clear controlling idea; nothing drifts or competes.",
+            "partial": "A controlling idea exists but some sentences drift, are tangential, or the support is present but poorly coordinated.",
+            "missing": "No single controlling idea governs — the paragraph accumulates sentences without one point.",
+            "misleading": "Two or more competing main ideas, or an unrelated topic is introduced, so the reader cannot tell what the paragraph is about.",
         },
-        "developmental_variations": ["No controlling idea", "Topic without point", "Two competing points", "One governing point"],
-        "teaching_strategy": "Ask the writer to finish 'this paragraph exists to show that ___' and test each sentence against it; they cut or move what does not serve it.",
-        "exit_criterion": "The writer can state the paragraph's one point and every sentence serves it.",
+        "developmental_variations": ["No controlling idea", "Multiple competing main ideas", "Controlling idea present but sentences drift", "Tangential / unrelated information included", "Two ideas combined that should be separated", "Needed developing information omitted", "Support present but poorly coordinated", "One clear, well-developed controlling idea"],
+        "teaching_strategy": "Select only when the paragraph's coherence around ONE controlling idea is the greatest-leverage gap — after ruling out a deeper Central Claim / Evidence / Explanation / Definition problem. Help the writer NAME the paragraph's controlling idea in their own words, then test each sentence against it: does this sentence develop that idea, or does it drift, repeat, or introduce a second topic? Have the writer decide what to keep, cut, move, or split. Never reorganize or rewrite for them; the evaluating and deciding stay theirs.",
+        "exit_criterion": "The writer can state the paragraph's one controlling idea, and every sentence visibly contributes to developing it.",
     },
     "Definition": {
         "essence": "The working meaning of a key term the argument depends on — precise and consistent enough that writer and reader reason about the same thing. It concerns the clarity of concepts, not the truth of claims or the quality of evidence.",
@@ -267,7 +267,7 @@ _SEL_SYS = (
     "concept is blocking the writer from developing or communicating their idea — not merely because "
     "a term could be defined; never select it over a more fundamental Central Claim, Evidence, or "
     "Explanation problem, and name the definition issue in developmental_variation (undefined / vague "
-    "/ too broad / too narrow / circular / inconsistent / everyday-vs-discipline). If EVERY applicable structure is already present and solid, select "
+    "/ too broad / too narrow / circular / inconsistent / everyday-vs-discipline). Paragraph Unity (Paragraph Main Point) is the focus only when a controlling idea/claim already EXISTS but the paragraph's sentences do not cohere around it (drift, tangents, a second competing topic, or poorly coordinated support) and improving that coherence is higher leverage than fixing evidence, explanation, or definition; never select it when no claim exists yet (that is Central Claim), and name the unity issue in developmental_variation (competing ideas / drift / tangential / should-be-split / poorly-coordinated). If EVERY applicable structure is already present and solid, select "
     "null — never invent a weakness to have something to teach. You must also record: the "
     "writer's estimated developmental level, the candidate developmental objects you considered, "
     "why you chose this object instead of the others, the instructional action to take, whether "
