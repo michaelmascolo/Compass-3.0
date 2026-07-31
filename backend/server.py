@@ -2068,8 +2068,8 @@ class ReasoningModePatch(BaseModel):
 
 @api_router.patch("/sessions/{session_id}/reasoning-mode", response_model=Session)
 async def set_reasoning_mode(session_id: str, patch: ReasoningModePatch):
-    if patch.reasoning_mode not in ("exhaustive", "triage_experimental", "governance_v2"):
-        raise HTTPException(status_code=422, detail="reasoning_mode must be 'exhaustive', 'triage_experimental', or 'governance_v2'")
+    if patch.reasoning_mode not in ("exhaustive", "triage_experimental", "governance_v2", "structure_v5"):
+        raise HTTPException(status_code=422, detail="reasoning_mode must be 'exhaustive', 'triage_experimental', 'governance_v2', or 'structure_v5'")
     doc = await db.sessions.find_one({"id": session_id}, {"_id": 0})
     if not doc:
         raise HTTPException(status_code=404, detail="Session not found")
@@ -3383,6 +3383,53 @@ async def _run_engine(session: Session, req: InteractRequest, preview_output: Op
     raise last_err or RuntimeError("engine failed")
 
 
+async def _finalize_structure_v5(session_id: str, ai_turn_id: str, req: InteractRequest) -> None:
+    """REVISION PACKAGE 5 tail — run the structure-centered engine and write the
+    single coaching turn onto the placeholder. The engine writes the authoritative
+    instructional decision + audit to the persistent state itself (Sprint 1-4 reused);
+    here we only persist the learner-facing dialogue. No theory / bridge / RP4."""
+    import compass_structure_engine as se
+    doc = await db.sessions.find_one({"id": session_id}, {"_id": 0})
+    if not doc:
+        return
+    session = Session(**doc)
+    try:
+        result = await se.run(session.model_dump(), req.content, req.kind)
+    except Exception as e:  # noqa: BLE001
+        logger.error(f"[rp5] structure engine failed for session {session_id}: {e}")
+        await db.sessions.update_one(
+            {"id": session_id, "turns.id": ai_turn_id},
+            {"$set": {"turns.$.status": "failed", "turns.$.content": "", "updated_at": now_iso()}},
+        )
+        return
+    doc2 = await db.sessions.find_one({"id": session_id}, {"_id": 0})
+    if not doc2:
+        return
+    session2 = Session(**doc2)
+    ai = next((t for t in session2.turns if t.id == ai_turn_id), None)
+    if ai is None or ai.status not in ("processing", "streaming"):
+        logger.info(f"[rp5] turn {ai_turn_id} no longer active; discarding result")
+        return
+    for t in session2.turns:
+        if t.id == ai_turn_id:
+            t.content = result["invitation"]
+            t.kind = "invitation"
+            t.status = "complete"
+            t.reasoning_path = "structure_v5"
+            break
+    session2.updated_at = now_iso()
+    await db.sessions.update_one(
+        {"id": session_id},
+        {"$set": {"turns": [t.model_dump() for t in session2.turns], "updated_at": session2.updated_at}},
+    )
+    m = result.get("_meta", {})
+    logger.info(
+        f"[rp5] path=structure_v5 coaching_path={result.get('coaching_path')} "
+        f"select={m.get('t_select_s')}s dialogue={m.get('t_dialogue_s')}s total={m.get('t_total_s')}s "
+        f"select_prompt_bytes={m.get('select_prompt_bytes')} session={session_id}"
+    )
+
+
 async def _run_reasoning(session_id: str, ai_turn_id: str, req: InteractRequest) -> None:
     """Background task: reason independently of the client connection and persist
     the completed turn to the database. Client disconnects never interrupt this."""
@@ -3401,6 +3448,13 @@ async def _run_reasoning(session_id: str, ai_turn_id: str, req: InteractRequest)
             await _fb.begin_instructional_turn(session.model_dump(), req.content, req.kind)
         except Exception as _be:  # noqa: BLE001
             logger.error(f"[bridge] begin_instructional_turn failed: {_be}")
+        # Revision Package 5 — Structure-Centered Decision Engine. A simplified,
+        # additive path: the Decision Engine (structure-first) is the ONLY component
+        # that determines what is taught, and the Dialogue Engine only builds it.
+        # Bypasses the heavy reasoner + Sprint-2/3 bridge + RP4 controller entirely.
+        if (session.reasoning_mode or "exhaustive") == "structure_v5":
+            await _finalize_structure_v5(session_id, ai_turn_id, req)
+            return
         # reason against the session WITHOUT the placeholder AI turn so previous-draft
         # detection and history behave exactly as before.
         reason_session = session.model_copy(deep=True)
