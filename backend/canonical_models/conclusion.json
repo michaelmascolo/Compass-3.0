@@ -1,0 +1,106 @@
+{
+  "definition": "A conclusion is the final integration of the integrated message developed throughout the paragraph.\n\nThe conclusion is not merely the final sentence.\n\nNor is it merely a restatement of the thesis.\n\nRather, the conclusion completes the communicative act initiated by the thesis and progressively developed through elaboration.\n\nThe conclusion expresses the understanding that the reader should possess after the developmental work of the paragraph has been completed.\n\nDifferent communicative purposes require different forms of final integration.\n\nFor example, a conclusion may:\n\n• demonstrate how the elaboration has fulfilled the communicative promise established by the thesis;\n\n• integrate the major ideas developed throughout the paragraph into a more coherent understanding;\n\n• extend the thesis by identifying broader implications, applications, or consequences;\n\n• answer the question posed by the thesis more fully than the thesis alone could;\n\n• resolve a tension, comparison, or problem developed during elaboration;\n\n• identify the larger significance of the integrated message when appropriate;\n\n• bring the intellectual activity to a natural point of completion.\n\nThese are not fixed conclusion types.\n\nThey are different ways of achieving the same developmental goal:\n\nHelping the reader leave the paragraph with a more integrated understanding than when they entered it.",
+  "function": "The conclusion performs the final intellectual work of the paragraph.\n\nIts functions include:\n\n• integrating the understanding developed throughout the paragraph;\n\n• completing the communicative purpose established by the thesis;\n\n• expressing the understanding that has emerged through elaboration;\n\n• bringing the paragraph to an intellectually satisfying point of completion.\n\nThe conclusion should communicate the understanding that has emerged through the paragraph rather than merely repeat where the paragraph began.",
+  "structural_dependencies": {
+    "upstream_dependencies": [
+      "A thesis.",
+      "Successful elaboration.",
+      "Any supporting evidence or examples required by the communicative purpose.",
+      "An intended audience.",
+      "A communicative purpose."
+    ],
+    "upstream_clarification": "Without sufficient elaboration, meaningful conclusion is impossible because there is no developed understanding to integrate.",
+    "downstream_dependencies": [
+      "Reader closure.",
+      "Completion of the communicative act.",
+      "Transition to whatever follows beyond the paragraph."
+    ],
+    "downstream_clarification": "The conclusion represents the final integration of the communicative act rather than the introduction of new developmental work."
+  },
+  "structural_requirements": [
+    {
+      "name": "Completion",
+      "requirement": "The conclusion completes the communicative purpose initiated by the thesis.",
+      "observable_questions": [
+        "What understanding should the reader now possess that they did not possess before reading this paragraph?"
+      ]
+    },
+    {
+      "name": "Integration",
+      "requirement": "The conclusion integrates rather than merely repeats.",
+      "observable_questions": [
+        "Does the conclusion express the understanding that emerged through elaboration?",
+        "Does it help the reader leave with a more integrated understanding than before?"
+      ]
+    },
+    {
+      "name": "Relation to the Thesis",
+      "requirement": "The conclusion remains faithful to the thesis while expressing the fuller understanding produced through elaboration.",
+      "observable_questions": [
+        "Has the integrated message developed beyond its original statement?"
+      ]
+    },
+    {
+      "name": "Appropriate Form of Completion",
+      "requirement": "The conclusion should complete the communicative purpose appropriate to the paragraph. Completion may take different forms depending upon the writer's purpose.",
+      "acceptable_forms": [
+        "Integrating ideas.",
+        "Answering the guiding question.",
+        "Identifying implications.",
+        "Resolving a comparison or tension.",
+        "Demonstrating fulfillment of the thesis.",
+        "Bringing an explanation to completion."
+      ],
+      "observable_questions": [
+        "Has this conclusion completed the communicative work appropriate to this paragraph?"
+      ],
+      "governing_rule": "Compass evaluates the function being performed rather than requiring a single rhetorical pattern."
+    },
+    {
+      "name": "Closure",
+      "requirement": "The conclusion provides an appropriate sense of intellectual completion.",
+      "observable_questions": [
+        "Does the reader experience this line of thought as complete?"
+      ]
+    }
+  ],
+  "developmental_variations": [
+    {
+      "name": "Abrupt ending",
+      "description": "The paragraph stops before the communicative work has reached completion."
+    },
+    {
+      "name": "Mere repetition",
+      "description": "The conclusion simply repeats the thesis without integrating the understanding developed through elaboration."
+    },
+    {
+      "name": "Introduction of unrelated new ideas",
+      "description": "The conclusion introduces developmental work that belongs in elaboration rather than integrating what has already been developed."
+    },
+    {
+      "name": "Incomplete integration",
+      "description": "The conclusion attempts closure but fails to communicate the fuller understanding developed throughout the paragraph."
+    },
+    {
+      "name": "Premature closure",
+      "description": "The conclusion arrives before sufficient elaboration has occurred."
+    },
+    {
+      "name": "Effective intellectual closure",
+      "description": "The conclusion appropriately integrates the understanding developed throughout the paragraph and completes the communicative purpose."
+    }
+  ],
+  "developmental_sufficiency": "A conclusion reaches developmental sufficiency when it communicates the integrated understanding that the paragraph exists to develop.\n\nDevelopmental sufficiency is not achieved by restating the thesis.\n\nThe governing question is:\n\n'Has the communicative purpose reached an appropriate point of completion?'\n\nAdditional concluding sentences should increase integration rather than merely prolong the paragraph.\n\nWhen further conclusion would simply repeat, summarize, or extend without increasing integration, developmental sufficiency has been reached.",
+  "discovery_instruction": "Compass teaches:\n\n• what conclusions are;\n\n• why conclusions complete rather than repeat;\n\n• how conclusions express the understanding produced through elaboration;\n\n• the different ways conclusions may achieve final integration;\n\n• how conclusions bring intellectual closure.\n\nCompass compares the learner's work with these structural requirements.\n\nCompass never teaches that conclusions simply restate the thesis.",
+  "rescue_instruction": "Rescue instruction occurs only after repeated unsuccessful attempts or an explicit request for additional help.\n\nCompass preserves learner ownership.\n\nCompass may ask:\n\n• What should your reader understand now that they could not understand before?\n\n• How has your thinking developed since the thesis?\n\n• What larger understanding has emerged through your elaboration?\n\n• What intellectual work remains unfinished?\n\nCompass may illustrate different forms of conclusion using unrelated examples.\n\nCompass never writes the learner's conclusion.",
+  "observable_decision_questions": [
+    "What integrated message did the thesis establish?",
+    "How has that message developed through elaboration?",
+    "What new understanding should the reader now possess?",
+    "Does the conclusion integrate rather than merely repeat?",
+    "Has the communicative purpose reached an appropriate point of completion?",
+    "What form of completion is appropriate for this communicative purpose?",
+    "Has the conclusion reached developmental sufficiency?",
+    "Would another concluding sentence deepen integration or merely prolong the paragraph?"
+  ]
+}
