@@ -1,0 +1,150 @@
+{
+  "definition": "Evidence and examples are subordinate supporting structures whose purpose is to strengthen the intended audience’s understanding, acceptance, or appreciation of the integrated message as it is developed through elaboration.\n\nEvidence and examples are not independent paragraph structures.\n\nThey derive their function from the elaborative work they support.\n\nEvidence provides grounds for understanding, accepting, evaluating, or giving appropriate weight to an elaborative point.\n\nExamples make an elaborative point more concrete, understandable, recognizable, or relatable.\n\nNeither evidence nor examples substitute for elaboration.",
+  "function": "Evidence and examples support the progressive differentiation and integration of the thesis by helping the intended audience understand, accept, evaluate, or appreciate particular elaborative points.\n\nTheir functions may include:\n\n• strengthening the credibility of an elaborative point;\n\n• making an abstract idea concrete;\n\n• illustrating a relationship, mechanism, distinction, condition, implication, or pattern;\n\n• helping the audience recognize how an elaborative point operates in a particular case;\n\n• providing grounds for accepting or evaluating an elaborative point;\n\n• increasing the audience’s confidence in the integrated message developed throughout the paragraph.\n\nEvidence and examples do not perform the principal intellectual work of the paragraph.\n\nThat work belongs to elaboration.",
+  "structural_dependencies": {
+    "upstream_dependencies": [
+      "An identifiable thesis.",
+      "An ongoing elaboration.",
+      "A specific elaborative point requiring support, clarification, illustration, evaluation, or concretization.",
+      "An intended audience.",
+      "A communicative purpose.",
+      "An understanding of what the intended audience already knows and what support the audience still needs."
+    ],
+    "upstream_clarification": "Evidence and examples do not possess an independent instructional purpose. Their meaning and relevance arise from the elaborative point they serve. Without elaboration, evidence lacks an interpretive framework and examples become isolated details.",
+    "downstream_dependencies": [
+      "The intended audience’s understanding of the elaborative point.",
+      "The intended audience’s acceptance, evaluation, or appreciation of the elaborative point.",
+      "The progressive integration of the paragraph.",
+      "The final integration achieved in the conclusion."
+    ],
+    "downstream_clarification": "Evidence and examples contribute to the integrated message only through their relationship to elaboration. They must be interpreted and incorporated into the paragraph’s developing conceptual organization."
+  },
+  "structural_requirements": [
+    {
+      "name": "Elaborative Purpose",
+      "requirement": "Evidence or an example must serve a specific elaborative point.",
+      "observable_questions": [
+        "What elaborative point is this evidence or example supporting?",
+        "What work is it performing within the development of the integrated message?"
+      ]
+    },
+    {
+      "name": "Audience Need",
+      "requirement": "Evidence or an example should be used when it provides something the intended audience needs in order to understand, accept, evaluate, or appreciate the elaborative point.",
+      "central_question": "What would a naïve reader need in order to understand, accept, evaluate, or appreciate this elaborative point?",
+      "observable_questions": [
+        "What does the intended audience still need here?",
+        "Does this evidence or example satisfy that need?"
+      ]
+    },
+    {
+      "name": "Relevance",
+      "requirement": "Evidence or an example must derive its relevance from its relationship to the elaborative point and the integrated message.",
+      "observable_questions": [
+        "Why does this evidence or example belong here?",
+        "How does it contribute to the elaboration?"
+      ]
+    },
+    {
+      "name": "Interpretation",
+      "requirement": "Evidence and examples do not speak for themselves. Their significance must be made explicit through elaboration.",
+      "observable_questions": [
+        "Has the writer explained what the evidence or example shows?",
+        "Has the writer explained why it matters?",
+        "What understanding should the reader gain from it?"
+      ]
+    },
+    {
+      "name": "Adequacy",
+      "requirement": "The evidence or example must provide enough support for the particular elaborative point and communicative purpose without being expected to prove more than it can reasonably support.",
+      "observable_questions": [
+        "Does this evidence or example adequately support the point being made?",
+        "Is the writer asking it to support a broader conclusion than it can bear?",
+        "Would the intended audience reasonably need additional support?"
+      ]
+    },
+    {
+      "name": "Direction",
+      "requirement": "The evidence must actually support, clarify, or appropriately complicate the elaborative point rather than contradict or undermine it without acknowledgment.",
+      "observable_questions": [
+        "Does this evidence support the point, contradict it, qualify it, or point in another direction?",
+        "Has the writer represented that relationship accurately?"
+      ]
+    },
+    {
+      "name": "Subordination",
+      "requirement": "Evidence and examples remain subordinate to the writer’s elaborative work. They must support thinking rather than replace it.",
+      "observable_questions": [
+        "If this evidence or example were removed, would the paragraph still contain an understandable elaboration?",
+        "Is the evidence supporting the writer’s thinking, or standing in place of it?"
+      ]
+    },
+    {
+      "name": "Proportionality",
+      "requirement": "Evidence and examples should deepen understanding rather than merely accumulate information or overwhelm the paragraph’s conceptual organization.",
+      "observable_questions": [
+        "Does this evidence deepen understanding, acceptance, evaluation, or appreciation?",
+        "Would additional evidence improve the paragraph, or merely increase quantity?"
+      ]
+    }
+  ],
+  "developmental_variations": [
+    {
+      "name": "Unsupported elaboration",
+      "description": "An elaborative point is present, but the intended audience is given insufficient grounds, illustration, or support when such support is needed."
+    },
+    {
+      "name": "Evidence or example absent because none is needed",
+      "description": "The elaborative point is sufficiently understandable and support is not required by the communicative purpose or intended audience."
+    },
+    {
+      "name": "Vague support",
+      "description": "The writer gestures toward evidence or an example but does not provide enough specificity for the audience to understand or evaluate it."
+    },
+    {
+      "name": "Irrelevant evidence or example",
+      "description": "The material is concrete or interesting but does not support the elaborative point or integrated message."
+    },
+    {
+      "name": "Relevant but uninterpreted evidence",
+      "description": "The material bears on the elaborative point, but the writer does not explain what it shows or why it matters."
+    },
+    {
+      "name": "Partial or inadequate support",
+      "description": "The evidence or example contributes to the point but does not adequately support the scope of the claim being made."
+    },
+    {
+      "name": "Evidence that contradicts or qualifies the point",
+      "description": "The evidence points against, limits, or complicates the elaborative point, but the writer does not yet acknowledge or integrate that relationship."
+    },
+    {
+      "name": "Evidence or example replacing elaboration",
+      "description": "The writer presents facts, quotations, statistics, anecdotes, or examples in place of developing the conceptual relationships required for understanding."
+    },
+    {
+      "name": "Excessive or accumulated evidence",
+      "description": "Multiple pieces of material are added without increasing understanding or strengthening the integration of the paragraph."
+    },
+    {
+      "name": "Appropriate evidence or example supporting elaboration",
+      "description": "The material is relevant, sufficiently specific, accurately interpreted, proportionate to the point, and integrated into the paragraph’s developing understanding."
+    }
+  ],
+  "developmental_sufficiency": "Evidence and examples reach developmental sufficiency when they provide what the intended audience reasonably needs in order to understand, accept, evaluate, or appreciate the elaborative point at the level required by the communicative purpose.\n\nDevelopmental sufficiency does not require the maximum possible amount of support.\n\nThe criterion is not:\n\n“Is there a lot of evidence?”\n\nThe criterion is:\n\n“Does this evidence or example adequately perform the supporting work required here?”\n\nEvidence or an example is sufficient when it is relevant, interpretable, appropriately directed, proportionate to the point, and adequately integrated into the elaboration.\n\nAdditional support is not warranted when it would merely repeat, accumulate information, or distract from the paragraph’s conceptual organization.\n\nIf the material remains difficult to interpret because the elaborative point itself is unclear or underdeveloped, Compass should return attention to Elaboration rather than continue requesting evidence.",
+  "discovery_instruction": "Compass teaches:\n\n• what evidence and examples are;\n\n• why they are subordinate to elaboration;\n\n• how evidence differs from elaboration;\n\n• how examples make an idea concrete without replacing thought;\n\n• why evidence and examples require interpretation;\n\n• how the intended audience determines whether support is needed;\n\n• how to judge relevance, adequacy, direction, proportionality, and integration.\n\nThe central discovery question is:\n\n“What would a naïve reader need in order to understand, accept, evaluate, or appreciate this elaborative point?”\n\nCompass compares the learner’s material with the structural requirements and invites the learner to determine what supporting work is genuinely needed.\n\nCompass never instructs the learner simply to add more evidence.\n\nCompass never supplies evidence, examples, or interpretations that the learner should construct or obtain.",
+  "rescue_instruction": "Rescue instruction occurs only after repeated unsuccessful attempts or an explicit request for additional help.\n\nCompass first clarifies the elaborative point and the audience need that the evidence or example must serve.\n\nCompass may ask:\n\n• What point are you trying to help the reader understand or accept?\n\n• What would count as support for that particular point?\n\n• What would allow a reader to examine or evaluate the point?\n\n• What does this evidence show?\n\n• Why does this example matter?\n\n• Are you asking this evidence to prove more than it can support?\n\nCompass may help the learner distinguish among possible forms of support, such as observation, fact, data, example, experience, testimony, comparison, or source-based evidence, but it should not prescribe which content to use.\n\nWhen illustration is necessary, Compass should use unrelated examples whenever possible.\n\nCompass never performs the learner’s research, selects the learner’s evidence, or supplies the interpretation that the learner must construct.",
+  "observable_decision_questions": [
+    "What elaborative point is the evidence or example intended to support?",
+    "Does this point actually require evidence or an example for this audience and communicative purpose?",
+    "What would a naïve reader need in order to understand, accept, evaluate, or appreciate the point?",
+    "Is the evidence or example relevant to that need?",
+    "Is it sufficiently specific and adequate for the scope of the point?",
+    "Does it support, contradict, qualify, or complicate the point, and has that relationship been represented accurately?",
+    "Has the writer interpreted what the evidence or example shows and why it matters?",
+    "Is the evidence or example supporting elaboration rather than replacing it?",
+    "Is the amount of evidence proportionate to the paragraph’s purpose and organization?",
+    "Has Evidence / Example reached developmental sufficiency?",
+    "Would additional support deepen understanding or merely increase quantity?",
+    "Is the true limiting structure Evidence / Example, or does the paragraph first require stronger Elaboration?"
+  ]
+}
