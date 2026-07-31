@@ -61,3 +61,25 @@ Adopted decisions governing the instructional engine, evaluator, benchmark suite
 - **Weakness classification for launch:** A = launch-blocking (undermines trust, student authorship, instructional safety, or basic first-use); B = important but not launch-blocking (document + address post-beta or in the single permitted refinement round); C = edge case (may remain in beta if disclosed internally).
 - **Current posture:** No Class A issues. Class B: W1 consolidation-by-principle, W2 target precision vs. teacher purpose, W3a AI-paste authorship surfacing. Class C: W3b parenthetical steering.
 - **Refinement budget for beta:** ≤1 focused engine-refinement cycle unless a serious authorship/safety/reliability problem emerges. Every refinement must be re-benchmarked (full 66-case run) and compared against `fd0dec0c` (Expanded Suite v1 Baseline) via Compare-Two-Runs to confirm gains without regressions.
+
+---
+
+# CIO Distinctness Principle (canonical — adopted 2026-06)
+
+**A developmental object is a distinct CIO only if it satisfies BOTH:**
+1. It represents a genuinely distinct instructional **judgment**, AND
+2. It requires a genuinely distinct instructional **intervention**.
+
+A conceptual distinction alone is NOT sufficient. If the intervention is effectively the same as
+an existing CIO, the object remains **part of that existing CIO** (as an indicator/subtype), not a
+separate developmental object. Goal: preserve clean instructional boundaries; never add a CIO
+merely to complete a list.
+
+**First application — CIO #6 (Organization), single-paragraph scope (DEFERRED):**
+Organization (sequence/order of ideas) IS a distinct judgment from Paragraph Unity (membership —
+does every sentence serve one idea), BUT at single-paragraph scale the intervention is identical
+(name the point, then keep/cut/**move**/split), and the live selector never reaches for it (deeper
+gaps dominate, or Unity's "poorly-coordinated support" already catches the residue). Fails
+condition 2 → NOT a distinct CIO at single-paragraph scale. Deferred until multi-paragraph
+composition, where sequencing already-unified paragraphs is a genuinely distinct intervention that
+Paragraph Unity cannot express. Analysis: `PHASE2_CIO06_Organization_ANALYSIS.md`. No code changed.
