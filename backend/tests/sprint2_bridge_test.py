@@ -27,6 +27,7 @@ code, sess = call("POST", "/sessions", {
     "pedagogical_purpose": "Help the student form and clarify a central claim that organizes the response.",
     "current_writing_task": "Draft your response.",
     "teacher_notes": "",
+    "reasoning_mode": "exhaustive",  # Sprint-2 bridge is the legacy/rollback path; V2 (consolidated_v2) bypasses it by design
 })
 sid = sess["id"]
 print("session", sid)

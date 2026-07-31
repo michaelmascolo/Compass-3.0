@@ -299,7 +299,8 @@ async def select_structure(session_id: str, assignment: str, unit: str,
     if isinstance(sel, str) and sel.strip().lower() in ("null", "none", ""):
         sel = None
     data["selected"] = resolve_structure(sel) if sel else None
-    data["_prompt_bytes"] = len(prompt)
+    data["_prompt_bytes"] = len(prompt) + len(_SEL_SYS)
+    data["_completion_bytes"] = len(raw or "")
     return data
 
 
@@ -529,6 +530,22 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
 
     ownership_ok = not bool(_DOES_WORK.search(invitation or ""))
 
+    # efficiency telemetry (bytes -> ~tokens via /4; recorded in the audit for validation)
+    _b2t = lambda b: round((b or 0) / 4)
+    efficiency = {
+        "path": "consolidated_v2",
+        "llm_calls": 2,
+        "t_select_s": round(t_select, 2),
+        "t_dialogue_s": round(t_dialogue, 2),
+        "t_total_s": round(time.perf_counter() - t0, 2),
+        "select_prompt_bytes": sel.get("_prompt_bytes", 0),
+        "select_completion_bytes": sel.get("_completion_bytes", 0),
+        "dialogue_prompt_bytes": dlg_bytes,
+        "dialogue_completion_bytes": len(invitation or ""),
+        "est_prompt_tokens": _b2t(sel.get("_prompt_bytes", 0)) + _b2t(dlg_bytes),
+        "est_completion_tokens": _b2t(sel.get("_completion_bytes", 0)) + _b2t(len(invitation or "")),
+    }
+
     await F._write_audit(AuditEvent(
         state_id=state.id, event_type="coaching_dialogue",
         requirement_ids=["DE-01", "TC-02"],
@@ -547,6 +564,7 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
             "one_target": True,
             "consistent_with_decision": True,     # true by construction — target is fixed
             "cognitive_ownership_ok": ownership_ok,
+            "efficiency": efficiency,
         },
         validation_results=[
             {"requirement_id": "DE-01", "passed": True,
@@ -577,13 +595,5 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
             "structure_status": status,
             "engine_recommendation": engine_recommendation,
         },
-        "_meta": {
-            "path": "structure_v5",
-            "llm_calls": 2,
-            "t_select_s": round(t_select, 2),
-            "t_dialogue_s": round(t_dialogue, 2),
-            "t_total_s": round(time.perf_counter() - t0, 2),
-            "select_prompt_bytes": sel.get("_prompt_bytes", 0),
-            "dialogue_prompt_bytes": dlg_bytes,
-        },
+        "_meta": efficiency,
     }
