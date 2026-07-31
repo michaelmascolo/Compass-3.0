@@ -283,9 +283,11 @@ async def select_structure(session_id: str, assignment: str, unit: str,
         "{\n"
         '  "selected": "<exact structure name from the list, or null>",\n'
         '  "status": "missing|partial|misleading|present",\n'
+        '  "developmental_variation": "which common developmental form the writer is at for the selected structure (or empty)",\n'
         '  "established": ["structures already solid in this writing"],\n'
         '  "not_applicable": ["structures that do not apply to this unit"],\n'
         '  "justification": "one sentence, grounded in the writing, on why this is the highest-leverage structure now",\n'
+        '  "instructional_intent": "one concise sentence naming what this coaching cycle should help the writer build",\n'
         '  "confidence": "high|medium|low"\n'
         "}"
     )
@@ -342,7 +344,7 @@ async def generate_dialogue(session_id: str, assignment: str, unit: str, student
     chat = LlmChat(api_key=_KEY, session_id=f"rp5-dlg-{session_id}",
                    system_message=_DLG_SYS).with_model(*DLG_MODEL)
     raw = await chat.send_message(UserMessage(text=prompt))
-    return (raw or "").strip()
+    return (raw or "").strip(), len(prompt) + len(_DLG_SYS)
 
 
 _CLOSURE_SYS = (
@@ -366,7 +368,7 @@ async def generate_closure(session_id: str, assignment: str, student_text: str,
     chat = LlmChat(api_key=_KEY, session_id=f"rp5-close-{session_id}",
                    system_message=_CLOSURE_SYS).with_model(*DLG_MODEL)
     raw = await chat.send_message(UserMessage(text=prompt))
-    return (raw or "").strip()
+    return (raw or "").strip(), len(prompt) + len(_CLOSURE_SYS)
 
 
 # cognitive-ownership guard (shared with RP4 intent): flag, do not do, the learner's work
@@ -419,6 +421,8 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
     engine_structure = sel.get("selected")
     established = sel.get("established") or []
     justification = sel.get("justification") or ""
+    developmental_variation = sel.get("developmental_variation") or ""
+    instructional_intent = sel.get("instructional_intent") or ""
     status = (sel.get("status") or "missing").lower()
     if status not in ("missing", "partial", "misleading", "present"):
         status = "missing"
@@ -451,6 +455,11 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
             f"Highest-priority structure not yet solid for this unit: {target}.")
 
     obj = retrieve_object(target) if target else {}
+    if not target:
+        developmental_variation = ""
+    if not instructional_intent:
+        instructional_intent = (obj.get("exit_criterion", "") if target
+                                else "Acknowledge the writing and offer an optional extension.")
 
     # write the authoritative decision onto persistent state (Sprint 1-4 fields reused)
     state.selected_instructional_object = target
@@ -476,6 +485,8 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
     state.scaffolding_level = "scaffolded"
     state.dialogue_state = "in_progress"
     state.current_learner_task = obj.get("exit_criterion", "") or "acknowledge and extend"
+    state.developmental_variation = developmental_variation
+    state.instructional_intent = instructional_intent
     state.decision_requirement_ids = ["DE-01", "DE-04", "DE-06"]
     state.decision_timestamp = now_iso()
     state.turns_recorded += 1
@@ -510,10 +521,10 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
     # STEP 4 — dialogue engine builds the FIXED structure (cannot re-decide)
     t_d0 = time.perf_counter()
     if instructional_need == "NO_CURRENT_INSTRUCTIONAL_TARGET":
-        invitation = await generate_closure(state.id, assignment, student_text, established)
+        invitation, dlg_bytes = await generate_closure(state.id, assignment, student_text, established)
     else:
-        invitation = await generate_dialogue(state.id, assignment, unit, student_text,
-                                             target, obj, status, kind)
+        invitation, dlg_bytes = await generate_dialogue(state.id, assignment, unit, student_text,
+                                                        target, obj, status, kind)
     t_dialogue = time.perf_counter() - t_d0
 
     ownership_ok = not bool(_DOES_WORK.search(invitation or ""))
@@ -531,6 +542,8 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
         output_state={
             "coaching_path": coaching_path,
             "instructional_target_presented": target,
+            "developmental_variation": developmental_variation,
+            "instructional_intent": instructional_intent,
             "one_target": True,
             "consistent_with_decision": True,     # true by construction — target is fixed
             "cognitive_ownership_ok": ownership_ok,
@@ -548,6 +561,15 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
     return {
         "invitation": invitation,
         "coaching_path": coaching_path,
+        # authoritative instructional intent — ONLY the fields needed downstream
+        "instructional_intent_obj": {
+            "selected_structure": target,
+            "developmental_variation": developmental_variation,
+            "support_level": state.scaffolding_level,
+            "instructional_intent": instructional_intent,
+            "exit_criterion": obj.get("exit_criterion", ""),
+            "decision_status": decision_status,
+        },
         "decision": {
             "decision_status": decision_status,
             "instructional_need": instructional_need,
@@ -557,10 +579,11 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
         },
         "_meta": {
             "path": "structure_v5",
+            "llm_calls": 2,
             "t_select_s": round(t_select, 2),
             "t_dialogue_s": round(t_dialogue, 2),
             "t_total_s": round(time.perf_counter() - t0, 2),
             "select_prompt_bytes": sel.get("_prompt_bytes", 0),
-            "dialogue_prompt_bytes": None,  # filled by caller log if needed
+            "dialogue_prompt_bytes": dlg_bytes,
         },
     }

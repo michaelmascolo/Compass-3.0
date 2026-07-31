@@ -26,6 +26,13 @@ db = client[os.environ['DB_NAME']]
 
 EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY')
 
+# Decision Engine V2 consolidation — the single live learner-facing decision
+# architecture. `consolidated_v2` (canonical) and `structure_v5` (alias) both route
+# to compass_structure_engine as the sole instructional selector. One-line rollback:
+# set COMPASS_REASONING_MODE=exhaustive in the environment.
+DEFAULT_REASONING_MODE = os.environ.get("COMPASS_REASONING_MODE", "consolidated_v2")
+RP5_MODES = ("consolidated_v2", "structure_v5")
+
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
 
@@ -622,7 +629,7 @@ class SessionCreate(BaseModel):
     current_writing_task: str
     teacher_notes: Optional[str] = ""
     assignment_prompt: Optional[str] = ""  # display-only reminder shown to the student; NOT fed to the engine
-    reasoning_mode: Optional[str] = "exhaustive"  # exhaustive | triage_experimental
+    reasoning_mode: Optional[str] = DEFAULT_REASONING_MODE  # V2: consolidated_v2 (RP5) is the learner default
 
 
 class TelosEdit(BaseModel):
@@ -657,7 +664,7 @@ class Session(BaseModel):
     preview_analytics: dict = Field(default_factory=dict)
     ot: Optional[dict] = None  # Organizing Thought (OT) state — set only when the student enters OT before Writing
     experience_control: Optional[ExperienceControl] = None  # Experience Compass — set ONLY on preview sessions
-    reasoning_mode: str = "exhaustive"  # exhaustive | triage_experimental (per-session; exhaustive is default, unchanged frozen path)
+    reasoning_mode: str = DEFAULT_REASONING_MODE  # V2 default = consolidated_v2 (RP5 sole decider); 'exhaustive' retained for rollback/comparison
     # Teacher-product linkage (teacher -> assignment(config) -> student session).
     teacher_id: Optional[str] = ""
     config_id: Optional[str] = ""
@@ -2068,8 +2075,8 @@ class ReasoningModePatch(BaseModel):
 
 @api_router.patch("/sessions/{session_id}/reasoning-mode", response_model=Session)
 async def set_reasoning_mode(session_id: str, patch: ReasoningModePatch):
-    if patch.reasoning_mode not in ("exhaustive", "triage_experimental", "governance_v2", "structure_v5"):
-        raise HTTPException(status_code=422, detail="reasoning_mode must be 'exhaustive', 'triage_experimental', 'governance_v2', or 'structure_v5'")
+    if patch.reasoning_mode not in ("exhaustive", "triage_experimental", "governance_v2", "structure_v5", "consolidated_v2"):
+        raise HTTPException(status_code=422, detail="reasoning_mode must be 'exhaustive', 'triage_experimental', 'governance_v2', 'structure_v5', or 'consolidated_v2'")
     doc = await db.sessions.find_one({"id": session_id}, {"_id": 0})
     if not doc:
         raise HTTPException(status_code=404, detail="Session not found")
@@ -3424,9 +3431,10 @@ async def _finalize_structure_v5(session_id: str, ai_turn_id: str, req: Interact
     )
     m = result.get("_meta", {})
     logger.info(
-        f"[rp5] path=structure_v5 coaching_path={result.get('coaching_path')} "
+        f"[rp5] path=consolidated_v2 llm_calls={m.get('llm_calls')} coaching_path={result.get('coaching_path')} "
         f"select={m.get('t_select_s')}s dialogue={m.get('t_dialogue_s')}s total={m.get('t_total_s')}s "
-        f"select_prompt_bytes={m.get('select_prompt_bytes')} session={session_id}"
+        f"select_prompt_bytes={m.get('select_prompt_bytes')} dialogue_prompt_bytes={m.get('dialogue_prompt_bytes')} "
+        f"session={session_id}"
     )
 
 
@@ -3448,11 +3456,11 @@ async def _run_reasoning(session_id: str, ai_turn_id: str, req: InteractRequest)
             await _fb.begin_instructional_turn(session.model_dump(), req.content, req.kind)
         except Exception as _be:  # noqa: BLE001
             logger.error(f"[bridge] begin_instructional_turn failed: {_be}")
-        # Revision Package 5 — Structure-Centered Decision Engine. A simplified,
-        # additive path: the Decision Engine (structure-first) is the ONLY component
-        # that determines what is taught, and the Dialogue Engine only builds it.
-        # Bypasses the heavy reasoner + Sprint-2/3 bridge + RP4 controller entirely.
-        if (session.reasoning_mode or "exhaustive") == "structure_v5":
+        # Revision Package 5 / Decision Engine V2 — Structure-Centered Decision Engine.
+        # `compass_structure_engine` is the SINGLE live learner-path instructional
+        # selector. Bypasses the heavy reasoner + Sprint-2/3 bridge + RP4 controller
+        # entirely (no second engine may re-derive or replace the target).
+        if (session.reasoning_mode or DEFAULT_REASONING_MODE) in RP5_MODES:
             await _finalize_structure_v5(session_id, ai_turn_id, req)
             return
         # reason against the session WITHOUT the placeholder AI turn so previous-draft

@@ -173,6 +173,9 @@ class InstructionalState(BaseModel):
     engine_recommendation: Optional[str] = None          # preserved original when a teacher overrides
     decision_requirement_ids: List[str] = Field(default_factory=list)
     decision_timestamp: str = ""
+    # --- Decision Engine V2 (RP5 consolidated) authoritative-output fields (additive) ---
+    developmental_variation: str = ""                    # which common developmental form the writer is at
+    instructional_intent: str = ""                       # what this coaching cycle intends the writer to build
     # provenance
     migrated_from_session_id: Optional[str] = None
     migration_limitations: List[str] = Field(default_factory=list)
@@ -582,6 +585,8 @@ async def diagnostic_trace(state_id: str, viewer_role: str = Query("student")):
         "engine_recommendation": state.engine_recommendation,
         "decision_requirement_ids": state.decision_requirement_ids,
         "decision_timestamp": state.decision_timestamp,
+        "developmental_variation": state.developmental_variation,
+        "instructional_intent": state.instructional_intent,
         # --- Revision Package 4 coaching path ---
         "coaching_path": coaching_os.get("coaching_path"),
         "instructional_target_presented": coaching_os.get("instructional_target_presented"),
