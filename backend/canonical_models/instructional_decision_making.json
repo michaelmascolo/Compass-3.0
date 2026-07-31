@@ -1,0 +1,94 @@
+{
+  "artifact_type": "cross_structure_instructional_decision_model",
+  "title": "Instructional Decision Making",
+  "version": "1.0",
+  "provenance": "canonical_supplied",
+  "sections": {
+    "purpose": "The purpose of Instructional Decision Making is to determine the single instructional action that is most likely to produce the greatest developmental advance in the learner's present organization of understanding.\n\nCompass does not ask:\n\n\"What is wrong with this paragraph?\"\n\nCompass asks:\n\n\"What single developmental act will make the greatest positive difference to the learner's ability to continue constructing this paragraph?\"\n\nInstructional decision making is therefore developmental rather than corrective.",
+    "definition": "Instructional decision making is the process of identifying the highest-leverage instructional opportunity in a learner's present organization of understanding.\n\nIt determines what should be taught next, not because that structure is simply missing, but because developing it will permit the greatest further growth.\n\nInstructional decision making regulates the order of instruction.\n\nIt does not merely evaluate completed work.",
+    "foundational_principles": [
+      {
+        "name": "One Thing Principle",
+        "text": "Compass teaches one instructional object at a time.\n\nThe selected object should be the single object whose development is expected to produce the greatest downstream improvement."
+      },
+      {
+        "name": "Development Before Correction",
+        "text": "Compass does not ask:\n\n\"What error should be fixed?\"\n\nCompass asks:\n\n\"What developmental capability should be constructed?\"\n\nErrors are treated as evidence of developmental organization."
+      },
+      {
+        "name": "Highest-Leverage Principle",
+        "text": "The selected instructional object should unlock the largest amount of subsequent development.\n\nIf improving Structure A is expected to improve Structures B, C, and D, then Structure A has greater instructional leverage."
+      },
+      {
+        "name": "Dependency Principle",
+        "text": "No instructional object exists independently.\n\nEvery instructional object depends upon other structures and supports later structures.\n\nInstruction must respect these dependency relations."
+      },
+      {
+        "name": "Generative Principle",
+        "text": "Instruction should produce capabilities that generate additional successful performance rather than merely repairing the present paragraph."
+      },
+      {
+        "name": "Developmental Sufficiency Principle",
+        "text": "Instruction does not seek perfection.\n\nInstruction continues until a structure is sufficiently organized to support subsequent development.\n\nOnce developmental sufficiency has been reached, instructional attention shifts elsewhere."
+      },
+      {
+        "name": "Recursive Principle",
+        "text": "Instruction may return to earlier structures whenever later work reveals that an earlier dependency remains insufficient.\n\nRecursion is developmental, not failure."
+      }
+    ],
+    "unit_of_decision": "The unit of decision is not the sentence.\n\nIt is not the paragraph.\n\nIt is not the assignment.\n\nThe unit of decision is the learner's present developmental organization.\n\nCompass attempts to identify the organization presently limiting further growth.",
+    "sources_of_evidence": {
+      "intro": "Instructional decisions are based upon multiple forms of evidence.\n\nThese include:",
+      "items": [
+        "the learner's current writing;",
+        "the learner's revision history;",
+        "the learner's responses to previous instructional invitations;",
+        "developmental variations defined within each canonical instructional object;",
+        "structural dependencies among instructional objects;",
+        "evidence of developmental sufficiency;",
+        "evidence of productive struggle;",
+        "evidence of misunderstanding."
+      ],
+      "closing": "No single observation determines instructional choice."
+    },
+    "order_of_decision": [
+      {
+        "step": 1,
+        "text": "Determine whether the learner's present work demonstrates developmental sufficiency for previously taught structures."
+      },
+      {
+        "step": 2,
+        "text": "Identify the instructional objects that presently constrain further development."
+      },
+      {
+        "step": 3,
+        "text": "Determine the dependency relations among those objects."
+      },
+      {
+        "step": 4,
+        "text": "Estimate the developmental leverage of each candidate object."
+      },
+      {
+        "step": 5,
+        "text": "Select the object whose development is expected to produce the greatest subsequent developmental gain."
+      },
+      {
+        "step": 6,
+        "text": "Determine the appropriate instructional level.\n\nDiscovery\n\nScaffold\n\nRescue\n\nClosure"
+      }
+    ],
+    "when_not_to_teach_a_structure": "Compass does not teach a structure merely because it is imperfect.\n\nCompass does not teach a structure merely because it can be improved.\n\nCompass teaches a structure only when improving that structure is expected to produce meaningful additional development.",
+    "when_to_recurse": "If later writing reveals that an earlier structure has become the limiting condition for further growth, Compass returns to that structure.\n\nRecursion is determined by developmental dependency rather than chronological order.",
+    "canonical_decision_questions": [
+      "What structure is presently limiting further development?",
+      "If this structure improved, what additional development would become possible?",
+      "Is another structure actually the dependency that must be addressed first?",
+      "Has the present structure reached developmental sufficiency?",
+      "Will teaching this object generate future capabilities beyond the present paragraph?",
+      "Does another instructional object possess greater developmental leverage?",
+      "Can the learner reasonably construct this capability now?",
+      "Would teaching this object now produce understanding rather than compliance?",
+      "Is Compass teaching the learner to think, or merely helping produce today's paragraph?\n\nOnly the first satisfies Compass."
+    ]
+  }
+}

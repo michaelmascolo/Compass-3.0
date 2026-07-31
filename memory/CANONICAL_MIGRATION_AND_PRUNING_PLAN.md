@@ -233,11 +233,11 @@ persistence, and the `COMPASS_REASONING_MODE=exhaustive` rollback path.
   objects; it cannot delete the subordinate/sentence-level legacy objects — those wait for P5.
 
 ### 4.2 Unresolved canonical authoring that BLOCKS later phases
-- **Blocks P0's completeness (not its start):** Gap-4 — no canonical *cross-structure leverage /
-  arbitration procedure* exists. P0 can begin with a documented interim ranking derived from
-  `structural_dependencies`, but P0 cannot be declared *canonically authoritative* until the
-  authority approves a leverage procedure. (P0 is therefore split into P0-a interim and P0-b
-  authoritative — see §5.)
+- **Blocks P0's completeness (not its start) — NOW RESOLVED:** Gap-4 — the canonical
+  *cross-structure leverage / arbitration procedure* has been AUTHORED (Instructional Decision
+  Making v1.0, stored verbatim, wired to nothing). P0-a may run with an interim dependency-derived
+  ranking; **P0-b (canonically authoritative selection) is now technically UNBLOCKED but NOT
+  authorized** — it awaits separate approval after review of the stored model.
 - **Blocks P4 completion:** Gaps 1, 2, 3, 5 — subordinate models (Definition/Transition/…),
   Explanation placement, sentence-level scope decision, and Paragraph-Main-Point→Thesis unity
   handling. Until these are authored/decided, the corresponding legacy objects must remain.
@@ -285,9 +285,11 @@ Split into **P0-a (interim, executable immediately)** and **P0-b (authoritative,
   canonical grounds. Nothing downstream can be trusted while selection is legacy.
 - **P0-a vs P0-b.** P0-a ships an interim leverage ranking derived from canonical
   `structural_dependencies` (upstream-before-downstream) documented in-code as provisional. P0-b
-  replaces that with the authority-approved canonical leverage procedure (Gap-4). P0-a is safe to
-  ship now because it changes only *ordering heuristics already under a flag*; P0-b is the point at
-  which selection becomes *canonically authoritative*.
+  replaces that with the **authored canonical leverage procedure — Instructional Decision Making
+  v1.0 (Gap-4, now RESOLVED / stored verbatim, wired to nothing).** P0-a is safe to ship now because
+  it changes only *ordering heuristics already under a flag*; P0-b is the point at which selection
+  becomes *canonically authoritative*. **P0-b is technically unblocked but NOT authorized —**
+  it awaits separate approval after the stored decision model is reviewed.
 
 ### Phase P1 — Canonical Sufficiency & State Judgement
 - **Objective.** Source `status` (missing/partial/misleading/present ↔ canonical
@@ -548,15 +550,31 @@ complete.
   all? If yes, author a home (subordinate model or note within a primary); if no, declare it
   explicitly out-of-scope so the legacy object can be removed rather than orphaned.
 
-- **Gap-4 — Cross-structure leverage / arbitration procedure (blocks P0-b authoritative status).**
-  The canonical models supply per-structure `observable_decision_questions` and a dependency-implied
-  order via `structural_dependencies`, but NOT an explicit "which of the five primaries is
-  highest-leverage RIGHT NOW" algorithm. The legacy `PRIORITY_ORDER` is a *contradicting* stand-in
-  (it ranks Evidence above Elaboration; canonical inverts this). Required: an authored leverage
-  procedure — e.g. "select the highest upstream unmet structure; Elaboration outranks its
-  subordinate Evidence; Opening/Conclusion are optional and selected only when the paragraph's
-  communicative purpose requires them." P0-a ships an interim version derived mechanically from
-  `structural_dependencies`; P0-b needs the authored procedure.
+- **Gap-4 — Cross-structure leverage / arbitration procedure — ✅ AUTHORED / CANONICALLY RESOLVED (2026-06).**
+  RESOLVED by the supplied **Canonical Model: Instructional Decision Making v1.0**, stored verbatim
+  at `backend/canonical_models/instructional_decision_making.json` and loaded read-only via
+  `compass_curriculum.py` (`get_decision_model`, `get_decision_section`,
+  `decision_foundational_principles`, `decision_order`, `canonical_decision_questions`,
+  `is_decision_model_ready`, `decision_model_report`). WIRED TO NOTHING — no change to
+  `select_structure`, priority order, sufficiency, dialogue, Teacher Review, UI, DB, audit, or OT.
+  The model supplies: 7 Foundational Principles (One Thing, Development-Before-Correction,
+  Highest-Leverage, Dependency, Generative, Developmental Sufficiency, Recursive), the Unit of
+  Decision (the learner's present developmental organization), Sources of Evidence, a 6-step Order
+  of Decision, When-Not-to-Teach and When-to-Recurse rules, and 9 Canonical Decision Questions.
+  This is the authoritative *procedure + principles* that P0-b must implement.
+  **P0-b is now technically UNBLOCKED but NOT authorized for execution** — it awaits separate
+  approval after review of the stored model.
+  - *Original (superseded) statement of the gap, kept for history:* the canonical models supplied
+    per-structure decision questions and a dependency-implied order but NOT an explicit
+    "which primary is highest-leverage now" procedure; the legacy `PRIORITY_ORDER` was a
+    contradicting stand-in.
+  - *Residual implementation note (NOT a new authoring gap — resolve during P0-b, do not resolve
+    now):* the model specifies leverage/dependency at the level of PRINCIPLES + PROCEDURE + DECISION
+    QUESTIONS; it does not itself enumerate the concrete ordering among the five primaries
+    (e.g. it does not literally state "Elaboration outranks Evidence"). That concrete ranking is to
+    be DERIVED mechanically in P0-b by applying the model's Highest-Leverage + Dependency principles
+    to each structure's canonical `structural_dependencies` — an implementation task, not further
+    curriculum authoring. See also the taxonomy note below.
 
 - **Gap-5 — Paragraph Main Point → Thesis unity (blocks P5 pruning of that object).**
   Reconciliation notes say Paragraph Main Point "folds into Thesis" via the Thesis model's
@@ -568,6 +586,25 @@ complete.
 **Summary of blocking relationships:** Gap-4 blocks P0 *authority* (not its start). Gaps 1,2,3,5
 block P4 *completion* and all of P5. None block P0-a, P1, P2, P3 from shipping for the five primary
 structures.
+
+### 9.1 Reported contradictions / implementation ambiguities (NOT resolved here — per directive)
+Per the store-verbatim directive (report, do not resolve), one implementation ambiguity was found
+while ingesting the Instructional Decision Making model; it is recorded for the P0-b execution phase
+and must be resolved by the executor/authority then, not now:
+
+- **Instructional-level taxonomy mismatch (P0-b).** The model's Order of Decision **Step 6** names
+  four instructional levels — **Discovery, Scaffold, Rescue, Closure**. The current engine implements
+  a DISCOVERY-vs-RESCUE *binary* (gated by `current_target_attempts` / `_wants_help`), a separate
+  CLOSURE path (`generate_closure`, CASE_2 no-target), and an independent `instructional_action`
+  field with five values (`teach|scaffold|ask_question|model|encourage_revision`). So "Scaffold" as
+  a *peer level* alongside Discovery/Rescue/Closure does not map 1:1 onto the engine's current
+  DISCOVERY/RESCUE modes + action list. This is an alignment decision for P0-b (how the model's
+  four levels map onto the engine's mode/action machinery). No literal contradiction with the FROZEN
+  flow; flagged only so P0-b does not silently pick a mapping. **Not resolved in this pass.**
+
+No other literal contradictions were found between the supplied model and the existing plan; the
+model's principles (Highest-Leverage, Dependency, Developmental Sufficiency, Recursive) are
+consistent with, and now supersede, the interim dependency-derived leverage described for P0-a.
 
 ---
 
