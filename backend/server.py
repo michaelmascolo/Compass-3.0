@@ -31,7 +31,7 @@ EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY')
 # to compass_structure_engine as the sole instructional selector. One-line rollback:
 # set COMPASS_REASONING_MODE=exhaustive in the environment.
 DEFAULT_REASONING_MODE = os.environ.get("COMPASS_REASONING_MODE", "consolidated_v2")
-RP5_MODES = ("consolidated_v2", "structure_v5")
+RP5_MODES = ("consolidated_v2", "structure_v5", "canonical_v2")
 
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
@@ -1808,6 +1808,7 @@ class PreviewStart(BaseModel):
     assignment: Optional[str] = ""     # the educator's authentic assignment — the authoritative task
     essay_about: Optional[str] = ""    # legacy (unused by Chapter 4 flow); retained for back-compat
     passage_type: Optional[str] = ""   # legacy (unused by Chapter 4 flow); retained for back-compat
+    canonical: Optional[bool] = False  # TEST-ONLY: route this preview session through canonical selection
 
 
 @api_router.post("/sessions/preview", response_model=Session)
@@ -1826,6 +1827,10 @@ async def create_preview_session(payload: Optional[PreviewStart] = None):
         teacher_intentions=notes,
         assignment_context=assignment,
     )
+    # TEST-ONLY isolation: a canonical-test preview routes to the structure engine
+    # (canonical_v2 is in RP5_MODES) AND activates canonical selection for THIS session
+    # only. Default previews keep the normal reasoning mode + legacy selection.
+    reasoning_mode = "canonical_v2" if payload.canonical else DEFAULT_REASONING_MODE
     session = Session(
         assignment=assignment,
         pedagogical_purpose=PREVIEW_BOOTSTRAP.pedagogical_purpose,
@@ -1833,10 +1838,64 @@ async def create_preview_session(payload: Optional[PreviewStart] = None):
         teacher_notes=notes,
         telos=telos,
         is_preview=True,
+        reasoning_mode=reasoning_mode,
         experience_control=ExperienceControl(),
     )
     await db.sessions.insert_one(session.model_dump())
     return session
+
+
+@api_router.get("/sessions/{session_id}/canonical-trace")
+async def canonical_trace(session_id: str):
+    """READ-ONLY diagnostic (TEST-ONLY). Per-turn canonical selection trace:
+    selected structure, developmental variation, status, developmental sufficiency,
+    and provisional judgment. Sourced from the persisted InstructionalState +
+    instructional_decision audit events. Additive; no schema/audit change."""
+    doc = await db.sessions.find_one({"id": session_id}, {"_id": 0})
+    if not doc:
+        raise HTTPException(status_code=404, detail="session not found")
+    import compass_foundation as _fb
+    state = await _fb.get_state_by_session(session_id)
+    turns = []
+    if state is not None:
+        events = await _fb.AUDIT.find(
+            {"state_id": state.id, "event_type": "instructional_decision"}, {"_id": 0}
+        ).sort("created_at", 1).to_list(1000)
+        for i, ev in enumerate(events):
+            outp = ev.get("output_state", {}) or {}
+            ia = outp.get("instructional_analysis", {}) or {}
+            turns.append({
+                "turn": i + 1,
+                "created_at": ev.get("created_at"),
+                "learner_action": ev.get("learner_action"),
+                "canonical_selection": ia.get("canonical_selection", False),
+                "selected_structure": outp.get("selected_instructional_object"),
+                "structure_status": outp.get("structure_status"),
+                "developmental_variation": ia.get("developmental_variation") or outp.get("developmental_variation"),
+                "developmental_sufficiency": ia.get("developmental_sufficiency"),
+                "sufficiency_reasoning": ia.get("sufficiency_reasoning"),
+                "instructional_need": outp.get("instructional_need"),
+                "established": outp.get("established_structures"),
+                "confidence": ia.get("confidence"),
+                "provisional_judgment": ia.get("provisional_judgment"),
+                "selection_rationale": ia.get("selection_rationale"),
+                "next_objective": ia.get("next_objective"),
+            })
+    return {
+        "session_id": session_id,
+        "reasoning_mode": doc.get("reasoning_mode"),
+        "canonical_active": (doc.get("reasoning_mode") == "canonical_v2"),
+        "is_preview": doc.get("is_preview", False),
+        "turn_count": len(turns),
+        "turns": turns,
+        "current_state": None if state is None else {
+            "selected_instructional_object": state.selected_instructional_object,
+            "developmental_variation": state.developmental_variation,
+            "current_target_attempts": state.current_target_attempts,
+            "decision_status": state.decision_status,
+            "instructional_need": state.instructional_need,
+        },
+    }
 
 
 # ---------------------------------------------------------------------------

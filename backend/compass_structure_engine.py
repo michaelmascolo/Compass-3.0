@@ -525,9 +525,11 @@ async def _select_structure_canonical(session_id: str, assignment: str, unit: st
 
 
 async def select_structure(session_id: str, assignment: str, unit: str,
-                            student_text: str) -> Dict[str, Any]:
-    """Return {selected, status, established[], not_applicable[], justification, confidence}."""
-    if _canonical_selection_enabled():
+                            student_text: str, canonical: Optional[bool] = None) -> Dict[str, Any]:
+    """Return {selected, status, established[], not_applicable[], justification, confidence}.
+    `canonical` overrides the env flag when explicitly passed (per-session activation)."""
+    use_canonical = _canonical_selection_enabled() if canonical is None else canonical
+    if use_canonical:
         return await _select_structure_canonical(session_id, assignment, unit, student_text)
     prompt = (
         f"ASSIGNMENT (authoritative task): {assignment or '(not specified)'}\n"
@@ -888,8 +890,11 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
 
     # STEP 1 — highest-priority structure (engine recommendation is always computed
     # so the teacher trace can preserve it even under override)
+    # Canonical selection is activated per-session (reasoning_mode == "canonical_v2")
+    # OR globally by the CANONICAL_SELECTION env flag. Otherwise legacy selection.
+    _canonical = (session.get("reasoning_mode") == "canonical_v2") or _canonical_selection_enabled()
     t_s0 = time.perf_counter()
-    sel = await select_structure(state.id, assignment, unit, student_text)
+    sel = await select_structure(state.id, assignment, unit, student_text, canonical=_canonical)
     t_select = time.perf_counter() - t_s0
     engine_structure = sel.get("selected")
     established = sel.get("established") or []
@@ -978,6 +983,7 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
         "candidate_objects": candidate_objects,
         "selected_object": target,
         "one_thing_rule": target,
+        "developmental_variation": developmental_variation,
         "selection_rationale": priority_rationale,
         "selection_contrast": selection_contrast,
         "instructional_action": instructional_action,
