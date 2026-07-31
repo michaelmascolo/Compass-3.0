@@ -103,16 +103,16 @@ MINIMAL_OBJECTS: Dict[str, Dict[str, Any]] = {
         "exit_criterion": "The writer can state the paragraph's one point and every sentence serves it.",
     },
     "Definition": {
-        "essence": "The working meaning of a key term the argument depends on, so the writer and reader are reasoning about the same thing.",
+        "essence": "The working meaning of a key term the argument depends on — precise and consistent enough that writer and reader reason about the same thing. It concerns the clarity of concepts, not the truth of claims or the quality of evidence.",
         "observable_indicators": {
-            "present": "Load-bearing terms are given a working meaning the argument uses consistently.",
-            "partial": "A key term is used in shifting senses without being pinned down.",
-            "missing": "The argument turns on an undefined term a reader could read two ways.",
-            "misleading": "A definition is stated but the argument then uses the term differently.",
+            "present": "The load-bearing term has a working meaning precise enough for this task and used consistently.",
+            "partial": "The key term is used in a vague, overly broad, or overly narrow sense, or its meaning is only loosely implied.",
+            "missing": "The argument turns on an undefined key term a reasonable reader could take more than one way.",
+            "misleading": "The term is circular, used inconsistently across the writing, or given an everyday sense where a discipline-specific one is needed — so a reasonable reader is misled.",
         },
-        "developmental_variations": ["Undefined key term", "Circular definition", "Shifting sense", "Stable working definition"],
-        "teaching_strategy": "Ask which word the argument depends on and what they mean by it here; have them state the working sense in their own words.",
-        "exit_criterion": "The key term has one working meaning the writing uses consistently.",
+        "developmental_variations": ["Undefined key term", "Vague / ambiguous term", "Overly broad definition", "Overly narrow definition", "Circular definition", "Inconsistent use of the term", "Everyday meaning where a discipline-specific one is needed", "Stable working definition sufficient for the task"],
+        "teaching_strategy": "Make Definition the focus ONLY when an unclear or unstable concept is actually BLOCKING the writer from developing or communicating the idea — not merely because a term could be defined. First rule out a deeper Central Claim / Evidence / Explanation problem. Then help the writer notice which word the argument leans on and where a reasonable reader could take it differently; have them state the working meaning in their OWN words, sharpen it if it is too broad, too narrow, or circular, and keep it consistent. A concrete example or a contrast often clarifies meaning. Never supply the definition; the meaning must be the writer's.",
+        "exit_criterion": "The load-bearing term has a clear, non-circular working meaning, precise enough for the task and used consistently.",
     },
     "Evidence": {
         "essence": "Specific, relevant, adequate material a reader can check that gives a claim something concrete to stand on — not bare assertion, not off-point material, and not so thin a skeptic could wave it away.",
@@ -241,7 +241,10 @@ _SEL_SYS = (
     "written, you perform an internal instructional analysis (never shown to the student) that "
     "becomes the basis for the whole coaching cycle and later for Teacher Review. Your central "
     "job is to identify the single writing STRUCTURE with the greatest developmental leverage "
-    "for this writer right now (the One Thing Rule). You are NOT diagnosing errors and NOT "
+    "for this writer right now (the One Thing Rule). When several developmental objects could be "
+    "improved, always choose the one whose improvement will produce the GREATEST DOWNSTREAM "
+    "improvement in the writer's overall writing — not simply the first detectable weakness. That "
+    "is the instructional meaning of the One Thing Rule. You are NOT diagnosing errors and NOT "
     "listing problems. You walk a fixed priority list from the top and choose the FIRST "
     "structure that is not yet solidly established for the unit the writer is producing (status "
     "missing, partial, or misleading) AND is applicable to that unit. Higher-priority structures "
@@ -260,7 +263,11 @@ _SEL_SYS = (
     "unstated or faulty reasoning between them is the highest-leverage gap; never let Explanation "
     "replace a more fundamental Central Claim or Evidence problem, and name the explanation issue in "
     "developmental_variation (merely stated / implicit / summary-not-interpretation / superficial / "
-    "overstated / unsupported reasoning). If EVERY applicable structure is already present and solid, select "
+    "overstated / unsupported reasoning). Select Definition only when an unclear or unstable KEY "
+    "concept is blocking the writer from developing or communicating their idea — not merely because "
+    "a term could be defined; never select it over a more fundamental Central Claim, Evidence, or "
+    "Explanation problem, and name the definition issue in developmental_variation (undefined / vague "
+    "/ too broad / too narrow / circular / inconsistent / everyday-vs-discipline). If EVERY applicable structure is already present and solid, select "
     "null — never invent a weakness to have something to teach. You must also record: the "
     "writer's estimated developmental level, the candidate developmental objects you considered, "
     "why you chose this object instead of the others, the instructional action to take, whether "
