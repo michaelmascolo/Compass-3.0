@@ -115,15 +115,15 @@ MINIMAL_OBJECTS: Dict[str, Dict[str, Any]] = {
         "exit_criterion": "The key term has one working meaning the writing uses consistently.",
     },
     "Evidence": {
-        "essence": "Specific, relevant material a reader can check that gives a claim something concrete to stand on rather than assertion alone.",
+        "essence": "Specific, relevant, adequate material a reader can check that gives a claim something concrete to stand on — not bare assertion, not off-point material, and not so thin a skeptic could wave it away.",
         "observable_indicators": {
-            "present": "A claim is backed by specific, relevant material (example, data, text, experience).",
-            "partial": "Support is offered but general, thin, or only loosely relevant.",
-            "missing": "Claims are asserted with nothing specific behind them.",
-            "misleading": "The material offered does not actually bear on the claim it follows.",
+            "present": "The claim is backed by material that is specific, relevant to THAT claim, and adequate — a skeptic has something concrete to weigh.",
+            "partial": "Support is offered but thin, general, or covers only part of the claim (backs a sub-point, not the whole position).",
+            "missing": "The claim is asserted with nothing specific behind it — an unsupported assertion.",
+            "misleading": "The material offered is irrelevant to the claim, or actually points against it (evidence that contradicts the claim).",
         },
-        "developmental_variations": ["Assertion only", "Vague/general support", "Relevant but unexplained", "Specific relevant evidence"],
-        "teaching_strategy": "Ask 'what would make a skeptic believe this?' and have the writer point to the specific thing; never invent evidence for them.",
+        "developmental_variations": ["Unsupported assertion", "Irrelevant support", "Vague / general support", "Partial support (covers only part of the claim)", "Relevant but inadequate", "Evidence that contradicts the claim", "Specific, relevant, adequate evidence"],
+        "teaching_strategy": "First confirm the claim is clear and answers the task — do NOT teach evidence for an unsettled claim (that is a Central Claim problem, not an evidence problem). Then help the writer judge their own material on three axes a skeptic uses: is it RELEVANT to this exact claim, is it SPECIFIC (checkable), and is it ADEQUATE (enough to carry the point)? If the material is off-point or actually cuts against the claim, have the writer notice the mismatch and decide what to do. Never supply the evidence or judge it for them; the noticing stays theirs.",
         "exit_criterion": "At least one claim is supported by specific, relevant material a reader could examine.",
     },
     "Explanation": {
@@ -250,7 +250,12 @@ _SEL_SYS = (
     "usually NOT applicable and the governing structure is the Central Claim, then its Evidence "
     "and Explanation. A Central Claim counts as PRESENT only when it takes a contestable position "
     "that ANSWERS the assignment's question — a claim-shaped sentence that does not answer the "
-    "task is NOT yet present. If EVERY applicable structure is already present and solid, select "
+    "task is NOT yet present. Evidence becomes the focus only once a clear, task-answering claim "
+    "exists; never select Evidence to prop up an unsettled claim. When Evidence IS the object, name "
+    "the issue in developmental_variation on three axes: RELEVANCE (does the material bear on THIS "
+    "claim), SPECIFICITY/adequacy (concrete and enough to weigh), and direction (does it support or "
+    "actually contradict the claim); if evidence is already specific, relevant, and adequate but its "
+    "reasoning is unstated, the object is Explanation, not Evidence. If EVERY applicable structure is already present and solid, select "
     "null — never invent a weakness to have something to teach. You must also record: the "
     "writer's estimated developmental level, the candidate developmental objects you considered, "
     "why you chose this object instead of the others, the instructional action to take, whether "
