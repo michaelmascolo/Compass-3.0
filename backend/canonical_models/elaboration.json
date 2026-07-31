@@ -1,0 +1,121 @@
+{
+  "definition": "Elaboration is the progressive differentiation and integration of the integrated message expressed in the thesis.\n\nThe thesis contains the central communicative message in implicit form.\n\nElaboration progressively unfolds that message by developing its conceptual organization into increasingly differentiated and increasingly integrated understanding.\n\nElaboration is not the addition of information.\n\nIt is the development of understanding.\n\nConsequently, elaboration is the principal intellectual work of the paragraph.\n\nEvidence, examples, definitions, qualifications, comparisons, and related subordinate structures exist only insofar as they contribute to that developmental process.",
+  "function": "Elaboration performs the central intellectual work of the paragraph.\n\nIts functions include:\n\n• progressively differentiating the integrated message contained in the thesis;\n\n• progressively integrating those differentiated ideas into an increasingly coherent understanding;\n\n• constructing the understanding required by the intended audience;\n\n• making explicit the important relationships that remain implicit within the thesis;\n\n• transforming an implicit conceptual organization into an explicit one.\n\nElaboration therefore serves as the developmental bridge between the thesis and the reader’s understanding.\n\nIts central operational question is:\n\n“What does a naïve reader have to know in order to understand this point?”",
+  "structural_dependencies": {
+    "upstream_dependencies": [
+      "An identifiable thesis.",
+      "An intended audience.",
+      "A communicative purpose.",
+      "An integrated message capable of further differentiation and integration.",
+      "An understanding of what the intended audience already knows and what the audience still needs in order to understand the point."
+    ],
+    "upstream_clarification": "Elaboration does not merely follow the thesis. It develops the relationships, distinctions, implications, mechanisms, conditions, and component ideas that are already implicit within the integrated message.",
+    "downstream_dependencies": [
+      "Evidence / Example.",
+      "Definitions.",
+      "Qualifications.",
+      "Comparisons.",
+      "Analogies.",
+      "Conclusion."
+    ],
+    "downstream_clarification": "These subordinate structures derive their function from the elaborative work they support. Without elaboration, they become isolated additions rather than meaningful contributions to the reader’s understanding."
+  },
+  "structural_requirements": [
+    {
+      "name": "Development of Understanding",
+      "requirement": "Every major elaborative idea contributes new understanding of the integrated message expressed in the thesis.",
+      "observable_questions": [
+        "What new understanding does this idea contribute?",
+        "Does this sentence develop the point, or merely add information?"
+      ]
+    },
+    {
+      "name": "Audience Understanding",
+      "requirement": "Elaboration develops what the intended audience needs in order to understand the integrated message.",
+      "central_question": "What does a naïve reader have to know in order to understand this point?",
+      "observable_questions": [
+        "What would a naïve reader still not understand?",
+        "What background, distinction, relationship, mechanism, condition, or implication must be made explicit?"
+      ]
+    },
+    {
+      "name": "Differentiation",
+      "requirement": "Elaboration progressively makes explicit the distinctions, relationships, implications, conditions, mechanisms, or component ideas already implicit within the thesis.",
+      "observable_questions": [
+        "What relationship or idea already implicit in the thesis is being made explicit here?",
+        "What part of the integrated message is being differentiated?"
+      ]
+    },
+    {
+      "name": "Integration",
+      "requirement": "Each newly differentiated idea contributes to one increasingly coherent understanding rather than becoming an independent section or disconnected addition.",
+      "observable_questions": [
+        "How does this idea strengthen the reader’s understanding of the integrated message?",
+        "Does this new idea become part of one increasingly coherent whole?",
+        "Does the paragraph become more integrated as it develops?"
+      ]
+    },
+    {
+      "name": "Relevance",
+      "requirement": "Every elaborative idea derives its purpose from its relationship to the thesis.",
+      "observable_questions": [
+        "Why does this idea belong here?",
+        "What role does it play in developing the integrated message?"
+      ]
+    },
+    {
+      "name": "Conceptual Continuity",
+      "requirement": "The paragraph develops through intelligible conceptual relationships rather than through disconnected observations or independent sections.",
+      "observable_questions": [
+        "Can the reader understand how one idea relates to the next?",
+        "Are the content connections among the elements coherent?",
+        "Does each development prepare for, extend, qualify, or integrate what came before?"
+      ]
+    }
+  ],
+  "developmental_variations": [
+    {
+      "name": "Minimal elaboration",
+      "description": "The thesis is stated, but the reader is given little of the understanding required to grasp the point."
+    },
+    {
+      "name": "Repetitive elaboration",
+      "description": "The writing restates the thesis or repeats the same idea without developing additional understanding."
+    },
+    {
+      "name": "Additive elaboration",
+      "description": "The writing adds information or separate points, but those additions do not become integrated into one developing understanding."
+    },
+    {
+      "name": "Fragmented elaboration",
+      "description": "Relevant ideas are present, but their relationships are unclear or they function as independent sections rather than parts of one conceptual whole."
+    },
+    {
+      "name": "Elaboration lacking audience support",
+      "description": "The writer possesses an understanding but omits distinctions, context, relationships, or explanations that a naïve reader needs."
+    },
+    {
+      "name": "Elaboration replaced by subordinate material",
+      "description": "Evidence, examples, definitions, quotations, or details appear in place of the writer’s own developmental work."
+    },
+    {
+      "name": "Progressively differentiated and integrated elaboration",
+      "description": "Each new idea develops an important aspect of the thesis while contributing to one increasingly coherent understanding for the intended audience."
+    }
+  ],
+  "developmental_sufficiency": "Elaboration reaches developmental sufficiency when the integrated message expressed in the thesis has been developed enough for the intended audience to understand it at the level required by the communicative purpose.\n\nDevelopmental sufficiency is judged by growth in understanding and integration, not by the quantity of information presented.\n\nThe critical question is not:\n\n“Can more be said?”\n\nThe critical questions are:\n\n“What else does a naïve reader genuinely need in order to understand this point?”\n\nand\n\n“Are the differentiated ideas sufficiently integrated into one coherent understanding?”\n\nElaboration is sufficient when the important relationships implicit in the thesis have been developed enough for the reader to grasp the integrated message, and when another instructional object would now produce greater developmental gain.\n\nFurther elaboration is not warranted when additional material would merely repeat, accumulate information, or fragment the organization.\n\nSubsequent work on evidence, examples, conclusion, or another structure may reveal a need to return recursively to elaboration.",
+  "discovery_instruction": "Compass teaches:\n\n• what elaboration is;\n\n• why elaboration is the development of understanding rather than the addition of details;\n\n• how elaboration progressively differentiates and integrates the message expressed in the thesis;\n\n• how to think from the perspective of a naïve reader;\n\n• how to identify the important relationships implicit in a thesis;\n\n• how each new idea must contribute both something new and something integrative.\n\nThe central discovery question is:\n\n“What does a naïve reader have to know in order to understand this point?”\n\nCompass compares the learner’s work with the structural requirements and invites the learner to identify and develop what the reader still needs.\n\nCompass teaches constraints rather than preferred solution strategies.\n\nCompass never performs the learner’s elaboration.",
+  "rescue_instruction": "Rescue instruction occurs only after repeated unsuccessful attempts or an explicit request for additional help.\n\nCompass first clarifies what the naïve reader still lacks and which relationship implicit in the thesis remains undeveloped.\n\nCompass may ask:\n\n• What would a reader still wonder?\n\n• What does the reader need to know before this point will make sense?\n\n• What relationship have you assumed but not yet made explicit?\n\n• How does this idea connect with the thesis and with the other ideas already developed?\n\nCompass may help the learner distinguish among possible kinds of missing development, such as context, distinction, cause, condition, mechanism, implication, comparison, or qualification.\n\nThese possibilities must be offered as supports for discovery, not as prescribed content.\n\nWhen examples are necessary, Compass should use material unrelated to the learner’s own paper whenever possible.\n\nCompass never supplies the learner’s elaboration or constructs the conceptual relationships for the learner.",
+  "observable_decision_questions": [
+    "What integrated message is the thesis expressing?",
+    "What does a naïve reader have to know in order to understand that message?",
+    "Which important distinctions or relationships implicit in the thesis remain undeveloped?",
+    "What new understanding does each elaborative idea contribute?",
+    "Does each new idea become integrated into one increasingly coherent understanding?",
+    "Are the content connections among the elements coherent?",
+    "Are evidence, examples, definitions, and other subordinate structures supporting elaboration rather than replacing it?",
+    "Which structural requirement currently limits the reader’s understanding?",
+    "Has elaboration reached developmental sufficiency?",
+    "Would further elaboration deepen and integrate understanding, or merely add information?"
+  ]
+}
