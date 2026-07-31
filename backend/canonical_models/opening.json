@@ -1,0 +1,148 @@
+{
+  "definition": "An opening is the portion of a paragraph that prepares the intended audience to understand the integrated message expressed in the thesis.\n\nThe opening establishes the relationship between the reader’s present understanding and the communicative work the paragraph is about to perform.\n\nIt may provide the context, orientation, background, question, problem, situation, or connection to a larger conversation that the intended audience needs before encountering the thesis.\n\nThe opening does not perform the principal intellectual work of the paragraph.\n\nIt prepares the conditions under which the thesis can be understood, interpreted, and appreciated appropriately.\n\nAn opening is not required in every paragraph.\n\nWhen the intended audience already possesses the necessary orientation, a paragraph may appropriately begin directly with the thesis.\n\nAn opening is therefore defined by its function for the audience, not by its location, length, or use of a conventional attention-getting device.",
+  "function": "The opening prepares the intended audience for the integrated message expressed in the thesis.\n\nIts functions may include:\n\n• activating relevant prior understanding;\n\n• establishing the context needed to understand the thesis;\n\n• locating the paragraph within a larger question, problem, situation, or conversation;\n\n• helping the audience recognize what issue the paragraph will address;\n\n• creating continuity between what the audience presently understands and what the writer intends to communicate;\n\n• preparing the audience to understand why the thesis is relevant or worthy of consideration when that preparation is needed.\n\nThe opening prepares the reader for the communicative act.\n\nIt does not replace the thesis or perform the elaborative work that follows.",
+  "structural_dependencies": {
+    "upstream_dependencies": [
+      "An intended audience.",
+      "An understanding of what the intended audience is likely to know, believe, misunderstand, expect, find relevant, or be capable of understanding.",
+      "A communicative purpose.",
+      "An emerging or sufficiently developed thesis.",
+      "An understanding of the larger question, problem, situation, or conversation within which the paragraph participates.",
+      "An understanding of where the paragraph is going and what preparation the thesis requires."
+    ],
+    "upstream_clarification": "An opening cannot be judged independently of its audience and thesis. Material that effectively prepares one audience may be unnecessary, confusing, or insufficient for another. The thesis helps determine what context is relevant, while the audience helps determine how much of that context must be made explicit.",
+    "downstream_dependencies": [
+      "The intended audience’s comprehension of the thesis.",
+      "The audience’s readiness to follow the elaboration.",
+      "The interpretation of evidence, examples, and subordinate structures.",
+      "The coherence of the paragraph’s communicative movement."
+    ],
+    "downstream_clarification": "The opening supports the structures that follow by placing the audience in a position to understand their communicative role. It does not govern them independently of the thesis."
+  },
+  "structural_requirements": [
+    {
+      "name": "Audience Orientation",
+      "requirement": "The opening provides the orientation the intended audience needs before encountering the thesis.",
+      "central_question": "What does this audience need before the thesis can accomplish its communicative purpose?",
+      "observable_questions": [
+        "What does the intended audience probably already understand?",
+        "What might the audience not yet understand?",
+        "What orientation is genuinely necessary before the thesis?"
+      ]
+    },
+    {
+      "name": "Relation to the Thesis",
+      "requirement": "Every important element of the opening prepares the audience for the integrated message expressed in the thesis.",
+      "observable_questions": [
+        "How does this opening prepare the reader for the thesis?",
+        "Would this material still be relevant if the thesis were different?",
+        "Does the opening establish the conditions under which this particular thesis can be understood?"
+      ]
+    },
+    {
+      "name": "Contextual Sufficiency",
+      "requirement": "The opening supplies enough context for the intended audience without introducing background that is unnecessary for understanding the thesis.",
+      "observable_questions": [
+        "What background is genuinely needed?",
+        "Is anything essential missing?",
+        "Is any information present that delays the thesis without improving the audience’s readiness?"
+      ]
+    },
+    {
+      "name": "Connection to the Larger Conversation",
+      "requirement": "When the communicative purpose requires it, the opening locates the paragraph within the larger question, issue, problem, situation, or conversation to which it contributes.",
+      "observable_questions": [
+        "What larger conversation is this paragraph entering?",
+        "Does the audience need to know that conversation in order to understand the thesis?",
+        "Has the writer made the relevant part of that conversation visible?"
+      ]
+    },
+    {
+      "name": "Continuity",
+      "requirement": "The opening creates an intelligible movement into the thesis.",
+      "observable_questions": [
+        "Can the reader understand why the thesis follows from this opening?",
+        "Does the opening prepare the thesis rather than interrupt or compete with it?",
+        "Is the relationship between the orientation and the thesis coherent?"
+      ]
+    },
+    {
+      "name": "Functional Proportionality",
+      "requirement": "The opening remains proportionate to its preparatory function and does not dominate, replace, or unnecessarily postpone the thesis.",
+      "observable_questions": [
+        "Has the opening become more extensive than the audience’s needs require?",
+        "Is the opening performing elaborative work that belongs later?",
+        "Would a shorter or direct opening prepare this audience equally well?"
+      ]
+    },
+    {
+      "name": "Optionality",
+      "requirement": "An opening should be included only when the intended audience requires preparation before the thesis.",
+      "observable_questions": [
+        "Does this paragraph genuinely need an opening?",
+        "Could the intended audience understand the thesis if the paragraph began directly with it?",
+        "Is the opening serving a communicative need or merely following a convention?"
+      ],
+      "governing_rule": "Compass should not require an opening, hook, anecdote, quotation, question, or startling fact merely because conventional composition pedagogy recommends one."
+    }
+  ],
+  "developmental_variations": [
+    {
+      "name": "Opening absent because none is needed",
+      "description": "The paragraph appropriately begins with the thesis because the intended audience already possesses the orientation required to understand it."
+    },
+    {
+      "name": "Abrupt opening",
+      "description": "The paragraph presents the thesis or begins developing the point before the intended audience has received necessary orientation."
+    },
+    {
+      "name": "Generic opening",
+      "description": "The opening offers broad statements about the topic but does not prepare the audience for the specific integrated message expressed in the thesis."
+    },
+    {
+      "name": "Irrelevant opening",
+      "description": "The material may be interesting or related to the general topic, but it does not help the intended audience understand the thesis."
+    },
+    {
+      "name": "Excessive opening",
+      "description": "The opening supplies more context than the intended audience needs and delays or obscures the thesis."
+    },
+    {
+      "name": "Opening replacing the thesis",
+      "description": "The paragraph provides context or discusses the topic but never clearly communicates the integrated message the writer wants the audience to understand."
+    },
+    {
+      "name": "Opening performing elaboration",
+      "description": "The opening begins developing distinctions, explanations, evidence, or implications that belong to the elaboration rather than limiting itself to audience preparation."
+    },
+    {
+      "name": "Disconnected opening",
+      "description": "The opening and thesis are both present, but their relationship is unclear, making the thesis appear to arrive without conceptual continuity."
+    },
+    {
+      "name": "Audience-mismatched opening",
+      "description": "The opening assumes knowledge the intended audience does not possess, explains what the audience already knows, or uses context inappropriate to the audience’s interests or capacities."
+    },
+    {
+      "name": "Effective audience orientation",
+      "description": "The opening provides the context and connection the intended audience needs, leads coherently into the thesis, and remains proportionate to its preparatory function."
+    }
+  ],
+  "developmental_sufficiency": "An opening reaches developmental sufficiency when it provides the intended audience with the orientation genuinely required for the thesis to accomplish its communicative purpose.\n\nDevelopmental sufficiency does not require an especially interesting, dramatic, or stylistically polished beginning.\n\nThe governing question is:\n\n“Is the intended audience now prepared to understand the integrated message expressed in the thesis?”\n\nThe opening is sufficient when the necessary context has been established, its relationship to the thesis is coherent, and additional opening material would no longer improve the audience’s readiness.\n\nIf the audience can already understand the thesis without preparatory material, the absence of an opening may itself be developmentally sufficient.\n\nFurther work on the opening is not warranted when it would merely decorate, prolong, or delay the paragraph rather than improve audience understanding.",
+  "discovery_instruction": "Compass teaches:\n\n• what an opening is;\n\n• why openings prepare a particular audience rather than merely begin a paragraph;\n\n• how openings depend upon audience knowledge, communicative purpose, the larger conversation, and the thesis;\n\n• how an opening differs from a thesis and from elaboration;\n\n• why openings are optional rather than universally required;\n\n• why hooks and attention-getting devices are possible strategies rather than canonical requirements;\n\n• how to determine what orientation the intended audience genuinely needs.\n\nThe central discovery question is:\n\n“What does this audience need before the thesis can accomplish its communicative purpose?”\n\nCompass compares the learner’s opening with the structural requirements and invites the learner to determine what preparation is necessary.\n\nCompass teaches the function and constraints of openings rather than prescribing a preferred opening technique.\n\nCompass never writes the learner’s opening.",
+  "rescue_instruction": "Rescue instruction occurs only after repeated unsuccessful attempts or an explicit request for additional help.\n\nCompass first helps the learner clarify the intended audience, the thesis, and the audience’s likely starting point.\n\nCompass may ask:\n\n• Who is your intended reader?\n\n• What does that reader probably already know?\n\n• What might the reader misunderstand or fail to appreciate without preparation?\n\n• What larger question, problem, situation, or conversation does the reader need to recognize?\n\n• What must be established before your thesis will make sense?\n\n• Which parts of your current opening genuinely prepare the thesis, and which merely discuss the topic?\n\nIf the learner remains stuck, Compass may identify possible kinds of orientation, such as necessary context, a relevant problem, a guiding question, a misconception, a prior event, or a connection to a larger conversation.\n\nThese must be offered as possible functional pathways rather than prescribed content or mandatory opening forms.\n\nWhen examples are necessary, Compass should use material unrelated to the learner’s own writing whenever possible.\n\nCompass never constructs the learner’s opening or supplies the audience analysis the learner should perform.",
+  "observable_decision_questions": [
+    "Who is the intended audience?",
+    "What does that audience probably already know, believe, expect, misunderstand, or need?",
+    "What integrated message is the thesis intended to communicate?",
+    "What preparation, if any, does this audience need before encountering that thesis?",
+    "Does each important element of the opening contribute to that preparation?",
+    "Does the opening locate the paragraph within a larger conversation when that context is necessary?",
+    "Does the opening lead coherently into the thesis?",
+    "Is the opening preparing rather than replacing the thesis or performing elaboration?",
+    "Is the amount of opening material proportionate to the audience’s needs?",
+    "Is an opening actually required for this paragraph?",
+    "Has the opening reached developmental sufficiency?",
+    "Would additional opening material improve audience readiness or merely delay the thesis?"
+  ]
+}

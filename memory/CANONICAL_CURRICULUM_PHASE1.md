@@ -57,3 +57,43 @@ Net readiness: 0/5 structures complete; 4/45 primary-field slots calibrated; the
 ## Infrastructure now
 - `compass_curriculum.py`: all 5 primary structures = 9 fields, every field `pending`; `MODEL_SUPPLY_ORDER = [Thesis, Elaboration, Evidence/Example, Conclusion, Opening]`; `SUBORDINATE_FIELDS` (8) + `SUBORDINATE_STRUCTURES` notes; `RECONCILIATION_NOTES`; `insert_primary_model()` + `validate_model()` (verbatim insert, nine-field check); read-only query API. Wired to NOTHING.
 - Awaiting model #1: **Thesis**.
+
+---
+
+## PHASE 1 COMPLETE — 2026-06 (all 5 primary models inserted & validated; ZERO rewiring)
+
+### 1. Completed authoritative models (stored / provenance)
+All under `/app/backend/canonical_models/*.json`, loaded verbatim into `compass_curriculum.CURRICULUM`
+on import; every field provenance = `canonical_supplied`; `is_structure_ready` = True for all five.
+| Structure | file | struct_reqs | dev_variations | decision_qs |
+|---|---|---|---|---|
+| Thesis | thesis.json | 5 | 6 | 9 |
+| Elaboration | elaboration.json | 6 | 7 | 10 |
+| Evidence / Example | evidence_example.json | 8 | 10 | 12 |
+| Conclusion | conclusion.json | 5 | 6 | 8 |
+| Opening | opening.json | 7 | 10 | 12 |
+Schema validation for each: {ok:True, missing:[], extra:[], empty:[]}. Verbatim fidelity confirmed
+field-by-field. No normalization toward conventional composition pedagogy. Internally consistent:
+Thesis→Elaboration→(Evidence/Example subordinate)→Conclusion; Opening optional & audience-defined;
+generic assumptions explicitly rejected inside the models (hook-required, conclusion=restate, etc.).
+
+### 2. Unresolved subordinate-object reconciliation questions (for the later phase)
+- Placement of existing calibrated **Explanation** CIO relative to canonical Elaboration (within
+  Elaboration / as an Evidence-Example relation / distinct lower-level object).
+- **Paragraph Main Point** folds into Thesis at single-paragraph level — confirm migration & retirement.
+- **Definition** subordinate activation modeling (lighter 8-field schema) — when to author it.
+- Naming: Thesis model's downstream lists "Evidence" & "Examples" separately vs primary name
+  "Evidence / Example" — unify during reconciliation.
+- Whether/when any subordinate (Transition, Qualification, Comparison, Analogy) needs a full model.
+
+### 3. Live-engine locations still on older CIO / generic knowledge (unchanged this phase)
+- `compass_structure_engine.MINIMAL_OBJECTS` (11 objects, 5-field) — the live knowledge base.
+- `compass_structure_engine._SEL_SYS` + `_priority_digest` — selection heuristics (generic prompt).
+- `compass_structure_engine._DLG_SYS` + `generate_dialogue` — dialogue voice/sequence (generic prompt).
+- `compass_structure_engine._CLOSURE_SYS` + `generate_closure`.
+- developmental sufficiency via `select_structure` (LLM heuristic).
+- `server.NOTICING_SYSTEM_MESSAGE` / `_pedagogical_noticing` (interim cards).
+- `server.get_teacher_review_cases` + `teacher_review_fixtures.json` (precomputed).
+NONE of these import `compass_curriculum`. Wiring them is the later, separately-approved phase.
+
+### Phase-1 exit criteria (E) status: 1✔ 2✔ 3✔ 4✔ 5✔ 6✔ ; production rewiring = 0 (as required).
