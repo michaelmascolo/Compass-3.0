@@ -1,0 +1,469 @@
+[
+  {
+    "id": "CS01",
+    "scenario": "topic mistaken for thesis",
+    "expected": [
+      "Thesis"
+    ],
+    "legacy_selection": "Central Claim",
+    "canonical_selection": "Thesis",
+    "canonical_rationale": "The writing identifies what the paragraph is about (school uniforms: definition, prevalence, variety) but does not express a principal integrated message about whether the school should require them. Without a thesis that takes a position and organizes subsequent development, elaboration cannot proceed coherently. Thesis is the highest-leverage structure because it alone can generate the conceptual organization needed for the entire paragraph.",
+    "observed_evidence": [
+      "First sentence: 'This paragraph is about school uniforms'\u2014explicit topic identification, not a message about whether uniforms should be required",
+      "Second sentence provides a definition (matching clothes)",
+      "Third sentence offers factual information (prevalence, variety)",
+      "No statement of the writer's position, claim, or integrated message about the assignment question"
+    ],
+    "hypothesized_interpretation": "The writer understands that the paragraph should be about uniforms and has provided factual orientation, but may not yet distinguish between topic/context and thesis. The writer may believe that background information is sufficient or may be uncertain what position to take on the assignment question.",
+    "unknowns": [
+      "Whether the writer has formed a position on whether uniforms should be required (yes, no, it depends)",
+      "Whether the writer understands that a thesis must communicate a position, not merely identify a topic",
+      "What information the writer plans to use to support a position (this would clarify whether elaboration is beginning to form but not yet articulated)"
+    ],
+    "plausible_alternative": {
+      "structure": "Opening",
+      "why": "If the learner is uncertain about the larger conversation (whether schools in their context are debating uniforms), an opening that situates the question could help clarify what thesis to develop. However, the assignment itself provides sufficient context; the missing element is the argument, not more context."
+    },
+    "confidence": "high",
+    "developmental_variation": "Topic substituted for thesis",
+    "expected_developmental_gain": "Help the writer identify and express the principal integrated message\u2014the specific argument about whether uniforms should be required\u2014that will organize and direct all subsequent development.",
+    "next_response_would_reveal": "If asked to state the single most important idea the paragraph should communicate to readers about school uniforms, the learner's response will clarify whether a position exists (even if not yet expressed) or whether the writer is still forming one. This will help distinguish between Thesis at 'implicit/emerging' versus 'absent/not yet conceived.'",
+    "invitation_intent": "both",
+    "developmental_sufficiency": "continue",
+    "integration_signal": "weak",
+    "verdict": "SUPERIOR"
+  },
+  {
+    "id": "CS02",
+    "scenario": "several independent points lacking an integrated message",
+    "expected": [
+      "Thesis"
+    ],
+    "legacy_selection": "Central Claim",
+    "canonical_selection": "Thesis",
+    "canonical_rationale": "The paragraph identifies the topic (school uniforms) and lists effects (reduce bullying, save money, look nice, speed mornings), but does not express a single integrated message about whether schools *should* require them. Without a thesis organizing the communicative purpose, elaboration cannot differentiate and integrate around a coherent claim, and subsequent structures cannot develop.",
+    "observed_evidence": [
+      "Five distinct claims listed in sequence: reduce bullying, save money, some countries require them by law, look nice, make mornings faster",
+      "No connective language integrating these claims into one argument",
+      "No statement of position (should/should not, for/against)",
+      "Each claim stands independently without explanation of how it supports a larger point",
+      "Closing claim ('they make mornings faster') is expressed casually, not argued"
+    ],
+    "hypothesized_interpretation": "The writer appears to recognize that multiple reasons exist for uniforms (benefits-focused thinking) but has not yet articulated whether the paragraph's communicative purpose is to argue schools *should* require uniforms, to explore *both* sides, or to defend a specific position. The writer may be accumulating reasons without yet integrating them into a deliberate stance.",
+    "unknowns": [
+      "Whether the writer intends to argue 'for' or 'against' uniforms, or is exploring both positions",
+      "Which claims the writer regards as central and which as subordinate",
+      "Whether the writer understands the assignment as requiring a position or merely as inviting exploration of the topic",
+      "What criterion would make one reason stronger than another in the writer's view"
+    ],
+    "plausible_alternative": {
+      "structure": "Elaboration",
+      "why": "If the writer's unstated thesis is 'schools should require uniforms because of multiple benefits,' then the present claims are embryonic elaboration lacking integration and support. However, without the thesis itself being explicit, it is unclear what these claims are elaborating. Thesis is the dependency."
+    },
+    "confidence": "high",
+    "developmental_variation": "Topic substituted for thesis",
+    "expected_developmental_gain": "Build the writer's ability to express a single integrated claim about whether uniforms should be required, organized enough to make each subsequent reason a differentiation of that central message rather than a separate point.",
+    "next_response_would_reveal": "If the writer revises by stating a clear position ('Schools should require uniforms' or 'Schools should not require uniforms'), or by integrating the claims under a single organizing principle ('uniforms benefit students in three main ways'), the thesis would become visible and would clarify whether the present claims are meant to elaborate it. This would also reveal whether the writer understands the assignment as requiring an argument rather than a list.",
+    "invitation_intent": "both",
+    "developmental_sufficiency": "continue",
+    "integration_signal": "weak",
+    "verdict": "SUPERIOR"
+  },
+  {
+    "id": "CS03",
+    "scenario": "adequate thesis with insufficient elaboration",
+    "expected": [
+      "Elaboration"
+    ],
+    "legacy_selection": "Evidence",
+    "canonical_selection": "Elaboration",
+    "canonical_rationale": "The thesis identifies a principal claim (uniforms reduce social pressure), but the writer has provided no differentiation of what that pressure is, how uniforms would reduce it, or why this matters to the school day. The intended audience cannot yet understand the integrated message because the conceptual work remains implicit. Developing elaboration will unlock the subsequent capacity to support the point with evidence and complete the communicative purpose.",
+    "observed_evidence": [
+      "The thesis uses the phrase 'reduce the social pressure students feel about clothing' without specifying what kind of pressure, whose pressure, or the mechanism of reduction.",
+      "The follow-up statement 'This single change would meaningfully improve the school day' asserts consequence without developing the causal or experiential chain.",
+      "No elaborative sentences exist between the thesis and the end of the paragraph.",
+      "The word 'meaningfully' is used but not defined or explained."
+    ],
+    "hypothesized_interpretation": "The writer appears to possess an intuitive understanding of the claim (uniforms reduce pressure; this improves the experience) but has not yet made that understanding explicit or differentiated it into the conceptual components a reader needs. The writer may be treating the claim as self-evident, which is a common developmental stage in which the writer's own understanding is not yet distinguished from the audience's understanding.",
+    "unknowns": [
+      "Whether the writer can identify specific forms of social pressure (peer judgment, economic comparison, bullying, self-consciousness) that uniforms would address",
+      "Whether the writer understands the causal mechanism (how removing clothing choice reduces pressure) or is working from an intuitive sense that 'uniforms = less pressure'",
+      "Whether the writer recognizes that 'improving the school day' requires elaboration of what that improvement looks like and why reduced pressure produces it",
+      "What the intended audience is (peers, administrators, parents) and what prior understanding they possess"
+    ],
+    "plausible_alternative": {
+      "structure": "Evidence / Example",
+      "why": "If the writer possesses but has not yet articulated the distinction between types of social pressure or mechanisms by which uniforms operate, the impulse to locate supporting evidence first might seem practical. However, evidence cannot perform its supporting function until the elaborative point it supports is itself made explicit. Selecting Evidence would risk asking the learner to support a point that remains underdeveloped, leading to evidence replacing elaboration rather than supporting it."
+    },
+    "confidence": "high",
+    "developmental_variation": "Minimal elaboration",
+    "expected_developmental_gain": "Help the writer develop the specific distinctions\u2014what kinds of pressure, how uniforms reduce them, and why that matters\u2014that transform an asserted claim into an understood one.",
+    "next_response_would_reveal": "If the learner can name specific types of social pressure (appearance-based judgment, economic anxiety, conformity pressure) and explain how uniforms would reduce each, that clarifies the writer possesses differentiated understanding that remains unexpressed. If the learner restates the thesis without adding conceptual distinction, that clarifies the understanding itself remains underdeveloped and Elaboration work is genuinely generative. Either response advances the diagnostic clarity.",
+    "invitation_intent": "both",
+    "developmental_sufficiency": "continue",
+    "integration_signal": "ok",
+    "verdict": "SUPERIOR"
+  },
+  {
+    "id": "CS04",
+    "scenario": "evidence present without elaboration (Evidence must NOT outrank Elaboration)",
+    "expected": [
+      "Elaboration"
+    ],
+    "legacy_selection": "Central Claim",
+    "canonical_selection": "Thesis",
+    "canonical_rationale": "The writing identifies the topic (uniforms reduce distraction) but does not yet express a principal integrated message about uniforms and school policy. The paragraph lacks a clear communicative purpose\u2014it presents a claim supported by evidence, but the writer has not yet articulated what the intended audience should understand or believe about uniforms as a school requirement. This is the highest-leverage structure because without a sufficiently developed thesis, elaboration cannot progressively differentiate and integrate; the evidence currently floats without a controlling integrative framework.",
+    "observed_evidence": [
+      "The opening sentence states a claim: 'Uniforms reduce distraction.'",
+      "Two pieces of evidence follow: a survey statistic (62% of teachers) and a concrete example (nearby school cut referrals in half).",
+      "No sentence articulates why reducing distraction should persuade the reader that the school should require uniforms.",
+      "No elaborative bridge connects the evidence to a broader message about school policy, student focus, academic benefit, or equity."
+    ],
+    "hypothesized_interpretation": "The writer appears to understand that evidence can support a position, but has not yet articulated the integrated message that makes uniforms persuasive\u2014is the argument that uniforms improve focus, which leads to better learning? That they reduce costly administrative burden? That they promote equity? The claim 'reduce distraction' is present, but the thesis as an integrated message about what the intended audience should believe or do remains underdeveloped.",
+    "unknowns": [
+      "Whether the writer intends the audience to understand that reduced distraction \u2192 improved academic outcomes (or social equity, or administrative efficiency).",
+      "Whether the writer recognizes that 'uniforms reduce distraction' is a supporting point within a larger thesis, or believes it is itself the principal integrated message.",
+      "What the intended audience is (school board, parents, students, general public) and what would persuade them.",
+      "Whether the writer has already composed a thesis in an earlier draft or planning stage but has not yet articulated it in this paragraph."
+    ],
+    "plausible_alternative": {
+      "structure": "Elaboration",
+      "why": "If the thesis is interpreted as sufficiently present ('Uniforms reduce distraction'), then the paragraph's true limiting structure becomes the absence of elaborative development that explains *why* this reduction matters, *how* it affects learning, or *what* the school should do about it. The evidence supports the claim, but no elaboration yet connects that reduction to the persuasive purpose."
+    },
+    "confidence": "high",
+    "developmental_variation": "Topic substituted for thesis",
+    "expected_developmental_gain": "Help the writer articulate the integrated message\u2014the principal reason the intended audience should believe uniforms are worth requiring\u2014that will organize and give coherence to the evidence already present.",
+    "next_response_would_reveal": "If the writer is invited to complete the sentence 'The school should require uniforms because...,' their completion will reveal whether they possess an integrated thesis that connects the distraction-reduction claim to a broader persuasive purpose. If the response returns only to the evidence ('...because uniforms reduce distraction, as the survey shows'), the thesis remains topic-level. If the response articulates a consequence or value ('...because reduced distraction improves learning and equity'), the writer has begun constructing an integrated thesis.",
+    "invitation_intent": "both",
+    "developmental_sufficiency": "continue",
+    "integration_signal": "weak",
+    "verdict": "WORSE/REVIEW"
+  },
+  {
+    "id": "CS05",
+    "scenario": "evidence genuinely needed (elaborated mechanism, no concrete instance)",
+    "expected": [
+      "Evidence / Example"
+    ],
+    "legacy_selection": "Evidence",
+    "canonical_selection": "Elaboration",
+    "canonical_rationale": "The thesis clearly identifies that uniforms reduce social pressure, but the elaboration\u2014while beginning to differentiate the mechanism\u2014omits the reasoning a na\u00efve reader needs to understand why reduced comparison and anxiety actually translate to better academic focus. The writer asserts the causal chain (comparing \u2192 anxiety \u2192 distraction; uniforms \u2192 less comparison \u2192 more focus) without explaining the psychological or practical steps that make this connection intelligible.",
+    "observed_evidence": [
+      "Thesis clearly stated: 'they reduce social pressure'",
+      "Two related ideas introduced: (1) 'everyone dresses similarly, students spend less mental energy comparing' and (2) 'constant low-level anxiety of being judged for what you wear fades'",
+      "Causal language present: 'which frees attention for learning and lowers the daily stress'",
+      "The mechanism is announced rather than developed: no explanation of *how* reduced comparison leads to cognitive capacity for learning, or *why* anxiety about dress specifically blocks academic focus"
+    ],
+    "hypothesized_interpretation": "The writer understands the causal pathway intuitively and has compressed it into rapid assertions. The writer appears to assume the reader will follow the logic without intermediate steps (e.g., 'mental energy spent on social comparison is mental energy unavailable for academic tasks' or 'the anticipatory anxiety of judgment throughout the school day creates cognitive load that depletes focus'). The writer is at the threshold of being able to elaborate but needs explicit support in making the implicit reasoning visible.",
+    "unknowns": [
+      "Whether the writer can articulate the intermediate steps (What is the mechanism by which social anxiety blocks learning? How does uniform policy specifically interrupt that mechanism?)",
+      "Whether the writer understands the distinction between the elaborative work of explaining causation and the supportive work of evidence",
+      "How this learner typically constructs causal reasoning in other contexts"
+    ],
+    "plausible_alternative": {
+      "structure": "Evidence / Example",
+      "why": "A concrete scenario (e.g., 'a student spending morning anxiety on outfit choice rather than reviewing material') could make the mechanism vivid; however, the reader still needs the conceptual chain explicit before evidence will deepen understanding rather than illustrate an unclear point."
+    },
+    "confidence": "high",
+    "developmental_variation": "Elaboration lacking audience support",
+    "expected_developmental_gain": "Help the writer articulate the intermediate reasoning steps that connect reduced social pressure to improved academic focus, making the causal mechanism explicit for the reader.",
+    "next_response_would_reveal": "If invited to explain 'why does less social comparison free up mental energy for learning?', a strong response would show the writer can differentiate the concept further (e.g., distinguishing between the comparison act, the anxiety it produces, and the cognitive resources anxiety consumes). A weak or circular response ('because students won't worry so much') would indicate the elaboration itself is incomplete and needs scaffolding toward the causal reasoning.",
+    "invitation_intent": "advance",
+    "developmental_sufficiency": "continue",
+    "integration_signal": "ok",
+    "verdict": "WORSE/REVIEW"
+  },
+  {
+    "id": "CS06",
+    "scenario": "evidence NOT needed (reflective purpose, self-sufficient meaning)",
+    "expected": [
+      "Conclusion",
+      "closure",
+      "Elaboration"
+    ],
+    "legacy_selection": "closure",
+    "canonical_selection": "closure",
+    "canonical_rationale": "Every applicable primary structure has reached developmental sufficiency. The thesis is integrated and capable of organizing further development. Elaboration has progressively differentiated the implicit concept (distraction \u2192 presence) and integrated it coherently. No evidence/example is required by the reflective purpose or audience. No opening is needed; the thesis arrives directly and appropriately. The paragraph achieves intellectual closure through integration, not repetition. No limiting condition remains.",
+    "observed_evidence": [
+      "Thesis is explicitly stated: 'that small shift, from watching myself to being present, is what makes uniforms matter to me'",
+      "Elaboration differentiates the thesis through a two-part movement: 'stop wondering whether I look right' \u2192 'start paying attention to the lesson'",
+      "Integration occurs through the metaphor: the observation is unified under 'they quiet a noise I did not realize I was carrying'",
+      "Conclusion does not repeat the thesis; instead, it completes understanding through metaphorical integration",
+      "No opening precedes the thesis; the paragraph begins directly with the principal message",
+      "No external evidence or examples are present; the understanding is developed through the writer's own elaboration"
+    ],
+    "hypothesized_interpretation": "The writer understands the reflective task and has constructed a paragraph that moves from personal observation to integrated insight. The brevity and directness suggest confidence in the integrated message and comfort with allowing elaboration to emerge through differentiation rather than through explanation. The metaphor ('noise') appears to be the emergent understanding rather than a decorative device, which indicates the elaboration has reached genuine integration rather than mere juxtaposition.",
+    "unknowns": [
+      "Whether the writer consciously chose to omit an opening or simply did not consider one necessary",
+      "Whether the writer understands the metaphor ('noise') as the completion of elaboration or if further development was intended but not yet written",
+      "Whether the intended audience for this reflection is the teacher, the self, or a peer, and whether that has been explicitly established for the writer"
+    ],
+    "plausible_alternative": {
+      "structure": "Elaboration",
+      "why": "The transition from concrete observation ('stop wondering / start paying attention') to abstract metaphor ('quiet a noise') happens quickly; one could argue the mechanism of that shift could be developed further. However, the paragraph is written for reflective depth, not explanatory completeness, and the metaphor itself *is* the elaborative insight. Attempting to develop this further would add explanation where the writer has chosen integration."
+    },
+    "confidence": "high",
+    "developmental_variation": "",
+    "expected_developmental_gain": "Recognize that this paragraph has completed its communicative act and is ready to stand; understand that developmental sufficiency is not perfection, and that continued refinement now would diminish rather than strengthen what has been built.",
+    "next_response_would_reveal": "The learner's next response would clarify whether this paragraph is complete as written or whether the writer perceives it as incomplete. If the writer offers additional sentences unprompted, it would reveal whether they believe elaboration requires further development. If the writer confirms the paragraph is finished, it would signal confidence in the integration achieved. Either response would help determine whether the current paragraph is genuinely sufficient or whether the writer has left developmental work unfinished.",
+    "invitation_intent": "advance",
+    "developmental_sufficiency": "reached",
+    "integration_signal": "ok",
+    "verdict": "AMBIGUOUS-OK"
+  },
+  {
+    "id": "CS07",
+    "scenario": "abrupt opening where orientation is needed (whole-piece unit)",
+    "expected": [
+      "Opening",
+      "Thesis"
+    ],
+    "legacy_selection": "Central Claim",
+    "canonical_selection": "Thesis",
+    "canonical_rationale": "The writer has expressed a position ('Ban them') and a topic (uniforms), but the thesis lacks sufficient conceptual organization to support progressively integrated elaboration. 'They cause more problems than they solve' is the only idea capable of organizing subsequent development, yet it remains undifferentiated\u2014the writer has not yet identified what problems, for whom, or how the claimed harm outweighs potential benefits. This underdevelopment is the structural dependency blocking meaningful elaboration.",
+    "observed_evidence": [
+      "Direct position statement: 'Ban them.'",
+      "Topic identification: pronouns 'them' refer to uniforms (from assignment context)",
+      "Single organizing idea: 'They cause more problems than they solve'",
+      "Appeal to external authority: 'most students agree with me on this'",
+      "No differentiation of 'problems' or specification of harm"
+    ],
+    "hypothesized_interpretation": "The writer appears to hold a conviction but has not yet articulated the integrated message that conviction requires. The thesis is present in embryo but lacks the conceptual scaffolding to support a persuasive essay. The reference to student agreement suggests the writer may be reasoning inductively from consensus rather than from a differentiated argument\u2014a signal that the principal claim has not yet been consciously organized.",
+    "unknowns": [
+      "Whether the writer can distinguish between 'uniforms are unpopular' and 'uniforms cause demonstrable harm' as distinct argumentative claims",
+      "What specific problems the writer intends to develop (social, practical, financial, developmental, etc.)",
+      "Whether 'more problems than they solve' implies a comparative framework the writer is ready to elaborate (problems vs. benefits)",
+      "What the writer understands as the relationship between student consensus and persuasive argument",
+      "Whether the writer has a developed understanding of the persuasive purpose of this essay or is responding primarily to the assignment task"
+    ],
+    "plausible_alternative": {
+      "structure": "Elaboration",
+      "why": "One could argue the writer needs to begin unpacking what 'problems' means in practice, treating that differentiation as elaborative work. However, the thesis must first be sufficiently explicit to organize such elaboration coherently. Without a thesis that names the principal integrated message, elaboration risks becoming scattered observation rather than purposeful development."
+    },
+    "confidence": "high",
+    "developmental_variation": "Underdeveloped thesis",
+    "expected_developmental_gain": "Help the writer differentiate the integrated message\u2014what specific problems uniforms cause and why that harm outweighs benefits\u2014so the thesis can organize subsequent development.",
+    "next_response_would_reveal": "If the writer is asked 'What are the specific problems uniforms cause?', their answer will clarify whether the conceptual organization exists but is simply not yet articulated, or whether differentiation must be constructed. If the writer can name 2\u20133 distinct categories of problems and indicate which is most important to the persuasive purpose, Thesis is ready to move to Elaboration. If the writer lists observations without hierarchy or connection to the persuasive claim, Thesis development is still primary.",
+    "invitation_intent": "advance",
+    "developmental_sufficiency": "continue",
+    "integration_signal": "weak",
+    "verdict": "AMBIGUOUS-OK"
+  },
+  {
+    "id": "CS08",
+    "scenario": "no opening where none is needed (paragraph opens directly with thesis)",
+    "expected": [
+      "Elaboration"
+    ],
+    "legacy_selection": "Evidence",
+    "canonical_selection": "Elaboration",
+    "canonical_rationale": "The thesis identifies a clear communicative purpose (uniforms reduce social pressure, which improves focus on learning), but the writer has not yet developed what 'social pressures' means, how they 'pull attention away,' or why reducing them would meaningfully improve learning. The thesis cannot organize the paragraph until the underlying claim is elaborated for the intended audience.",
+    "observed_evidence": [
+      "Single declarative sentence with causal structure: 'uniforms \u2192 reduce social pressure \u2192 pull attention away \u2192 impairs learning'",
+      "The claim 'social pressures that pull students' attention away from learning' is asserted but not explained",
+      "No development of what 'social pressures' the writer means (appearance-based comparison, clothing status, peer judgment, etc.)",
+      "No explanation of the mechanism by which uniforms would reduce this or improve focus",
+      "No exploration of whether this is the primary or only benefit"
+    ],
+    "hypothesized_interpretation": "The writer possesses an intuitive sense that uniform policies address a real problem and has named it, but has not yet made the underlying logic explicit. The thesis reads as an assertion rather than as a developed claim, suggesting the writer may not yet have fully conceptualized what 'social pressure about dress' actually interferes with or how uniforms address it. The writer may be working from a general sense that 'appearance competition is distracting' without having elaborated the distinction.",
+    "unknowns": [
+      "Whether the writer understands what specific social pressures (dress-based status competition, peer judgment, economic disparity visibility, fashion conformity demands) the thesis refers to",
+      "Whether the writer has thought through how uniforms mechanically reduce these pressures or whether this is intuitive agreement with the position",
+      "What audience the writer is addressing (is this for classmates, administrators, or parents?) and what they already believe",
+      "Whether the writer intends this as the only argument for uniforms or one of several"
+    ],
+    "plausible_alternative": {
+      "structure": null,
+      "why": "Thesis is the only other in-scope primary present, and it has reached sufficiency to support elaboration. No credible alternative exists."
+    },
+    "confidence": "high",
+    "developmental_variation": "Minimal elaboration",
+    "expected_developmental_gain": "Construct explicit elaboration by unpacking what 'social pressures about dress' means and how reducing dress differentiation would change students' classroom focus.",
+    "next_response_would_reveal": "If the writer develops the concept of 'social pressure,' their response will clarify whether they can distinguish among types of pressure (appearance-based, economic, conformity-based), whether they understand the causal mechanism (how exactly uniforms reduce it), and whether they recognize what counts as evidence or illustration of this pressure. A learner at Emerging level may expand using synonyms rather than distinct elaborative ideas. A learner approaching Developing level will distinguish the types of pressure or the conditions under which pressure affects learning.",
+    "invitation_intent": "both",
+    "developmental_sufficiency": "continue",
+    "integration_signal": "ok",
+    "verdict": "SUPERIOR"
+  },
+  {
+    "id": "CS09",
+    "scenario": "premature conclusion (concludes before development exists)",
+    "expected": [
+      "Thesis",
+      "Elaboration"
+    ],
+    "legacy_selection": "Central Claim",
+    "canonical_selection": "Thesis",
+    "canonical_rationale": "The thesis 'our school should adopt them as soon as possible' names a position but contains almost no conceptual organization to support elaboration. The writer has stated a conclusion without developing the integrated message that would justify it. Strengthening the thesis\u2014by identifying what makes uniforms valuable and why that matters for the school\u2014is the highest-leverage move because it will organize all subsequent work and make elaboration possible.",
+    "observed_evidence": [
+      "Thesis appears in final sentence: 'our school should adopt them as soon as possible'",
+      "Opening statement 'Uniforms matter a lot' is generic and does not differentiate a position",
+      "Conclusion appears before any elaboration has occurred",
+      "No intermediate ideas, distinctions, or relationships are present",
+      "The phrase 'that is exactly why' suggests the writer believes elaboration has occurred, but none has"
+    ],
+    "hypothesized_interpretation": "The writer appears to understand the assignment (argue for or against uniforms) and has arrived at a position (for adoption), but has not yet articulated the integrated message\u2014the reasons or framework that would justify that position. The writer may believe the thesis is self-evident or may not yet understand what a thesis needs to contain in order to organize a paragraph. The conclusion suggests the writer thinks the argument is complete, when in fact it has not begun.",
+    "unknowns": [
+      "Whether the writer has thought through reasons for uniforms but simply has not articulated them",
+      "Whether the writer understands the difference between a position and a thesis with conceptual organization",
+      "What the writer intends to communicate about uniforms beyond 'they should be adopted'"
+    ],
+    "plausible_alternative": {
+      "structure": "Elaboration",
+      "why": "If the writer's position is already clear in their mind but simply not expressed, the limiting factor might be the failure to develop distinctions and relationships. However, the thesis itself is too thin to organize elaboration, so thesis development must come first."
+    },
+    "confidence": "high",
+    "developmental_variation": "Underdeveloped thesis",
+    "expected_developmental_gain": "Help the writer develop a thesis that contains enough integrated reasoning to organize the entire paragraph.",
+    "next_response_would_reveal": "If the writer expands the thesis by adding reasoning (e.g., 'our school should adopt uniforms because they reduce distractions and build community'), that would clarify whether the writer has thought-through distinctions but simply did not express them, or whether the position itself is not yet integrated. If the writer restates the same position without elaboration, that would suggest the writer does not yet understand what a thesis needs to accomplish.",
+    "invitation_intent": "advance",
+    "developmental_sufficiency": "continue",
+    "integration_signal": "repeatedly_failing",
+    "verdict": "AMBIGUOUS-OK"
+  },
+  {
+    "id": "CS10",
+    "scenario": "conclusion that merely repeats the thesis (developed paragraph)",
+    "expected": [
+      "Conclusion"
+    ],
+    "legacy_selection": "Explanation",
+    "canonical_selection": "Elaboration",
+    "canonical_rationale": "The thesis identifies a clear claim (uniforms reduce social pressure), but the elaboration does not adequately develop the mechanism or reasoning that would help a reader understand WHY uniforms reduce social pressure or HOW that reduction occurs. The cousin example is concrete but functions as evidence before the underlying logic has been made explicit, leaving the causal relationship underdeveloped.",
+    "observed_evidence": [
+      "Thesis clearly stated: 'uniforms because they reduce social pressure'",
+      "Elaboration present: 'When everyone dresses alike, students compare themselves less and focus more'",
+      "Example present: 'my cousin's school saw the constant judging about brands fade within a month'",
+      "Observation of effect: 'classmates seemed calmer'",
+      "Conclusion: direct repetition of thesis ('Therefore, our school should require uniforms because they reduce social pressure')"
+    ],
+    "hypothesized_interpretation": "The writer understands the general connection between uniform dress and reduced social comparison, and has observed or heard evidence from a concrete case. However, the writer has not yet explicitly developed the intermediate reasoning that would explain to a reader why uniform dress specifically reduces social comparison, or what psychological or social mechanisms make that true. The jump from 'everyone dresses alike' to 'less comparison' assumes the reader will automatically make that connection; the elaboration treats the outcome (calmer students) as self-evident rather than explaining the causal pathway.",
+    "unknowns": [
+      "Whether the writer has a more developed understanding of the mechanism but has simply not articulated it",
+      "Whether the writer would recognize that the phrase 'students compare themselves less' is the seed of elaboration but not yet the elaboration itself",
+      "What specific audience (school board, principal, fellow students) is intended, which would affect depth of development needed"
+    ],
+    "plausible_alternative": {
+      "structure": "Evidence / Example",
+      "why": "A case could be made that the cousin example needs stronger interpretation to explain what the observation (brands fading, students calmer) actually demonstrates about the mechanism of reduced social pressure. However, that interpretation work is elaboration, not evidence management; the limiting structure is the underdeveloped reasoning that should precede and contextualize the example."
+    },
+    "confidence": "high",
+    "developmental_variation": "Elaboration lacking audience support",
+    "expected_developmental_gain": "Help the writer develop the implicit causal reasoning\u2014why uniform dress reduces social comparison\u2014so that a reader can understand the logic, not just accept the example.",
+    "next_response_would_reveal": "If the writer is invited to explain 'When everyone dresses alike, students compare themselves less'\u2014to make that statement more explicit\u2014the response will show whether the reasoning is present but inarticulate (a scaffolding opportunity) or whether the causal link itself is not yet fully formed (an earlier developmental need). This will clarify whether Elaboration is the correct target or whether Thesis itself needs recursive work.",
+    "invitation_intent": "both",
+    "developmental_sufficiency": "continue",
+    "integration_signal": "weak",
+    "verdict": "WORSE/REVIEW"
+  },
+  {
+    "id": "CS11",
+    "scenario": "multiple simultaneous weaknesses (choose highest leverage)",
+    "expected": [
+      "Thesis"
+    ],
+    "legacy_selection": "Central Claim",
+    "canonical_selection": "Thesis",
+    "canonical_rationale": "The writer has identified a topic (uniforms) and gestured toward two reasons (saving money, reducing bullying), but has not yet constructed an integrated thesis that communicates a principal message about whether uniforms should be required. The thesis is the dependency: without it, elaboration cannot differentiate and integrate around a coherent point, and evidence cannot know what to support.",
+    "observed_evidence": [
+      "uniforms good\u2014evaluative assertion, but not an integrated message",
+      "save money and no bully\u2014two reasons listed without synthesis or integration",
+      "everyone should do it i think\u2014conclusion-like statement with personal hedging ('i think'), but no thesis precedes it"
+    ],
+    "hypothesized_interpretation": "The writer has identified the topic and recognized that the assignment asks for an argument ('should require'), and has generated two supporting ideas. The writer may believe that listing reasons constitutes a thesis, or may not yet distinguish between topic and integrated message. The phrase 'everyone should do it' suggests awareness that a position is needed, but the thesis remains implicit and unintegrated.",
+    "unknowns": [
+      "Whether the writer understands the difference between naming a topic and stating an integrated position on that topic",
+      "What the writer means by 'uniforms good'\u2014is this an assertion about efficacy, necessity, desirability, or mere preference?",
+      "Whether 'save money and no bully' represent two co-equal reasons or whether one is primary",
+      "What the writer's intended audience is (peer, teacher, community) and whether that affects thesis formation",
+      "Whether the writer has been taught to distinguish thesis from topic in prior instruction"
+    ],
+    "plausible_alternative": {
+      "structure": "Elaboration",
+      "why": "If the writer's implicit organizing principle is already 'uniforms should be required because they save money and prevent bullying,' then the limiting structure might be the development of those two distinctions. However, the thesis itself is too underdeveloped to organize elaboration reliably; teaching elaboration would leave the organizing message ambiguous."
+    },
+    "confidence": "high",
+    "developmental_variation": "Topic substituted for thesis; Underdeveloped thesis",
+    "expected_developmental_gain": "Help the writer construct one integrated message about uniforms that organizes and connects the two ideas ('save money' and 'reduce bullying') into a single reason why uniforms should or should not be required.",
+    "next_response_would_reveal": "If invited to state in one sentence what schools should do about uniforms and why, the learner's response will clarify whether the implicit organizing message is present but unexpressed, or whether conceptual integration has not yet formed. A clear, unified statement would suggest the thesis exists but requires explication; a fragmented or hedged response would suggest the thesis itself needs construction.",
+    "invitation_intent": "both",
+    "developmental_sufficiency": "continue",
+    "integration_signal": "weak",
+    "verdict": "SUPERIOR"
+  },
+  {
+    "id": "CS12",
+    "scenario": "ambiguous \u2014 two defensible targets",
+    "expected": [
+      "Thesis",
+      "Elaboration"
+    ],
+    "legacy_selection": "Paragraph Main Point",
+    "canonical_selection": "Elaboration",
+    "canonical_rationale": "The thesis identifies two reasons (reduced social pressure, cost savings) but provides no elaboration of how or why these mechanisms operate. The learner has stated a position but has not yet developed the understanding required for the reader to grasp the integrated message. Elaboration is the highest-leverage structure because it will generate the conceptual work needed to make the thesis coherent and persuasive.",
+    "observed_evidence": [
+      "Thesis states two coordinate reasons: 'reduce social pressure' and 'save families money'",
+      "No explanation of the mechanism by which uniforms reduce pressure",
+      "No explanation of how cost savings connect to school welfare or fairness",
+      "No distinction between the two reasons or their relative weight",
+      "Thesis is a compound claim without internal integration"
+    ],
+    "hypothesized_interpretation": "The learner appears to have generated a position and two supporting claims but has not yet engaged in the intellectual work of explaining what those claims mean or how they function. The thesis reads as a list of talking points rather than an integrated argument. The learner likely understands the general direction but has not yet built the conceptual distinctions that would make the argument coherent to a reader.",
+    "unknowns": [
+      "Whether the learner understands the distinction between *stating* a reason and *explaining* why that reason matters",
+      "Whether the learner recognizes that 'reduce social pressure' requires elaboration of what kind of pressure, how uniforms reduce it, and why that reduction benefits the school",
+      "Whether the learner can integrate the two reasons into one coherent argument or views them as separate justifications",
+      "What prior experience the learner has with paragraph elaboration"
+    ],
+    "plausible_alternative": {
+      "structure": "Evidence / Example",
+      "why": "If the learner interprets the assignment as requiring only a position statement plus examples, Evidence might appear to be the next step. However, without elaborative development of *how* uniforms reduce pressure or *why* cost savings matter to the argument, examples would lack the conceptual support they need to function meaningfully."
+    },
+    "confidence": "high",
+    "developmental_variation": "Minimal elaboration",
+    "expected_developmental_gain": "Build the capacity to develop a claim by explaining the mechanism or reasoning that makes it true.",
+    "next_response_would_reveal": "If the learner elaborates one or both reasons (explaining *how* uniforms reduce pressure or *why* cost savings matter), that response will clarify whether the learner understands elaboration but simply did not apply it here, or whether elaboration is genuinely underdeveloped. If the learner adds examples without explaining the mechanism, that will suggest the learner interprets the task as adding concrete material rather than developing conceptual relationships.",
+    "invitation_intent": "advance",
+    "developmental_sufficiency": "continue",
+    "integration_signal": "weak",
+    "verdict": "AMBIGUOUS-OK"
+  },
+  {
+    "id": "CS13",
+    "scenario": "strong paragraph requiring closure, not invented weakness",
+    "expected": [
+      "closure",
+      "Conclusion"
+    ],
+    "legacy_selection": "closure",
+    "canonical_selection": "closure",
+    "canonical_rationale": "All five canonical primary structures have reached developmental sufficiency. The thesis is clear and sufficiently organized to support the elaboration; the elaboration progressively differentiates the thesis through two key ideas (uniforms reduce status signaling, which removes distraction rather than suppressing identity); the evidence (the nearby school example) supports the elaborative distinction; and the conclusion integrates the developed understanding back to the thesis's original concession. No single structure is limiting further development.",
+    "observed_evidence": [
+      "Opening concedes a contrary concern ('many worry that uniforms erase individuality')",
+      "Thesis clearly states the principal message ('should require them because they lower the daily social pressure')",
+      "Elaboration develops two integrated ideas: (1) 'When clothing stops being a status signal, students spend less energy comparing themselves and more on their work'; (2) 'uniforms do not suppress identity so much as remove a distraction from it'",
+      "Evidence is concrete and specific: 'a nearby school that adopted uniforms reported that dress-related conflicts nearly disappeared within a term'",
+      "Conclusion integrates by explaining what the evidence shows: 'letting students bring their attention to what they came to school to do'",
+      "Logical coherence throughout: status signal \u2192 distraction \u2192 removal of distraction \u2192 return of attention to learning"
+    ],
+    "hypothesized_interpretation": "The writer demonstrates command of paragraph architecture at a proficient level. The concession-plus-counterargument structure suggests deliberate rhetorical awareness. The mechanism-based elaboration (uniforms function by reducing status signaling, not by suppressing identity) shows conceptual sophistication beyond simple claim-and-evidence. The evidence selection and interpretation appear intentional rather than incidental. The concluding gesture back to 'what they came to school to do' suggests awareness of the larger educational purpose underlying the argument.",
+    "unknowns": [
+      "Whether the writer understands why this organization works (conscious strategy vs. intuitive execution)",
+      "Whether the writer can sustain this level of organization across multiple paragraphs or essay length",
+      "What the writer's next developmental frontier is (argument across multiple paragraphs, counterargument handling, evidence evaluation criteria, etc.)",
+      "What the writer's actual intended audience is (classroom peers, school administration, general readers) and whether the paragraph has been shaped with that specific audience in mind"
+    ],
+    "plausible_alternative": {
+      "structure": null,
+      "why": "The paragraph demonstrates mature organization across all five structures. No plausible alternative target exists that would produce greater developmental gain than advancement to a new unit or essay-level work."
+    },
+    "confidence": "high",
+    "developmental_variation": "",
+    "expected_developmental_gain": "Build the writer's capacity to compose multi-paragraph arguments by identifying what structural work this one-paragraph argument accomplishes and what new work becomes necessary when the argument expands.",
+    "next_response_would_reveal": "If the writer is asked to expand this argument to multiple paragraphs, which structure becomes limiting\u2014thesis stability across paragraphs, elaboration depth, evidence selection and evaluation, or the ability to integrate counterarguments into a larger coherence. A request to revise or extend the paragraph would also reveal whether the proficiency demonstrated here is stable or dependent on this particular topic/argument.",
+    "invitation_intent": "advance",
+    "developmental_sufficiency": "reached",
+    "integration_signal": "ok",
+    "verdict": "AMBIGUOUS-OK"
+  }
+]

@@ -291,6 +291,11 @@ def canonical_decision_questions() -> List[str]:
     return get_decision_section("canonical_decision_questions") or []
 
 
+def decision_implementation_notes() -> Dict[str, Any]:
+    art = get_decision_model() or {}
+    return art.get("implementation_notes", {})
+
+
 def decision_model_report() -> Dict[str, Any]:
     art = get_decision_model()
     return {

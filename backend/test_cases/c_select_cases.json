@@ -1,0 +1,110 @@
+{
+  "corpus": "C-SELECT",
+  "note": "Canonical-selection validation over the five primary structures. 'expected' lists canonically defensible target(s); 'closure' means null (developmental sufficiency / no current target).",
+  "cases": [
+    {
+      "id": "CS01",
+      "scenario": "topic mistaken for thesis",
+      "assignment": "Write one paragraph arguing whether your school should require uniforms.",
+      "unit": "one paragraph",
+      "text": "This paragraph is about school uniforms. School uniforms are matching clothes that all students wear. Many schools around the world use them, and they come in different colors and styles.",
+      "expected": ["Thesis"]
+    },
+    {
+      "id": "CS02",
+      "scenario": "several independent points lacking an integrated message",
+      "assignment": "Write one paragraph arguing whether your school should require uniforms.",
+      "unit": "one paragraph",
+      "text": "Uniforms reduce bullying. They also save parents money. Some countries require them by law. They can look pretty nice too, and they make mornings faster.",
+      "expected": ["Thesis"]
+    },
+    {
+      "id": "CS03",
+      "scenario": "adequate thesis with insufficient elaboration",
+      "assignment": "Write one paragraph arguing whether your school should require uniforms.",
+      "unit": "one paragraph",
+      "text": "Our school should require uniforms because they reduce the social pressure students feel about clothing. This single change would meaningfully improve the school day.",
+      "expected": ["Elaboration"]
+    },
+    {
+      "id": "CS04",
+      "scenario": "evidence present without elaboration (Evidence must NOT outrank Elaboration)",
+      "assignment": "Write one paragraph persuading readers that your school should require uniforms.",
+      "unit": "one paragraph",
+      "text": "Uniforms reduce distraction. A 2019 survey found 62% of teachers reported fewer clothing-related disruptions after a uniform policy, and one nearby school cut dress-code referrals in half the year they adopted uniforms.",
+      "expected": ["Elaboration"]
+    },
+    {
+      "id": "CS05",
+      "scenario": "evidence genuinely needed (elaborated mechanism, no concrete instance)",
+      "assignment": "Write one paragraph persuading readers that your school should require uniforms.",
+      "unit": "one paragraph",
+      "text": "Our school should require uniforms because they reduce social pressure. When everyone dresses similarly, students spend less mental energy comparing themselves to others and more on their work; the constant low-level anxiety of being judged for what you wear fades, which frees attention for learning and lowers the daily stress of getting dressed.",
+      "expected": ["Evidence / Example"]
+    },
+    {
+      "id": "CS06",
+      "scenario": "evidence NOT needed (reflective purpose, self-sufficient meaning)",
+      "assignment": "Write one reflective paragraph about a small thing that changes how your school day feels.",
+      "unit": "one paragraph",
+      "text": "When I wear the same outfit as everyone else, I stop wondering whether I look right and start paying attention to the lesson. That small shift, from watching myself to being present, is what makes uniforms matter to me: they quiet a noise I did not realize I was carrying.",
+      "expected": ["Conclusion", "closure", "Elaboration"]
+    },
+    {
+      "id": "CS07",
+      "scenario": "abrupt opening where orientation is needed (whole-piece unit)",
+      "assignment": "Write a short persuasive essay on whether your school should require uniforms.",
+      "unit": "short essay",
+      "text": "Ban them. That is my view. They cause more problems than they solve, and honestly most students agree with me on this.",
+      "expected": ["Opening", "Thesis"]
+    },
+    {
+      "id": "CS08",
+      "scenario": "no opening where none is needed (paragraph opens directly with thesis)",
+      "assignment": "Write one paragraph arguing whether your school should require uniforms.",
+      "unit": "one paragraph",
+      "text": "Our school should require uniforms because they reduce the social pressures that pull students' attention away from learning.",
+      "expected": ["Elaboration"]
+    },
+    {
+      "id": "CS09",
+      "scenario": "premature conclusion (concludes before development exists)",
+      "assignment": "Write one paragraph arguing whether your school should require uniforms.",
+      "unit": "one paragraph",
+      "text": "Uniforms matter a lot. In conclusion, that is exactly why our school should adopt them as soon as possible.",
+      "expected": ["Thesis", "Elaboration"]
+    },
+    {
+      "id": "CS10",
+      "scenario": "conclusion that merely repeats the thesis (developed paragraph)",
+      "assignment": "Write one paragraph arguing whether your school should require uniforms.",
+      "unit": "one paragraph",
+      "text": "Our school should require uniforms because they reduce social pressure. When everyone dresses alike, students compare themselves less and focus more; my cousin's school saw the constant judging about brands fade within a month of switching, and classmates seemed calmer. Therefore, our school should require uniforms because they reduce social pressure.",
+      "expected": ["Conclusion"]
+    },
+    {
+      "id": "CS11",
+      "scenario": "multiple simultaneous weaknesses (choose highest leverage)",
+      "assignment": "Write one paragraph arguing whether your school should require uniforms.",
+      "unit": "one paragraph",
+      "text": "uniforms good. save money and no bully. everyone should do it i think.",
+      "expected": ["Thesis"]
+    },
+    {
+      "id": "CS12",
+      "scenario": "ambiguous — two defensible targets",
+      "assignment": "Write one paragraph arguing whether your school should require uniforms.",
+      "unit": "one paragraph",
+      "text": "Our school should require uniforms because they reduce social pressure and because they save families money on clothing.",
+      "expected": ["Thesis", "Elaboration"]
+    },
+    {
+      "id": "CS13",
+      "scenario": "strong paragraph requiring closure, not invented weakness",
+      "assignment": "Write one paragraph arguing whether your school should require uniforms.",
+      "unit": "one paragraph",
+      "text": "While many worry that uniforms erase individuality, our school should require them because they lower the daily social pressure that distracts students from learning. When clothing stops being a status signal, students spend less energy comparing themselves and more on their work; a nearby school that adopted uniforms reported that dress-related conflicts nearly disappeared within a term. That change matters because it shows uniforms do not suppress identity so much as remove a distraction from it, letting students bring their attention to what they came to school to do.",
+      "expected": ["closure", "Conclusion"]
+    }
+  ]
+}

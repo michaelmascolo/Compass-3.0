@@ -224,14 +224,31 @@ def resolve_structure(name: Optional[str]) -> Optional[str]:
     if not name:
         return None
     n = name.strip()
+    if n in CC.PRIMARY_STRUCTURES:   # canonical primary names pass through unchanged
+        return n
     if n in MINIMAL_OBJECTS:
         return n
     return _ALIAS.get(n.lower())
 
 
 def retrieve_object(structure: str) -> Dict[str, Any]:
-    """MINIMAL retrieval — return ONLY the five instructional components."""
-    return MINIMAL_OBJECTS.get(structure, {})
+    """MINIMAL retrieval. Legacy objects return their five components; a canonical
+    primary name (canonical-selection path) returns a canonical-derived minimal view so
+    downstream state/telemetry populate without a second retrieval path."""
+    legacy = MINIMAL_OBJECTS.get(structure, {})
+    if legacy:
+        return legacy
+    if CC.is_structure_ready(structure):
+        f = CC.get_structure(structure)["fields"]
+        vlist = f["developmental_variations"]["value"]
+        return {
+            "essence": f["definition"]["value"],
+            "observable_indicators": {},
+            "developmental_variations": [v.get("name", "") for v in vlist if isinstance(v, dict)],
+            "teaching_strategy": f["discovery_instruction"]["value"],
+            "exit_criterion": f["developmental_sufficiency"]["value"],
+        }
+    return {}
 
 
 # ---------------------------------------------------------------------------
@@ -296,9 +313,222 @@ def _extract_json(raw: str) -> Dict[str, Any]:
     return json.loads(s)
 
 
+# ===========================================================================
+# CANONICAL SELECTION (Phase P0-b) — behind the CANONICAL_SELECTION flag.
+# The single consolidated selector converges onto canonical authority over the
+# five PRIMARY paragraph structures, governed by the canonical Instructional
+# Decision Making model. Legacy selection remains available (flag off) for
+# rollback + comparison. No parallel public selector: select_structure() branches.
+# ===========================================================================
+def _canonical_selection_enabled() -> bool:
+    return os.environ.get("CANONICAL_SELECTION", "0").strip().lower() in ("1", "true", "yes", "on")
+
+
+# canonical name normalization (canonical-selection path ONLY — never legacy names)
+_CANON_ALIAS = {
+    "opening": "Opening", "introduction": "Opening",
+    "thesis": "Thesis", "central claim": "Thesis", "claim": "Thesis", "main point": "Thesis",
+    "elaboration": "Elaboration", "development": "Elaboration",
+    "evidence": "Evidence / Example", "evidence / example": "Evidence / Example",
+    "evidence/example": "Evidence / Example", "example": "Evidence / Example",
+    "conclusion": "Conclusion",
+}
+
+
+def _canonical_or_none(name: Optional[str]) -> Optional[str]:
+    if not name:
+        return None
+    n = str(name).strip()
+    if n.lower() in ("null", "none", ""):
+        return None
+    if n in CC.PRIMARY_STRUCTURES:
+        return n
+    return _CANON_ALIAS.get(n.lower())
+
+
+def _canonical_primary_digest() -> str:
+    parts = []
+    for name in CC.PRIMARY_STRUCTURES:
+        if not CC.is_structure_ready(name):
+            continue
+        f = CC.get_structure(name)["fields"]
+        deps = f["structural_dependencies"]["value"]
+        up = deps.get("upstream_dependencies", []) if isinstance(deps, dict) else []
+        down = deps.get("downstream_dependencies", []) if isinstance(deps, dict) else []
+        reqs = f["structural_requirements"]["value"]
+        req_lines = "; ".join(f"{r.get('name','')}: {r.get('requirement','')}"
+                              for r in reqs if isinstance(r, dict))
+        vlist = f["developmental_variations"]["value"]
+        var_lines = " | ".join(f"{v.get('name','')} — {v.get('description','')}"
+                               for v in vlist if isinstance(v, dict))
+        odq = f["observable_decision_questions"]["value"]
+        odq_lines = " ".join(f"({i+1}) {q}" for i, q in enumerate(odq)) if isinstance(odq, list) else str(odq)
+        parts.append(
+            f"### {name}\n"
+            f"FUNCTION: {f['function']['value']}\n"
+            f"UPSTREAM DEPENDENCIES (must exist first): {up}\n"
+            f"DOWNSTREAM (this structure enables): {down}\n"
+            f"STRUCTURAL REQUIREMENTS: {req_lines}\n"
+            f"DEVELOPMENTAL VARIATIONS (least → most developed): {var_lines}\n"
+            f"DEVELOPMENTAL SUFFICIENCY (when to STOP teaching it and advance): {f['developmental_sufficiency']['value']}\n"
+            f"OBSERVABLE DECISION QUESTIONS: {odq_lines}\n"
+        )
+    return "\n".join(parts)
+
+
+def _decision_model_digest() -> str:
+    if not CC.is_decision_model_ready():
+        return ""
+    principles = CC.decision_foundational_principles()
+    order = CC.decision_order()
+    qs = CC.canonical_decision_questions()
+    pr = "\n".join(f"- {p.get('name','')}: {p.get('text','')}" for p in principles if isinstance(p, dict))
+    od = "\n".join(f"{s.get('step')}. {s.get('text','')}" for s in order if isinstance(s, dict))
+    ql = "\n".join(f"{i+1}. {q}" for i, q in enumerate(qs))
+    unit = CC.get_decision_section("unit_of_decision") or ""
+    wnt = CC.get_decision_section("when_not_to_teach_a_structure") or ""
+    wtr = CC.get_decision_section("when_to_recurse") or ""
+    return (f"UNIT OF DECISION: {unit}\n\nFOUNDATIONAL PRINCIPLES:\n{pr}\n\nORDER OF DECISION:\n{od}\n\n"
+            f"WHEN NOT TO TEACH A STRUCTURE:\n{wnt}\n\nWHEN TO RECURSE:\n{wtr}\n\n"
+            f"CANONICAL DECISION QUESTIONS:\n{ql}")
+
+
+_CANON_SEL_SYS = (
+    "You are the Compass Instructional Decision layer, performing an INTERNAL analysis (never shown "
+    "to the learner) that determines the single instructional target for this turn. You are governed "
+    "ENTIRELY by the canonical Instructional Decision Making model and the five Canonical Paragraph "
+    "Structure models provided in the user message. Your job is DEVELOPMENTAL, not corrective: you do "
+    "NOT ask 'what is wrong with this paragraph?'; you ask 'which single developmental act will make "
+    "the greatest positive difference to the learner's ability to keep constructing this paragraph?'.\n"
+    "\n"
+    "CANDIDATES: exactly the five PRIMARY structures — Opening, Thesis, Elaboration, Evidence / "
+    "Example, Conclusion. Choose EXACTLY ONE, or null if every applicable primary has reached "
+    "developmental sufficiency (do NOT invent a weakness to have something to teach — that is the "
+    "closure/advance case). Apply the One Thing Principle (teach one object), the Highest-Leverage "
+    "Principle (choose the object whose development unlocks the most subsequent development), the "
+    "Dependency Principle (respect which structures must exist before others), the Developmental "
+    "Sufficiency Principle (teach only until a structure can support further development, then shift), "
+    "and the Recursive Principle (an earlier structure may again become the limiting condition).\n"
+    "\n"
+    "PROHIBITED — do NOT use these legacy rules for the five canonical structures: universal thesis "
+    "'must be contestable'; any mandatory opening or hook; treating Evidence as outranking Elaboration "
+    "by fixed priority (Elaboration is the PRINCIPAL developmental work of the paragraph and Evidence "
+    "is SUBORDINATE to it — never select Evidence to prop up a point that has not yet been elaborated); "
+    "conclusion as mere restatement of the thesis; treating 'Paragraph Main Point' or 'Central Claim' "
+    "as structures separate from Thesis (use 'Thesis'); and any fixed surface-order assumption (a "
+    "thesis need not follow an opening; openings and conclusions are OPTIONAL, selected only when the "
+    "communicative purpose and audience require them).\n"
+    "OUT OF SCOPE this phase — do NOT select or reason toward: Explanation, Definition, Transition, "
+    "Sentence Construction, Qualification, Comparison, Analogy. In particular, reasoning about "
+    "evidence→claim connection is NOT canonical Elaboration; if the limiting structure is one of these "
+    "out-of-scope objects, choose the nearest IN-SCOPE primary that is actually limiting (usually "
+    "Thesis or Elaboration) rather than an out-of-scope object.\n"
+    "\n"
+    "RESTRAINT — WHEN NOT TO TEACH (apply strictly): do NOT select a structure merely because it is "
+    "imperfect or could be made more explicit or more thorough. Select a structure ONLY when "
+    "developing it is expected to produce MEANINGFUL additional development. A structure that has "
+    "reached developmental sufficiency — one that can already support the further development of the "
+    "paragraph — must NOT be selected for incremental refinement, even if a richer version can be "
+    "imagined. Judge sufficiency by each structure's stated DEVELOPMENTAL SUFFICIENCY criterion, not "
+    "by whether a more complete version is conceivable. When every applicable primary has reached "
+    "developmental sufficiency, select null (the closure / advance case) rather than manufacturing a "
+    "refinement to have something to teach.\n"
+    "\n"
+    "PROVISIONAL JUDGMENT (required): you must not pretend certainty about the learner. Separate "
+    "OBSERVED evidence (specific words/features actually on the page) from HYPOTHESIZED interpretation "
+    "(what you infer) and UNKNOWN (what the evidence is insufficient to determine). Do NOT infer fixed "
+    "traits, motivation, mindset, emotional capacity, or personal characteristics as facts. Offer a "
+    "plausible ALTERNATIVE target whenever genuine ambiguity exists. Give a confidence of high, "
+    "medium, or low (NO numeric probabilities). State what the learner's NEXT response could reveal "
+    "about this judgment, and whether the invitation is intended primarily to ADVANCE development, "
+    "CLARIFY the learner's current organization, or BOTH.\n"
+    "Ground every judgment in the actual words on the page. Respond with ONLY a JSON object."
+)
+
+
+async def _select_structure_canonical(session_id: str, assignment: str, unit: str,
+                                       student_text: str) -> Dict[str, Any]:
+    """Canonical selection over the five primaries (P0-b). Same return contract as the
+    legacy select_structure plus a `_provisional` block carrying the provisional judgment."""
+    prompt = (
+        f"ASSIGNMENT (authoritative task): {assignment or '(not specified)'}\n"
+        f"UNIT the writer is producing: {unit or 'one paragraph'}\n\n"
+        f"THE FIVE CANONICAL PRIMARY STRUCTURES (your only candidates):\n\n{_canonical_primary_digest()}\n"
+        f"CANONICAL INSTRUCTIONAL DECISION MODEL (govern your choice by this):\n{_decision_model_digest()}\n\n"
+        f"THE WRITER'S CURRENT WRITING:\n\"\"\"\n{student_text}\n\"\"\"\n\n"
+        "Return ONLY this JSON:\n"
+        "{\n"
+        '  "selected": "Opening|Thesis|Elaboration|Evidence / Example|Conclusion, or null",\n'
+        '  "status": "missing|partial|misleading|present",\n'
+        '  "developmental_variation": "the canonical variation name the writer is at for the selected structure (or empty)",\n'
+        '  "estimated_developmental_level": "emerging|developing|approaching|proficient",\n'
+        '  "selection_rationale": "one or two sentences, grounded in the writing, on why this is the greatest-leverage structure now per the decision model",\n'
+        '  "candidate_considerations": [{"structure":"<primary>","status":"missing|partial|misleading|present","note":"one phrase"}],\n'
+        '  "established": ["primaries already sufficient in this writing"],\n'
+        '  "not_applicable": ["primaries that do not apply to this unit/purpose"],\n'
+        '  "plausible_alternative": {"structure":"<primary or null>","why":"why it could also be the target"},\n'
+        '  "observed_evidence": ["specific features/words actually present in the writing"],\n'
+        '  "hypothesized_interpretation": "what you infer, explicitly as interpretation not fact",\n'
+        '  "unknowns": ["what the evidence is insufficient to determine"],\n'
+        '  "confidence": "high|medium|low",\n'
+        '  "next_response_would_reveal": "what the learner\'s next response could clarify about this judgment",\n'
+        '  "invitation_intent": "advance|clarify|both",\n'
+        '  "instructional_intent": "one concise sentence naming what this cycle should help the writer build",\n'
+        '  "developmental_sufficiency": "continue|reached",\n'
+        '  "sufficiency_reasoning": "one sentence on why sufficiency has or has not been reached",\n'
+        '  "next_objective": "<the primary to address after this one, or null>",\n'
+        '  "next_objective_reasoning": "one phrase on why that comes next",\n'
+        '  "composition_integration_signal": "ok|weak|repeatedly_failing"\n'
+        "}"
+    )
+    chat = LlmChat(api_key=_KEY, session_id=f"canon-sel-{session_id}",
+                   system_message=_CANON_SEL_SYS).with_model(*SEL_MODEL)
+    raw = await chat.send_message(UserMessage(text=prompt))
+    data = _extract_json(raw)
+    sel = _canonical_or_none(data.get("selected"))
+    cand = data.get("candidate_considerations") or []
+    candidate_objects = [{"object": _canonical_or_none(c.get("structure")) or c.get("structure"),
+                          "status": c.get("status", ""), "note": c.get("note", "")}
+                         for c in cand if isinstance(c, dict)]
+    alt = data.get("plausible_alternative") or {}
+    result = {
+        "selected": sel,
+        "status": (data.get("status") or "missing").lower(),
+        "developmental_variation": data.get("developmental_variation") or "",
+        "estimated_developmental_level": data.get("estimated_developmental_level") or "",
+        "candidate_objects": candidate_objects,
+        "established": data.get("established") or [],
+        "not_applicable": data.get("not_applicable") or [],
+        "justification": data.get("selection_rationale") or "",
+        "selection_contrast": (alt.get("why") or "") if isinstance(alt, dict) else "",
+        "instructional_action": "scaffold",
+        "instructional_intent": data.get("instructional_intent") or "",
+        "developmental_sufficiency": (data.get("developmental_sufficiency") or "").lower(),
+        "sufficiency_reasoning": data.get("sufficiency_reasoning") or "",
+        "next_objective": data.get("next_objective") or "",
+        "next_objective_reasoning": data.get("next_objective_reasoning") or "",
+        "confidence": (data.get("confidence") or "medium").lower(),
+        "_prompt_bytes": len(prompt) + len(_CANON_SEL_SYS),
+        "_completion_bytes": len(raw or ""),
+        "_canonical": True,
+        "_provisional": {
+            "observed_evidence": data.get("observed_evidence") or [],
+            "hypothesized_interpretation": data.get("hypothesized_interpretation") or "",
+            "unknowns": data.get("unknowns") or [],
+            "plausible_alternative": alt if isinstance(alt, dict) else {},
+            "next_response_would_reveal": data.get("next_response_would_reveal") or "",
+            "invitation_intent": (data.get("invitation_intent") or "").lower(),
+            "composition_integration_signal": (data.get("composition_integration_signal") or "").lower(),
+        },
+    }
+    return result
+
+
 async def select_structure(session_id: str, assignment: str, unit: str,
                             student_text: str) -> Dict[str, Any]:
     """Return {selected, status, established[], not_applicable[], justification, confidence}."""
+    if _canonical_selection_enabled():
+        return await _select_structure_canonical(session_id, assignment, unit, student_text)
     prompt = (
         f"ASSIGNMENT (authoritative task): {assignment or '(not specified)'}\n"
         f"UNIT the writer is producing: {unit or 'one paragraph'}\n\n"
@@ -757,6 +987,9 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
         "next_objective": next_objective,
         "next_objective_reasoning": next_objective_reasoning,
     }
+    if sel.get("_provisional"):
+        instructional_analysis["provisional_judgment"] = sel["_provisional"]
+        instructional_analysis["canonical_selection"] = True
 
     # write the authoritative decision onto persistent state (Sprint 1-4 fields reused)
     state.selected_instructional_object = target
@@ -778,9 +1011,10 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
     state.demonstrated_strengths = established
     state.strength_status = "PRESENT" if established else "UNKNOWN"
     state.observed_strengths = established
-    state.observed_selection_evidence = ([f"{target}: status {status} in the writing"] if target else [])
+    state.observed_selection_evidence = (sel.get("_provisional", {}).get("observed_evidence")
+                                         or ([f"{target}: status {status} in the writing"] if target else []))
     state.engine_recommendation = engine_recommendation
-    state.decision_uncertainty = []
+    state.decision_uncertainty = sel.get("_provisional", {}).get("unknowns", [])
     state.exit_criterion_description = obj.get("exit_criterion", "")
     state.exit_criterion_status = "not_met" if instructional_need == "NEEDS_INSTRUCTION" else "met"
     state.advancement_decision = "hold" if instructional_need == "NEEDS_INSTRUCTION" else "advance"
