@@ -178,6 +178,9 @@ class InstructionalState(BaseModel):
     instructional_intent: str = ""                       # what this coaching cycle intends the writer to build
     # --- Internal Instructional Decision analysis (never shown to the student; drives Teacher Review) ---
     instructional_analysis: Dict[str, Any] = Field(default_factory=dict)
+    # count of consecutive continuation turns on the CURRENT target (0 on a fresh/first turn);
+    # gates DISCOVERY (default) vs RESCUE (adaptive strategy scaffolds) dialogue. Additive/defaulted.
+    current_target_attempts: int = 0
     # provenance
     migrated_from_session_id: Optional[str] = None
     migration_limitations: List[str] = Field(default_factory=list)

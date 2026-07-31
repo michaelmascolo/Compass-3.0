@@ -374,11 +374,10 @@ _DLG_SYS = (
     "structure just taught. The object of discussion is the canonical structure; the paper is evidence. "
     "Avoid \"Your paragraph…\" as a critique; prefer \"Compared with the structure we just "
     "described…\" or \"Your writing already contains the beginning of this structure…\", then name the "
-    "REQUIREMENT the structure must satisfy and how the draft stands relative to it. When several "
-    "structurally valid solutions exist, do NOT propose one — say that different writers satisfy the "
-    "requirement in different ways and give the range briefly (e.g. \"some identify a broader idea that "
-    "unifies the others; some make one idea primary and let the rest support it; others reorganize the "
-    "relationships differently\"), then restate the constraint the finished structure must meet.\n"
+    "REQUIREMENT the structure must satisfy and how the draft stands relative to it. In DISCOVERY mode "
+    "(the default) teach ONLY what the structure must accomplish, the requirements that define a "
+    "successful instance, and what the learner's task is — do NOT offer example solution strategies "
+    "(do not say \"different writers do this in different ways\" followed by examples).\n"
     "  5) DEVELOPMENTAL INVITATION — it must emerge from the concept and ask the learner to CONSTRUCT a "
     "structure that satisfies the requirement, NOT to adopt one particular strategy you picked for "
     "them. Frame it around the constraint (e.g. \"which one idea could coordinate all the others so "
@@ -390,6 +389,12 @@ _DLG_SYS = (
     "unless the assignment itself requires a specific form. Solving the learner's intellectual problem "
     "for them — choosing which idea wins, which order to use, which definition to adopt — is "
     "prohibited; that construction is the learner's cognitive work.\n"
+    "DISCOVERY vs RESCUE: DISCOVERY is the default for the first turn and normal continuation — teach "
+    "structure, function, and constraints, and withhold solution strategies. Switch to RESCUE ONLY when "
+    "the user message tells you the learner is stuck after prior unsuccessful attempts or has "
+    "explicitly asked for examples. In RESCUE you MAY introduce a few possible strategies as temporary "
+    "scaffolds, but present them as POSSIBILITIES to consider, never as recommendations, and still "
+    "leave the choice and the construction to the learner.\n"
     "\n"
     "═══ CONTINUATION TURN on the same active structure — do NOT repeat the six-function teaching "
     "sequence. Briefly re-anchor the same structure in a few words, compare the learner's latest "
@@ -405,10 +410,22 @@ _DLG_SYS = (
 )
 
 
+_RESCUE_SIGNAL = re.compile(
+    r"\b(for example|give (me )?an example|show me|an example|i (don'?t|do not) know|not sure how|"
+    r"no idea|i'?m stuck|stuck|confused|help me|can you help|a hint|give me a hint|i give up|"
+    r"what (do|should) i (write|say|put)|i can'?t (do|figure))\b", re.I)
+
+
+def _wants_help(text: str) -> bool:
+    """Learner explicitly asks for examples/help or signals being stuck (triggers RESCUE)."""
+    return bool(text and _RESCUE_SIGNAL.search(text))
+
+
 async def generate_dialogue(session_id: str, assignment: str, unit: str, student_text: str,
                             structure: str, obj: Dict[str, Any], status: str,
                             kind: str, action: str = "scaffold",
-                            mode: str = "first_turn", sufficiency: str = "continue") -> str:
+                            mode: str = "first_turn", sufficiency: str = "continue",
+                            rescue: bool = False) -> str:
     ind = obj.get("observable_indicators", {})
     _action_hint = {
         "teach": "Explain the structure plainly and show what it does, then hand the doing back to the writer.",
@@ -441,8 +458,8 @@ async def generate_dialogue(session_id: str, assignment: str, unit: str, student
         "learner reasons; (4) COMPARE their work to that structure (\"Compared with the structure we "
         "just described…\" / \"Your writing already contains the beginning of this structure…\") — the "
         "structure is the subject, the paper is evidence; do NOT critique the paragraph; when multiple "
-        "valid solutions exist, name the REQUIREMENT and note that writers satisfy it in different ways "
-        "rather than prescribing one; (5) an invitation that asks the learner to CONSTRUCT a structure "
+        "valid solutions exist, name the REQUIREMENT the structure must satisfy without proposing a "
+        "solution; (5) an invitation that asks the learner to CONSTRUCT a structure "
         "satisfying that requirement (their choice of how), never to adopt one strategy you selected; "
         "(6) STOP.\n"
         "STRUCTURAL REQUIREMENTS RULE: teach the constraints a successful structure must satisfy; never "
@@ -451,12 +468,24 @@ async def generate_dialogue(session_id: str, assignment: str, unit: str, student
         "intellectual problem for them.\n"
         f"WHAT COUNTS AS ENOUGH (the requirement, for the compare step): {obj.get('exit_criterion','')}\n"
     )
+    _support_block = (
+        "SUPPORT LEVEL = RESCUE. The learner is stuck after prior attempts or has asked for examples. "
+        "You MAY now offer a few possible solution strategies as temporary scaffolds — but present them "
+        "as POSSIBILITIES to weigh (\"one way some writers do this is…; another is…\"), NEVER as "
+        "recommendations, and still require the learner to choose and construct. Keep withholding the "
+        "finished answer itself.\n"
+        if rescue else
+        "SUPPORT LEVEL = DISCOVERY (default). Teach only the structure, its function, and the "
+        "requirements a successful instance must satisfy. Do NOT list solution strategies or examples "
+        "of how to satisfy the requirement; the learner constructs their own.\n"
+    )
     prompt = (
         f"ASSIGNMENT: {assignment or '(not specified)'}\n"
         f"UNIT: {unit or 'one paragraph'}\n"
         f"THE WRITER JUST {('REVISED' if kind == 'revise' else 'WROTE' if kind in ('writing','continue') else 'RESPONDED')}:\n"
         f"\"\"\"\n{student_text}\n\"\"\"\n\n"
         f"{_mode_block}\n"
+        f"{_support_block}\n"
         f"THE INSTRUCTIONAL DECISION IS ALREADY MADE. Help the writer build exactly this — do not "
         f"reconsider or broaden it:\n"
         f"- FOCUS (the one canonical structure to work on this turn): {structure}\n"
@@ -648,6 +677,11 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
 
     # write the authoritative decision onto persistent state (Sprint 1-4 fields reused)
     state.selected_instructional_object = target
+    # DISCOVERY vs RESCUE: track consecutive continuation turns on the SAME target
+    if prior_target and prior_target == target:
+        state.current_target_attempts += 1
+    else:
+        state.current_target_attempts = 0
     state.current_instructional_object = target
     state.selected_object_definition = obj.get("essence", "")
     state.candidate_instructional_objects = [c.get("object") for c in candidate_objects if isinstance(c, dict) and c.get("object")] or ([target] if target else [])
@@ -713,9 +747,13 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
         # FIRST-TURN vs CONTINUATION: continuation only when the SAME object stayed active
         # from the prior turn (instruction already presented on it); otherwise first turn.
         dialogue_mode = "continuation" if (prior_target and prior_target == target) else "first_turn"
+        # RESCUE only after the learner remains stuck across continuation attempts, or asks for help.
+        rescue = (dialogue_mode == "continuation"
+                  and (state.current_target_attempts >= 2 or _wants_help(learner_content)))
         invitation, dlg_bytes = await generate_dialogue(state.id, assignment, unit, student_text,
                                                         target, obj, status, kind, instructional_action,
-                                                        mode=dialogue_mode, sufficiency=developmental_sufficiency)
+                                                        mode=dialogue_mode, sufficiency=developmental_sufficiency,
+                                                        rescue=rescue)
     t_dialogue = time.perf_counter() - t_d0
 
     ownership_ok = not bool(_DOES_WORK.search(invitation or ""))

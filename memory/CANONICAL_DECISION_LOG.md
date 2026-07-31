@@ -102,3 +102,21 @@ First turn now enforces:
 Validated live across all 5 calibrated CIOs (Central Claim, Explanation, Evidence, Definition,
 Paragraph Main Point): 5/5 definitive accomplishment, next-task framing, function-teaching, compare-
 framing, concept-dependent invitation. Continuation mode unchanged. Harness: /tmp/wt/validate_voice_all5.py
+
+---
+
+# Constraints-Before-Strategies: DISCOVERY vs RESCUE (2026-06) — first-turn/continuation dialogue
+
+Default DISCOVERY withholds solution strategies; teaches structure + function + constraints only.
+Removed the default "different writers satisfy this in different ways…+examples" from the first turn.
+RESCUE (adaptive) may offer strategies AS POSSIBILITIES (never recommendations) only when the learner
+is stuck after attempts or explicitly asks.
+Wiring (minimal, additive): new state field InstructionalState.current_target_attempts (int, default 0),
+incremented on same-target continuation, reset to 0 on a new/first target. generate_dialogue gained a
+`rescue` param. run() sets rescue = (continuation AND (current_target_attempts>=2 OR _wants_help(text))).
+_wants_help = regex on learner message for explicit example/help/stuck signals.
+Validated live: T1 first=DISCOVERY(no strategies); T2 1st continuation=DISCOVERY; T3 2nd continuation=RESCUE;
+explicit-request on a continuation turn=RESCUE. Signal detector accurate.
+WATCH: a pure help-only 'answer' turn with no draft content can route to the closure path (selector
+returns no target, frozen behavior) and thus bypass continuation/RESCUE — selector-owned, out of scope.
+Harness: /tmp/wt/validate_rescue.py, /tmp/wt/validate_rescue2.py
