@@ -34,6 +34,7 @@ from emergentintegrations.llm.chat import LlmChat, UserMessage
 
 import compass_foundation as F
 from compass_foundation import AuditEvent, InstructionalState, now_iso
+import compass_curriculum as CC
 
 _KEY = os.environ.get("EMERGENT_LLM_KEY")
 SEL_MODEL = ("anthropic", "claude-haiku-4-5-20251001")   # fast, cheap structure selection
@@ -367,7 +368,7 @@ _DLG_SYS = (
     "  3) TEACH HOW THE STRUCTURE FUNCTIONS — do NOT merely define it. Show the intellectual WORK it "
     "does and how to THINK with it, in a way that changes how the learner reasons. Avoid the flat "
     "definitional opener \"A [structure] is…\"; instead teach what it does for the whole piece (e.g. "
-    "\"A central claim gives every other sentence one job: each reason and piece of evidence has a "
+    "\"A thesis gives every other sentence one job: each reason and piece of evidence has a "
     "single question to answer — how does this help a reader accept that one idea?\"). The learner "
     "should walk away able to use the concept, not just recite it.\n"
     "  4) COMPARE (do not critique, do not solve) — hold the learner's current work UP AGAINST the "
@@ -421,12 +422,61 @@ def _wants_help(text: str) -> bool:
     return bool(text and _RESCUE_SIGNAL.search(text))
 
 
+# Legacy selector object name -> Canonical Curriculum structure name (Acceptance Criterion #1).
+# Only structures SUPERSEDED by a ready canonical model are remapped; others keep legacy behavior.
+_LEGACY_TO_CANONICAL = {
+    "Central Claim": "Thesis",
+    "Paragraph Main Point": "Thesis",
+    "Reader Orientation": "Opening",
+    "Explanation": "Elaboration",          # provisional: reconciliation of Explanation still pending
+    "Evidence": "Evidence / Example",
+    "Elaboration": "Elaboration",
+    "Paragraph Closure": "Conclusion",
+    "Conclusion": "Conclusion",
+    "Opening": "Opening",
+    "Thesis": "Thesis",
+    "Evidence / Example": "Evidence / Example",
+}
+
+
+def _resolve_teaching_source(structure: str, obj: Dict[str, Any]) -> Dict[str, Any]:
+    """Return the teaching content + the STUDENT-FACING name for this turn.
+
+    When the target maps to a ready Canonical Curriculum model, teach from the canonical
+    model and use the CANONICAL name (no obsolete names reach the learner). Otherwise fall
+    back to the legacy object (subordinate structures with no canonical model yet)."""
+    canon = _LEGACY_TO_CANONICAL.get(structure, structure)
+    cc = CC.get_structure(canon) if CC.is_structure_ready(canon) else None
+    if cc:
+        f = cc["fields"]
+        variations = [v.get("name", "") for v in f["developmental_variations"]["value"]]
+        goal = f["developmental_variations"]["value"][-1].get("description", "")
+        reqs = f["structural_requirements"]["value"]
+        req_text = " | ".join(f"{r.get('name','')}: {r.get('requirement','')}" for r in reqs)
+        return {
+            "display_name": canon, "canonical": True,
+            "what_it_is": f["definition"]["value"], "function": f["function"]["value"],
+            "goal": goal, "requirements": req_text,
+            "discovery": f["discovery_instruction"]["value"], "rescue": f["rescue_instruction"]["value"],
+            "sufficiency": f["developmental_sufficiency"]["value"], "variations": variations,
+        }
+    ind = obj.get("observable_indicators", {})
+    return {
+        "display_name": structure, "canonical": False,
+        "what_it_is": obj.get("essence", ""), "function": obj.get("essence", ""),
+        "goal": ind.get("present", ""), "requirements": ind.get("present", ""),
+        "discovery": obj.get("teaching_strategy", ""), "rescue": obj.get("teaching_strategy", ""),
+        "sufficiency": obj.get("exit_criterion", ""), "variations": obj.get("developmental_variations", []),
+    }
+
+
 async def generate_dialogue(session_id: str, assignment: str, unit: str, student_text: str,
                             structure: str, obj: Dict[str, Any], status: str,
                             kind: str, action: str = "scaffold",
                             mode: str = "first_turn", sufficiency: str = "continue",
                             rescue: bool = False) -> str:
-    ind = obj.get("observable_indicators", {})
+    src = _resolve_teaching_source(structure, obj)
+    disp = src["display_name"]
     _action_hint = {
         "teach": "Explain the structure plainly and show what it does, then hand the doing back to the writer.",
         "scaffold": "Give one concrete scaffold (a question or sentence frame) the writer completes themselves.",
@@ -445,7 +495,7 @@ async def generate_dialogue(session_id: str, assignment: str, unit: str, student
         "hidden right answer: if more work is needed, state clearly what has IMPROVED, what still "
         "REMAINS, why it matters, and what would count as ENOUGH. If the requirement is now met, say so "
         "explicitly, name what they accomplished, and recommend moving forward. Then STOP.\n"
-        f"WHAT COUNTS AS ENOUGH (the requirement to compare against): {obj.get('exit_criterion','')}\n"
+        f"WHAT COUNTS AS ENOUGH (the requirement to compare against): {src['sufficiency']}\n"
         f"INTERNAL sufficiency read (informs you; do not quote): {sufficiency}\n"
     ) if is_cont else (
         "MODE = FIRST TURN. You are a developmental TEACHER, not a writing coach: teach the canonical "
@@ -466,7 +516,7 @@ async def generate_dialogue(session_id: str, assignment: str, unit: str, student
         "prescribe one particular way of satisfying them (which idea wins, which order, which "
         "definition) unless the assignment requires a specific form. Do not solve the learner's "
         "intellectual problem for them.\n"
-        f"WHAT COUNTS AS ENOUGH (the requirement, for the compare step): {obj.get('exit_criterion','')}\n"
+        f"WHAT COUNTS AS ENOUGH (the requirement, for the compare step): {src['sufficiency']}\n"
     )
     _support_block = (
         "SUPPORT LEVEL = RESCUE. The learner is stuck after prior attempts or has asked for examples. "
@@ -474,11 +524,14 @@ async def generate_dialogue(session_id: str, assignment: str, unit: str, student
         "as POSSIBILITIES to weigh (\"one way some writers do this is…; another is…\"), NEVER as "
         "recommendations, and still require the learner to choose and construct. Keep withholding the "
         "finished answer itself.\n"
+        f"CANONICAL RESCUE GUIDANCE (private; apply, do not quote verbatim): {src['rescue']}\n"
         if rescue else
         "SUPPORT LEVEL = DISCOVERY (default). Teach only the structure, its function, and the "
         "requirements a successful instance must satisfy. Do NOT list solution strategies or examples "
         "of how to satisfy the requirement; the learner constructs their own.\n"
+        f"CANONICAL DISCOVERY GUIDANCE (private; apply, do not quote verbatim): {src['discovery']}\n"
     )
+    _forms = ", ".join(src["variations"]) if isinstance(src["variations"], list) else str(src["variations"])
     prompt = (
         f"ASSIGNMENT: {assignment or '(not specified)'}\n"
         f"UNIT: {unit or 'one paragraph'}\n"
@@ -487,18 +540,20 @@ async def generate_dialogue(session_id: str, assignment: str, unit: str, student
         f"{_mode_block}\n"
         f"{_support_block}\n"
         f"THE INSTRUCTIONAL DECISION IS ALREADY MADE. Help the writer build exactly this — do not "
-        f"reconsider or broaden it:\n"
-        f"- FOCUS (the one canonical structure to work on this turn): {structure}\n"
-        f"- WHAT IT IS / WHY IT MATTERS (use in your OWN plain words; do not recite): {obj.get('essence','')}\n"
+        f"reconsider or broaden it. Use ONLY this canonical structure name with the learner; never use "
+        f"any other or older name for it:\n"
+        f"- FOCUS (the one canonical structure to work on this turn): {disp}\n"
+        f"- WHAT IT IS (teach in your OWN plain words; do not recite verbatim): {src['what_it_is']}\n"
+        f"- WHAT INTELLECTUAL WORK IT PERFORMS: {src['function']}\n"
+        f"- STRUCTURAL REQUIREMENTS a successful instance must satisfy (teach as constraints, do not "
+        f"prescribe one solution): {src['requirements']}\n"
         f"- WHAT IT LOOKS LIKE ONCE BUILT (the goal to move toward — NOT a verdict to read back): "
-        f"{ind.get('present','')}\n"
-        f"- HOW TO SCAFFOLD IT (private guidance for you; do not quote): {obj.get('teaching_strategy','')}\n"
+        f"{src['goal']}\n"
         f"- DECIDED ACTION (shapes HOW you deliver the one invitation): {action} — {_action_hint}\n\n"
         f"INTERNAL ANALYSIS — informs your choices; NOT for the learner. Never voice, quote, "
         f"paraphrase, or expose internal labels/status words. Locating the attempt (allowed) is a plain "
         f"observation in the learner's own terms, never a weakness list or status readout:\n"
-        f"  internal_status={status}; internal_indicator={ind.get(status,'')}; "
-        f"internal_developmental_forms={', '.join(obj.get('developmental_variations', []))}\n"
+        f"  internal_status={status}; internal_developmental_forms={_forms}\n"
     )
     chat = LlmChat(api_key=_KEY, session_id=f"rp5-dlg-{session_id}",
                    system_message=_DLG_SYS).with_model(*DLG_MODEL)
