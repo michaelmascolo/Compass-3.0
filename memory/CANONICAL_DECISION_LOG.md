@@ -83,3 +83,22 @@ gaps dominate, or Unity's "poorly-coordinated support" already catches the resid
 condition 2 → NOT a distinct CIO at single-paragraph scale. Deferred until multi-paragraph
 composition, where sequencing already-unified paragraphs is a genuinely distinct intervention that
 Paragraph Unity cannot express. Analysis: `PHASE2_CIO06_Organization_ANALYSIS.md`. No code changed.
+
+---
+
+# Developmental Instruction Voice Refinement (2026-06) — first-turn dialogue only
+
+Applied to the FIRST-TURN block of `generate_dialogue` + `_DLG_SYS` (prompt-only; no engine/CIO/
+selector/sufficiency/DB/audit/UI change). Compass = developmental teacher, not writing coach.
+First turn now enforces:
+1. ACCOMPLISHMENT — completed achievement, definitive verbs ("You have identified/established/
+   developed/distinguished"); banned "you've already…"/progress language.
+2. INTRODUCE — "Your next task is to develop a [structure]"; banned sharpen/improve/strengthen/fix.
+3. TEACH FUNCTION — how the structure WORKS / how to think with it (not a flat "A X is…" definition).
+4. COMPARE (not critique) — "Compared with the structure we just described…" / "Your writing already
+   contains the beginning of this structure…"; structure is subject, paper is evidence.
+5. INVITATION — emerges from the concept, requires using it; no rhetorical/assignment-specific coaching.
+6. STOP.
+Validated live across all 5 calibrated CIOs (Central Claim, Explanation, Evidence, Definition,
+Paragraph Main Point): 5/5 definitive accomplishment, next-task framing, function-teaching, compare-
+framing, concept-dependent invitation. Continuation mode unchanged. Harness: /tmp/wt/validate_voice_all5.py
