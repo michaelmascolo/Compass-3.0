@@ -18,6 +18,8 @@ Provenance tags per field:
   - "pending"            : PENDING_CANONICAL_INPUT — awaiting the supplied model. Never invented.
 """
 from typing import Any, Dict, List
+import json
+import os
 
 PENDING = "PENDING_CANONICAL_INPUT"
 
@@ -108,6 +110,16 @@ def _pending_primary() -> Dict[str, Any]:
 # The authoritative registry. Every primary structure awaits its supplied model. Wired to NOTHING.
 CURRICULUM: Dict[str, Dict[str, Any]] = {name: _pending_primary() for name in PRIMARY_STRUCTURES}
 
+# Authority-supplied models are stored verbatim as JSON under canonical_models/ and loaded on import.
+_MODEL_DIR = os.path.join(os.path.dirname(__file__), "canonical_models")
+_MODEL_FILES: Dict[str, str] = {
+    "Thesis": "thesis.json",
+    "Elaboration": "elaboration.json",
+    "Evidence / Example": "evidence_example.json",
+    "Conclusion": "conclusion.json",
+    "Opening": "opening.json",
+}
+
 
 # ---------------------------------------------------------------------------
 # Insertion + validation API (used ONLY to store authority-supplied models verbatim).
@@ -167,3 +179,20 @@ def pending_report() -> Dict[str, Any]:
     return {name: {"status": entry["status"],
                    "fields": {f: entry["fields"][f]["provenance"] for f in CANONICAL_FIELDS}}
             for name, entry in CURRICULUM.items()}
+
+
+def _load_supplied_models() -> None:
+    """Ingest authority-supplied JSON models verbatim on import. Missing files stay PENDING."""
+    for name, fname in _MODEL_FILES.items():
+        path = os.path.join(_MODEL_DIR, fname)
+        if not os.path.exists(path):
+            continue
+        with open(path, "r", encoding="utf-8") as fh:
+            model = json.load(fh)
+        result = insert_primary_model(name, model)
+        if not result["ok"]:
+            # keep PENDING and surface the problem loudly rather than inserting a broken model
+            CURRICULUM[name]["status"] = f"INVALID_SUPPLIED_MODEL: {result}"
+
+
+_load_supplied_models()

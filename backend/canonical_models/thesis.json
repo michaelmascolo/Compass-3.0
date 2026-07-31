@@ -1,0 +1,106 @@
+{
+  "definition": "A thesis is the principal point that the writer wishes the intended audience to understand about a topic.\n\nThe topic identifies what the writing is about.\n\nThe thesis identifies the integrated message that the writer wishes to communicate about that topic.\n\nThe distinction is fundamental.\n\nThe topic answers:\n\n“What is this writing about?”\n\nThe thesis answers:\n\n“What is the most important thing I want my reader to understand about what this writing is about?”\n\nA thesis is not merely a sentence. It is an organized communicative intention expressed through language.\n\nThat intention may be expressed explicitly, implicitly, or progressively throughout a piece of writing.\n\nA successful thesis is the paragraph or essay in miniature. It contains, in implicit form, the major conceptual organization that will later be differentiated and integrated throughout the remainder of the writing.",
+  "function": "The thesis exists because writers have something they wish to communicate.\n\nIts primary function is to express the principal integrated message of the paragraph or essay.\n\nThe thesis does not exist merely to organize writing. Organization is a consequence of expressing an integrated communicative purpose.\n\nAccordingly, the thesis also:\n\n• identifies the principal meaning to be communicated;\n\n• organizes the subsequent development of the paragraph;\n\n• provides the criterion by which relevance is judged;\n\n• anticipates the conceptual relationships that will later become differentiated and integrated.",
+  "structural_dependencies": {
+    "upstream_dependencies": [
+      "A communicative purpose.",
+      "An intended audience.",
+      "A topic.",
+      "An understanding of the larger communicative conversation within which the writing participates.",
+      "An emerging conception of the integrated message the writer wishes to communicate."
+    ],
+    "upstream_clarification": "A thesis does not depend upon an opening. Many successful paragraphs appropriately begin directly with the thesis.",
+    "downstream_dependencies": [
+      "Opening.",
+      "Elaboration.",
+      "Evidence.",
+      "Examples.",
+      "Definitions.",
+      "Qualifications.",
+      "Conclusion."
+    ],
+    "downstream_clarification": "These structures do not merely follow the thesis. They elaborate, support, clarify, qualify, and ultimately integrate the communicative purpose established by the thesis."
+  },
+  "structural_requirements": [
+    {
+      "name": "Communicative Purpose",
+      "requirement": "The principal message the writer wishes to communicate is identifiable.",
+      "observable_questions": [
+        "What is the single most important thing the writer wants the intended audience to understand?"
+      ]
+    },
+    {
+      "name": "Thesis Is Not the Topic",
+      "requirement": "A successful thesis communicates more than the topic. It communicates the principal integrated message that the writer wants the intended audience to understand about that topic.",
+      "observable_questions": [
+        "Can Compass identify the topic?",
+        "Can Compass identify the principal message?",
+        "Are these genuinely different?"
+      ],
+      "decision_rule": "If the writing identifies only the subject matter but not the principal message, the writer has identified a topic rather than a thesis."
+    },
+    {
+      "name": "Generative Integration",
+      "requirement": "A successful thesis contains sufficient conceptual organization to support progressively integrated elaboration.",
+      "principle": "This is the Generative Integration Principle.",
+      "negative_criterion": "The criterion is not: Can additional information be added?",
+      "positive_criterion": "The criterion is: Can additional ideas become increasingly integrated into one developing understanding?",
+      "clarification": "The thesis should contain the conceptual seeds from which increasingly differentiated and increasingly integrated understanding can emerge."
+    },
+    {
+      "name": "Organizing Relevance",
+      "requirement": "The thesis provides the criterion by which relevance is judged. Every subsequent idea should derive its function from its relationship to the thesis.",
+      "observable_questions": [
+        "Can every major idea in the paragraph be understood as contributing to the thesis?",
+        "Does the thesis provide a coherent organizing center for the paragraph?"
+      ]
+    },
+    {
+      "name": "Audience",
+      "requirement": "The intended audience can understand the principal integrated message.",
+      "clarification": "The required degree of specificity depends upon communicative purpose rather than genre convention.",
+      "prohibited_generic_rule": "Compass should not impose universal textbook rules such as: Every thesis must be contestable.",
+      "governing_rule": "Structural requirements arise from communicative function rather than conventional composition pedagogy."
+    }
+  ],
+  "developmental_variations": [
+    {
+      "name": "Topic substituted for thesis",
+      "description": "The writing identifies what the paragraph is about but does not identify the principal integrated message the writer wants the audience to understand about that topic."
+    },
+    {
+      "name": "Implicit thesis",
+      "description": "An organizing message is present, but the reader must infer it rather than encounter it clearly expressed."
+    },
+    {
+      "name": "Diffuse thesis",
+      "description": "Several important ideas are present, but no integrated message organizes their relationships."
+    },
+    {
+      "name": "Multiple competing theses",
+      "description": "The writing appears to pursue more than one principal communicative purpose without integrating them."
+    },
+    {
+      "name": "Underdeveloped thesis",
+      "description": "A principal message is identifiable, but it does not yet contain enough conceptual organization to support progressively integrated elaboration."
+    },
+    {
+      "name": "Integrated thesis capable of supporting progressively integrated elaboration",
+      "description": "The principal integrated message is identifiable, distinguishable from the topic, understandable to the intended audience, and capable of organizing subsequent ideas into one increasingly coherent understanding."
+    }
+  ],
+  "developmental_sufficiency": "A thesis reaches developmental sufficiency when it possesses enough conceptual organization to support progressively integrated elaboration.\n\nDevelopmental sufficiency does not imply that the thesis is complete.\n\nIt means that the thesis now contains sufficient conceptual integration to allow the remainder of the paragraph to unfold through progressive differentiation and integration.\n\nContinued refinement of the thesis would produce less developmental gain than beginning work on the next limiting structure.\n\nCompass should therefore shift instructional attention once the thesis can successfully coordinate the emerging conceptual system.\n\nSubsequent elaboration may reveal limitations requiring later revision of the thesis. Recursive revision is therefore expected rather than exceptional.",
+  "discovery_instruction": "Compass teaches:\n\n• what a thesis is;\n\n• why writers construct theses;\n\n• how a thesis expresses communicative purpose;\n\n• how a thesis communicates an integrated message;\n\n• how a thesis organizes subsequent development;\n\n• what structural constraints define a successful thesis.\n\nCompass teaches the structure, its function, and its constraints.\n\nCompass does not teach preferred solutions or prescribe one strategy for satisfying the requirements.\n\nCompass compares the learner’s work with the structural requirements and invites the learner to construct a thesis satisfying those requirements.\n\nThe learner remains responsible for discovering and expressing the integrated message.",
+  "rescue_instruction": "Rescue instruction occurs only after repeated unsuccessful construction attempts or an explicit request for additional help.\n\nCompass clarifies the structural constraints and provides the minimum additional support needed.\n\nCompass may introduce multiple possible approaches as temporary possibilities, without recommending or selecting one.\n\nWhen possible, examples should be unrelated to the learner’s own writing so that they illustrate the structure without supplying the learner’s intellectual construction.\n\nCompass never constructs the learner’s thesis.\n\nThe learner remains responsible for discovering an integrated message satisfying the structural requirements.",
+  "observable_decision_questions": [
+    "What is the topic?",
+    "What is the principal integrated message the writer wants the intended audience to understand about that topic?",
+    "Are the topic and the thesis genuinely different?",
+    "Does the thesis express a clear communicative purpose?",
+    "Can subsequent ideas become progressively differentiated while simultaneously becoming increasingly integrated around this thesis?",
+    "Does the thesis provide a coherent criterion by which relevance can be judged?",
+    "Which structural requirement currently limits further development?",
+    "Has the thesis reached developmental sufficiency?",
+    "Would further work on the thesis produce greater developmental gain than moving to another canonical structure?"
+  ]
+}
