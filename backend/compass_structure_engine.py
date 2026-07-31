@@ -127,16 +127,16 @@ MINIMAL_OBJECTS: Dict[str, Dict[str, Any]] = {
         "exit_criterion": "At least one claim is supported by specific, relevant material a reader could examine.",
     },
     "Explanation": {
-        "essence": "The reasoning that makes explicit HOW the evidence supports the claim, so the reader is not left to connect them on their own.",
+        "essence": "The reasoning that makes explicit HOW and WHY the evidence supports the claim, so the reader understands the connection instead of inferring it — and does not claim more than the evidence can bear.",
         "observable_indicators": {
-            "present": "The writer spells out why the evidence supports the claim.",
-            "partial": "The link is gestured at but the reasoning is left implicit.",
-            "missing": "Evidence sits next to a claim with no connective reasoning.",
-            "misleading": "The stated reasoning does not actually connect this evidence to this claim.",
+            "present": "The writer spells out the causal or logical relationship showing why the evidence supports this claim, without overreaching.",
+            "partial": "A link is gestured at but left implicit, or it only restates the claim / re-summarizes the evidence rather than interpreting it.",
+            "missing": "Evidence sits next to the claim with no connective reasoning — merely stated, left for the reader to connect.",
+            "misleading": "The reasoning overstates what the evidence supports, introduces an unsupported premise, or does not actually connect this evidence to this claim.",
         },
-        "developmental_variations": ["Evidence dropped in", "Restates the claim", "Partial link", "Explicit reasoning"],
-        "teaching_strategy": "Ask 'how does this example prove your point?' and have the writer put the connecting reasoning into words; do not supply the link.",
-        "exit_criterion": "The writer has made explicit, in their own words, how their evidence supports their claim.",
+        "developmental_variations": ["Evidence merely stated (no reasoning)", "Implicit connection only", "Summary mistaken for interpretation", "Superficial link (restates the claim)", "Overstated / overreaching reasoning", "Unsupported reasoning introduced", "Explicit causal or logical explanation"],
+        "teaching_strategy": "First confirm a clear, task-responsive claim AND adequate evidence are already present — if the claim is unsettled or the evidence is missing/off-point, THAT is the higher-leverage object, not Explanation. Then help the writer put into words HOW their evidence supports THIS claim: is the link stated or left for the reader to guess; is it real reasoning or just restating the claim / summarizing the evidence; does it claim more than the evidence can bear? Have the writer name the causal or logical relationship themselves. Never supply the explanation; the reasoning must be theirs.",
+        "exit_criterion": "The writer has stated, in their own words, the causal or logical reasoning that shows why their evidence supports their claim, without overstating what it proves.",
     },
     "Elaboration": {
         "essence": "The development that gives an idea enough substance for a reader to fully understand it, rather than leaving it as a bare statement.",
@@ -255,7 +255,12 @@ _SEL_SYS = (
     "the issue in developmental_variation on three axes: RELEVANCE (does the material bear on THIS "
     "claim), SPECIFICITY/adequacy (concrete and enough to weigh), and direction (does it support or "
     "actually contradict the claim); if evidence is already specific, relevant, and adequate but its "
-    "reasoning is unstated, the object is Explanation, not Evidence. If EVERY applicable structure is already present and solid, select "
+    "reasoning is unstated, the object is Explanation, not Evidence. Explanation is the focus ONLY "
+    "when a clear task-answering claim AND adequate, relevant evidence are already present and the "
+    "unstated or faulty reasoning between them is the highest-leverage gap; never let Explanation "
+    "replace a more fundamental Central Claim or Evidence problem, and name the explanation issue in "
+    "developmental_variation (merely stated / implicit / summary-not-interpretation / superficial / "
+    "overstated / unsupported reasoning). If EVERY applicable structure is already present and solid, select "
     "null — never invent a weakness to have something to teach. You must also record: the "
     "writer's estimated developmental level, the candidate developmental objects you considered, "
     "why you chose this object instead of the others, the instructional action to take, whether "
