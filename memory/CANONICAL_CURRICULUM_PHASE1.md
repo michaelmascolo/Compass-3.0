@@ -44,3 +44,16 @@ Net readiness: 0/5 structures complete; 4/45 primary-field slots calibrated; the
 
 ## 5. Open questions blocking further population (do NOT invent — asked)
 (see ask_human)
+
+---
+
+## Canonical decisions applied (A–E) — 2026-06
+- **A(a):** Authority supplies each primary model verbatim. NO reconstruction from existing CIOs or generic knowledge. All primary fields reset to PENDING_CANONICAL_INPUT until supplied. Earlier 1:1 lifts (Thesis/Evidence developmental_variations & sufficiency) were REMOVED per this rule.
+- **B(c):** Elaboration is a NEW object (not the calibrated Explanation). Working definition recorded in RECONCILIATION_NOTES; full model PENDING supply. Existing Explanation CIO left unchanged.
+- **C(a):** Opening & Conclusion stay PENDING; existing generic Reader Orientation/Conclusion NOT lifted, even provisionally. Generic assumptions to reject recorded.
+- **D:** Paragraph Main Point folds into Thesis (single-paragraph); NOT a primary; existing CIO unchanged. Definition & Explanation subordinate (unchanged in live engine); reconciliation-pending. Subordinate structures use a LIGHTER 8-field schema; no full models built this phase.
+- **E:** Phase 1 = populate 5 primary models + provenance + validation + internal consistency + report; ZERO production rewiring. Confirmed.
+
+## Infrastructure now
+- `compass_curriculum.py`: all 5 primary structures = 9 fields, every field `pending`; `MODEL_SUPPLY_ORDER = [Thesis, Elaboration, Evidence/Example, Conclusion, Opening]`; `SUBORDINATE_FIELDS` (8) + `SUBORDINATE_STRUCTURES` notes; `RECONCILIATION_NOTES`; `insert_primary_model()` + `validate_model()` (verbatim insert, nine-field check); read-only query API. Wired to NOTHING.
+- Awaiting model #1: **Thesis**.
