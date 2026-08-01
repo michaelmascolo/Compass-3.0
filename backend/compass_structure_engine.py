@@ -522,6 +522,15 @@ _CANON_SEL_SYS = (
     "focused' as merely 'a condition, not a meaning' AFTER the learner has connected it to learning "
     "and to the purpose of school is a MISREAD — that thesis is sufficient. 'Could be deeper' is never "
     "grounds to hold Thesis.\n"
+    "ELABORATION — functional sufficiency (Elaboration → Conclusion): do NOT advance from Elaboration "
+    "to Conclusion merely because the draft is LONGER, contains more abstract language, or adds several "
+    "reflective sentences. Elaboration is developmentally sufficient — and you may advance — ONLY when "
+    "the learner has (a) unfolded at least ONE important relation contained in the thesis; (b) connected "
+    "that relation to the existing story or experience; (c) made the relation understandable to a naive "
+    "reader; and (d) INTEGRATED the new material with the thesis rather than leaving parallel strands "
+    "running beside it. If reflection has merely been ADDED but still runs PARALLEL to the thesis (not "
+    "yet integrated), Elaboration is NOT sufficient — hold on Elaboration and the coach teaches "
+    "integration; do NOT advance to Conclusion on length or abstraction alone.\n"
     "THESIS — recognition (genre-neutral; do NOT confuse topic or subject matter with thesis): "
     "distinguish THREE separate things and never collapse them. (1) ASSIGNMENT TOPIC — what the "
     "assignment asks the student to write about (e.g. 'an experience that changed you'). (2) SUBJECT "
@@ -599,6 +608,19 @@ _CANON_SEL_SYS = (
     "CLARIFY the learner's current organization, or BOTH.\n"
     "Ground every judgment in the actual words on the page. Respond with ONLY a JSON object."
 )
+
+
+def _thesis_is_verbatim(thesis: str, student_text: str) -> bool:
+    """True when the reported thesis is (essentially) an exact learner-authored quotation
+    present in the draft, vs a Compass paraphrase/synthesis. Drives the UI panel label."""
+    if not thesis or not student_text:
+        return False
+    def _n(s: str) -> str:
+        return re.sub(r"\s+", " ", re.sub(r"[^a-z0-9\s]", " ", s.lower())).strip()
+    t = _n(thesis)
+    if len(t.split()) < 3:
+        return False
+    return t in _n(student_text)
 
 
 async def _select_structure_canonical(session_id: str, assignment: str, unit: str,
@@ -780,6 +802,7 @@ async def _select_structure_canonical(session_id: str, assignment: str, unit: st
         "next_objective": data.get("next_objective") or "",
         "next_objective_reasoning": data.get("next_objective_reasoning") or "",
         "current_thesis": (data.get("current_thesis") or "").strip(),
+        "thesis_is_verbatim": _thesis_is_verbatim((data.get("current_thesis") or "").strip(), student_text),
         "confidence": (data.get("confidence") or "medium").lower(),
         "_prompt_bytes": len(prompt) + len(_CANON_SEL_SYS),
         "_completion_bytes": len(raw or ""),
@@ -868,13 +891,30 @@ _DLG_SYS = (
     "a non-canonical category). You are an expert teacher who has ALREADY decided what to teach.\n"
     "\n"
     "GLOBAL STYLE (applies to EVERY turn, overrides any tendency to lecture): keep it SHORT — this is "
-    "the next line of a coaching conversation, not a rewritten lecture. Aim for roughly 70-130 words "
-    "and at most ~150; never write more than a short paragraph or two. In practice: briefly name what "
+    "the next line of a coaching conversation, not a rewritten lecture. Aim for roughly 90-140 words "
+    "and NEVER exceed ~150 words or 3 short paragraphs, even on a first turn — if the teaching would "
+    "run longer, COMPRESS it (one specific acknowledgment, one idea, one gap, one invitation) rather "
+    "than adding sentences or paragraphs. In practice: briefly name what "
     "was accomplished, say only what is necessary for THIS instructional move, teach the one thinking "
     "operation that moves this draft to the next — then STOP. Do NOT re-explain ideas you "
     "or earlier turns already covered; assume the learner remembers, and never re-teach a concept the "
     "learner has already been shown — the learner should feel they are PROGRESSING through a "
-    "conversation, not rereading a lesson. Prefer AUTHENTIC developmental "
+    "conversation, not rereading a lesson. WRITE FOR A GRADE-9 LEARNER: keep it to AT MOST 3 short "
+    "paragraphs carrying ONE achievement, ONE structural gap, and ONE developmental invitation; do "
+    "NOT reteach the full theory of elaboration every turn — teach only the single move this turn "
+    "needs. Across turns do NOT repeat the same praise or the same thesis summary; each turn "
+    "distinguishes what changed, what the learner did, and what remains. "
+    "ANTI-MENU (never lead the content): do NOT offer the learner a LIST of candidate meanings to "
+    "pick from (e.g. \"Is it about effort, identity, or what success requires?\") — that steers them "
+    "toward Compass-generated interpretations. You MAY name a distinction the learner has ALREADY put "
+    "in their writing, but you must NOT generate several possible meanings for them to choose among. "
+    "This ban also covers candidate CAUSES or MECHANISMS offered as a SERIES OF RHETORICAL QUESTIONS "
+    "(e.g. \"Was it the repetition of showing up? A moment where something clicked? The fact that "
+    "improvement became visible?\") — offer NONE of these; ask ONE open question and let the learner "
+    "supply the answer. "
+    "Ask a structurally OPEN question instead (\"What did this experience help you understand that the "
+    "events alone do not yet show?\", \"What is the connection between the way you understood failure "
+    "and what you did next?\"). Prefer AUTHENTIC developmental "
     "QUESTIONS over sentence stems; a sentence stem is one tool among many — use it ONLY when a question "
     "alone will not let the learner perform the move, and introduce it naturally (\"One way to start "
     "is…\", \"Try completing this idea…\", \"Consider this distinction…\"). NEVER use instructional "
@@ -1155,6 +1195,10 @@ async def generate_dialogue(session_id: str, assignment: str, unit: str, student
         "solution; (5) an invitation that asks the learner to CONSTRUCT a structure "
         "satisfying that requirement (their choice of how), never to adopt one strategy you selected; "
         "(6) STOP.\n"
+        "COMPRESSION (first turn): deliver ALL of the above woven into AT MOST 3 short paragraphs and "
+        "~150 words total — do NOT give each function its own paragraph or sentence. One specific "
+        "acknowledgment, one concise teaching of what the structure does, one gap named in reader "
+        "terms, one invitation. Brevity is required even on the first turn.\n"
         "STRUCTURAL REQUIREMENTS RULE: teach the constraints a successful structure must satisfy; never "
         "prescribe one particular way of satisfying them (which idea wins, which order, which "
         "definition) unless the assignment requires a specific form. Do not solve the learner's "
@@ -1275,6 +1319,11 @@ async def generate_dialogue(session_id: str, assignment: str, unit: str, student
                 "other structural functions only when it clarifies this move — Evidence = concrete support "
                 "for an idea; Explanation = how or why something works; Interpretation = making sense of "
                 "an experience; Conclusion = what the reader should take away.\n"
+                "NAME THE FUNCTIONAL REINTERPRETATION: when the learner's story shifts from being the "
+                "MAIN organization of the paragraph to SERVING as illustration or evidence for the "
+                "thesis, name that achievement briefly (\"Your story now does a new job: it shows the "
+                "change your thesis is describing\") — so the learner understands their existing "
+                "material is preserved while its FUNCTION changes.\n"
             )
             if not is_cont:
                 _elab_block += (
@@ -1694,6 +1743,7 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
             "engine_recommendation": engine_recommendation,
             "established_structures": established,
             "current_thesis": sel.get("current_thesis") or "",
+            "thesis_is_verbatim": bool(sel.get("thesis_is_verbatim")),
         },
         "_meta": efficiency,
     }
