@@ -1,0 +1,125 @@
+[
+  {
+    "id": "CS01",
+    "expected": [
+      "Thesis"
+    ],
+    "legacy": "Central Claim",
+    "canonical": "Thesis",
+    "verdict": "SUPERIOR"
+  },
+  {
+    "id": "CS02",
+    "expected": [
+      "Thesis"
+    ],
+    "legacy": "Central Claim",
+    "canonical": "Thesis",
+    "verdict": "SUPERIOR"
+  },
+  {
+    "id": "CS03",
+    "expected": [
+      "Elaboration"
+    ],
+    "legacy": "Evidence",
+    "canonical": "Elaboration",
+    "verdict": "SUPERIOR"
+  },
+  {
+    "id": "CS04",
+    "expected": [
+      "Elaboration"
+    ],
+    "legacy": "Central Claim",
+    "canonical": "Thesis",
+    "verdict": "WORSE/REVIEW"
+  },
+  {
+    "id": "CS05",
+    "expected": [
+      "Evidence / Example"
+    ],
+    "legacy": "Evidence",
+    "canonical": "Elaboration",
+    "verdict": "WORSE/REVIEW"
+  },
+  {
+    "id": "CS06",
+    "expected": [
+      "Conclusion",
+      "closure",
+      "Elaboration"
+    ],
+    "legacy": "closure",
+    "canonical": "Elaboration",
+    "verdict": "AMBIGUOUS-OK"
+  },
+  {
+    "id": "CS07",
+    "expected": [
+      "Opening",
+      "Thesis"
+    ],
+    "legacy": "Central Claim",
+    "canonical": "Thesis",
+    "verdict": "AMBIGUOUS-OK"
+  },
+  {
+    "id": "CS08",
+    "expected": [
+      "Elaboration"
+    ],
+    "legacy": "Evidence",
+    "canonical": "Thesis",
+    "verdict": "WORSE/REVIEW"
+  },
+  {
+    "id": "CS09",
+    "expected": [
+      "Thesis",
+      "Elaboration"
+    ],
+    "legacy": "Central Claim",
+    "canonical": "Thesis",
+    "verdict": "AMBIGUOUS-OK"
+  },
+  {
+    "id": "CS10",
+    "expected": [
+      "Conclusion"
+    ],
+    "legacy": "Explanation",
+    "canonical": "Elaboration",
+    "verdict": "WORSE/REVIEW"
+  },
+  {
+    "id": "CS11",
+    "expected": [
+      "Thesis"
+    ],
+    "legacy": "Central Claim",
+    "canonical": "Thesis",
+    "verdict": "SUPERIOR"
+  },
+  {
+    "id": "CS12",
+    "expected": [
+      "Thesis",
+      "Elaboration"
+    ],
+    "legacy": "Paragraph Main Point",
+    "canonical": "Thesis",
+    "verdict": "AMBIGUOUS-OK"
+  },
+  {
+    "id": "CS13",
+    "expected": [
+      "closure",
+      "Conclusion"
+    ],
+    "legacy": "closure",
+    "canonical": "Elaboration",
+    "verdict": "WORSE/REVIEW"
+  }
+]

@@ -447,12 +447,42 @@ _CANON_SEL_SYS = (
 
 
 async def _select_structure_canonical(session_id: str, assignment: str, unit: str,
-                                       student_text: str) -> Dict[str, Any]:
+                                       student_text: str, prior_target: Optional[str] = None,
+                                       prior_variation: str = "") -> Dict[str, Any]:
     """Canonical selection over the five primaries (P0-b). Same return contract as the
-    legacy select_structure plus a `_provisional` block carrying the provisional judgment."""
+    legacy select_structure plus a `_provisional` block carrying the provisional judgment.
+    `prior_target`/`prior_variation` carry the previous turn's principal diagnosis so the
+    Instructional Continuity Principle can be applied."""
+    if prior_target:
+        continuity_block = (
+            "INSTRUCTIONAL CONTINUITY (apply this FIRST, before weighing leverage):\n"
+            f"The principal developmental constraint on the PREVIOUS turn was: {prior_target}"
+            f"{f' (developmental variation: {prior_variation})' if prior_variation else ''}.\n"
+            "That prior constraint REMAINS the authoritative target until ONE of two things is true — "
+            "(1) it has reached developmental sufficiency in the CURRENT writing, or (2) new learner "
+            "evidence shows a DIFFERENT structure has genuinely become the higher-leverage constraint "
+            "(a real dependency shift). Your first question: 'has the prior constraint NOW reached "
+            "developmental sufficiency?' If it has NOT, KEEP regulating that SAME structure — do NOT "
+            "abandon an unresolved prior diagnosis merely because a downstream weakness is now also "
+            "visible; a downstream weakness that DEPENDS on the still-unresolved structure is expected "
+            "and does NOT justify moving (do not jump to Evidence/Conclusion while the Elaboration they "
+            "depend on is incomplete; do not jump to Elaboration while the Thesis it integrates is "
+            "underdeveloped). When you keep the same structure, identify the developmental PROGRESS the "
+            "learner has already made before naming the remaining work — the learner should experience "
+            "'I moved forward,' not 'I am starting over.'\n"
+            "AVOID THE OPPOSITE ERROR TOO: developmental sufficiency does NOT mean perfect or maximally "
+            "rich — it means the structure can now SUPPORT the development that depends on it (judge by "
+            "that structure's DEVELOPMENTAL SUFFICIENCY criterion). Once the prior constraint can "
+            "support its dependents, it IS sufficient — ADVANCE to the next highest-leverage structure. "
+            "Do not strand the learner on a thesis that can already organize elaboration, or an "
+            "elaboration that can already carry evidence, just because a richer version is imaginable.\n\n"
+        )
+    else:
+        continuity_block = ""  # first turn: zero footprint — identical prompt to the validated P0-b baseline
     prompt = (
         f"ASSIGNMENT (authoritative task): {assignment or '(not specified)'}\n"
         f"UNIT the writer is producing: {unit or 'one paragraph'}\n\n"
+        f"{continuity_block}"
         f"THE FIVE CANONICAL PRIMARY STRUCTURES (your only candidates):\n\n{_canonical_primary_digest()}\n"
         f"CANONICAL INSTRUCTIONAL DECISION MODEL (govern your choice by this):\n{_decision_model_digest()}\n\n"
         f"THE WRITER'S CURRENT WRITING:\n\"\"\"\n{student_text}\n\"\"\"\n\n"
@@ -476,6 +506,9 @@ async def _select_structure_canonical(session_id: str, assignment: str, unit: st
         '  "instructional_intent": "one concise sentence naming what this cycle should help the writer build",\n'
         '  "developmental_sufficiency": "continue|reached",\n'
         '  "sufficiency_reasoning": "one sentence on why sufficiency has or has not been reached",\n'
+        '  "continuity_decision": "first_turn|held_same_structure|advanced_after_sufficiency|reprioritized_higher_leverage",\n'
+        '  "prior_constraint_reached_sufficiency": "yes|no|na",\n'
+        '  "progress_since_last_turn": "what the writer advanced since the previous turn (empty on first turn)",\n'
         '  "next_objective": "<the primary to address after this one, or null>",\n'
         '  "next_objective_reasoning": "one phrase on why that comes next",\n'
         '  "composition_integration_signal": "ok|weak|repeatedly_failing"\n'
@@ -491,6 +524,20 @@ async def _select_structure_canonical(session_id: str, assignment: str, unit: st
                           "status": c.get("status", ""), "note": c.get("note", "")}
                          for c in cand if isinstance(c, dict)]
     alt = data.get("plausible_alternative") or {}
+    # Deterministic continuity label (more reliable than the model's self-report): compare the
+    # selected target to the previous turn's principal constraint along the developmental chain.
+    _prior_reached = (data.get("prior_constraint_reached_sufficiency") or "").lower()
+    _order = list(CC.PRIMARY_STRUCTURES)  # Opening, Thesis, Elaboration, Evidence/Example, Conclusion
+    if not prior_target:
+        _continuity = "first_turn"
+    elif sel == prior_target:
+        _continuity = "held_same_structure"
+    elif sel is None:
+        _continuity = "advanced_after_sufficiency"  # closure: every applicable structure sufficient
+    elif sel in _order and prior_target in _order and _order.index(sel) > _order.index(prior_target):
+        _continuity = "advanced_after_sufficiency"   # moved forward down the dependency chain
+    else:
+        _continuity = "reprioritized_higher_leverage"  # returned to an upstream structure (recursion)
     result = {
         "selected": sel,
         "status": (data.get("status") or "missing").lower(),
@@ -519,18 +566,26 @@ async def _select_structure_canonical(session_id: str, assignment: str, unit: st
             "next_response_would_reveal": data.get("next_response_would_reveal") or "",
             "invitation_intent": (data.get("invitation_intent") or "").lower(),
             "composition_integration_signal": (data.get("composition_integration_signal") or "").lower(),
+            "prior_constraint": prior_target or None,
+            "continuity_decision": _continuity,
+            "prior_constraint_reached_sufficiency": _prior_reached,
+            "progress_since_last_turn": data.get("progress_since_last_turn") or "",
         },
     }
     return result
 
 
 async def select_structure(session_id: str, assignment: str, unit: str,
-                            student_text: str, canonical: Optional[bool] = None) -> Dict[str, Any]:
+                            student_text: str, canonical: Optional[bool] = None,
+                            prior_target: Optional[str] = None,
+                            prior_variation: str = "") -> Dict[str, Any]:
     """Return {selected, status, established[], not_applicable[], justification, confidence}.
-    `canonical` overrides the env flag when explicitly passed (per-session activation)."""
+    `canonical` overrides the env flag when explicitly passed (per-session activation).
+    `prior_target`/`prior_variation` feed the Instructional Continuity Principle."""
     use_canonical = _canonical_selection_enabled() if canonical is None else canonical
     if use_canonical:
-        return await _select_structure_canonical(session_id, assignment, unit, student_text)
+        return await _select_structure_canonical(session_id, assignment, unit, student_text,
+                                                  prior_target=prior_target, prior_variation=prior_variation)
     prompt = (
         f"ASSIGNMENT (authoritative task): {assignment or '(not specified)'}\n"
         f"UNIT the writer is producing: {unit or 'one paragraph'}\n\n"
@@ -872,6 +927,7 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
     assignment = session.get("assignment") or state.assignment_purpose or ""
     unit = _unit_hint(session)
     prior_target = state.selected_instructional_object  # prior turn's target (for first/continuation mode)
+    prior_variation = state.developmental_variation or ""  # prior turn's variation (Instructional Continuity)
 
     # current writing snapshot
     if learner_content:
@@ -894,7 +950,8 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
     # OR globally by the CANONICAL_SELECTION env flag. Otherwise legacy selection.
     _canonical = (session.get("reasoning_mode") == "canonical_v2") or _canonical_selection_enabled()
     t_s0 = time.perf_counter()
-    sel = await select_structure(state.id, assignment, unit, student_text, canonical=_canonical)
+    sel = await select_structure(state.id, assignment, unit, student_text, canonical=_canonical,
+                                 prior_target=prior_target, prior_variation=prior_variation)
     t_select = time.perf_counter() - t_s0
     engine_structure = sel.get("selected")
     established = sel.get("established") or []
