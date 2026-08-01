@@ -523,6 +523,27 @@ export default function PublicPreview({ mode = "ot" }) {
                       <X className="h-4 w-4" />
                     </button>
                   </div>
+                  {activeCoaching.focus_of_work && (
+                    <div
+                      data-testid="preview-focus-of-work"
+                      className="mb-3 border border-stone-200 bg-stone-50 rounded-sm px-3 py-2"
+                    >
+                      <div className="text-[10px] uppercase tracking-[0.18em] text-stone-500 font-mono-panel">
+                        Focus of Work
+                      </div>
+                      <div
+                        data-testid="preview-focus-of-work-structure"
+                        className="text-[15px] font-serif-display text-[#8C3A2A] mt-0.5"
+                      >
+                        {activeCoaching.focus_of_work}
+                      </div>
+                      {activeCoaching.focus_description && (
+                        <div className="text-[12px] text-stone-600 mt-0.5 leading-snug">
+                          {activeCoaching.focus_description}
+                        </div>
+                      )}
+                    </div>
+                  )}
                   <p
                     data-testid="preview-coaching-invitation"
                     className="text-stone-800 leading-relaxed text-[16px] font-serif-display whitespace-pre-wrap"

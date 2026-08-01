@@ -544,6 +544,8 @@ class Turn(BaseModel):
     content: str
     status: str = "complete"  # complete | processing | failed | cancelled (durable revision processing)
     reasoning_path: str = ""  # which reasoning path produced this AI turn (exhaustive_full | triage_focused | foundational_fallback_full)
+    focus_of_work: str = ""  # canonical student-facing instructional object for this turn (Focus of Work display)
+    focus_description: str = ""  # optional one-line description of the current focus
     created_at: str = Field(default_factory=now_iso)
 
 
@@ -2063,16 +2065,36 @@ CONSTRAINTS (all mandatory):
 - Instructional in spirit (they trace the structure of the thinking) but NOT a coaching move: no instructional target, no 'you should' / 'try to' / 'consider adding', no advice, no correction, no scores, no naming a deficiency or what is missing, no rewriting, no giving the answer.
 - Do NOT describe your own process ('I'm analyzing…', 'I'm looking for your thesis…', 'I'm thinking about the structure…', 'please wait…').
 - Do NOT disclose hidden chain-of-thought or detailed diagnostic conclusions before the coaching itself.
-- Must be CONSISTENT with the coaching that will follow (same central idea / same structural reading). Maximum TWO observations."""
+- Must be CONSISTENT with the coaching that will follow (same central idea / same structural reading). Maximum TWO observations.
+- CUMULATIVE (critical): Thinking must build on what you already noticed, never rediscover it. If PRIOR OBSERVATIONS and a PRIOR VERSION are supplied, begin from what is already known and name only what is genuinely NEW, changed, strengthened, weakened, or newly visible in the LATEST version — the specific developmental operation the learner just performed. Do NOT restate an earlier observation in slightly different words (e.g. 'strong central idea' → 'clear central understanding' → 'meaningful thesis' across turns with nothing new). Only re-anchor a prior achievement if the learner weakened/removed it, it is needed to explain a new advance, or the focus has changed. The evaluative acknowledgment in OBSERVATION 1 must celebrate the NEW achievement, not the same one again.
+- NO SUBSTANTIVE CHANGE: if the LATEST version is essentially unchanged from the PRIOR VERSION, do NOT invent a fresh paraphrase of the earlier observation. Return exactly ONE observation stating plainly that this version is essentially the same as the last, so the focus is unchanged, and gently point back to the step already invited."""
 
 
-async def _pedagogical_noticing(assignment: str, response: str, session_id: str) -> Optional[dict]:
+async def _pedagogical_noticing(assignment: str, response: str, session_id: str,
+                                prior_response: str = "", prior_observations: Optional[List[str]] = None) -> Optional[dict]:
     """Run the small, fast interim-observations generation. Returns
     {observations: [..], understanding: obs1, _t_noticing_s: float} on success, or
-    None on failure/timeout (caller falls back to the plain thinking state)."""
+    None on failure/timeout (caller falls back to the plain thinking state).
+    Cumulative: when a prior version + prior observations are supplied, the model
+    names only what is genuinely new in the latest version."""
+    _cur = (response or "").strip()
+    _prev = (prior_response or "").strip()
+    # No-change short-circuit (deterministic; no LLM call): essentially identical submission.
+    if _prev and " ".join(_cur.split()).lower() == " ".join(_prev.split()).lower():
+        return {"observations": ["This version looks essentially the same as your last one, so the "
+                                 "focus hasn't changed — try the step I suggested and send the update."],
+                "understanding": "no substantive change", "_t_noticing_s": 0.0, "_no_change": True}
+    _prior_block = ""
+    if _prev:
+        _prior_block += f"The learner's PRIOR version:\n\"\"\"{_prev}\"\"\"\n\n"
+    if prior_observations:
+        _po = "\n".join(f"- {o}" for o in prior_observations if o)
+        _prior_block += ("Observations you ALREADY made on the prior version (do NOT repeat these; name "
+                         f"only what is genuinely NEW now):\n{_po}\n\n")
     prompt = (
         f"The assignment the learner is responding to:\n\"\"\"{(assignment or '').strip()}\"\"\"\n\n"
-        f"The learner's writing so far:\n\"\"\"{(response or '').strip()}\"\"\"\n\n"
+        f"{_prior_block}"
+        f"The learner's LATEST writing:\n\"\"\"{_cur}\"\"\"\n\n"
         "Produce your interim observations. Respond with ONLY the JSON object."
     )
     _t0 = time.perf_counter()
@@ -2102,7 +2124,7 @@ async def _pedagogical_noticing(assignment: str, response: str, session_id: str)
 @api_router.post("/sessions/{session_id}/noticing")
 async def pedagogical_noticing(session_id: str):
     doc = await db.sessions.find_one(
-        {"id": session_id}, {"_id": 0, "assignment": 1, "turns": 1}
+        {"id": session_id}, {"_id": 0, "assignment": 1, "turns": 1, "last_noticing_observations": 1}
     )
     if not doc:
         raise HTTPException(status_code=404, detail="Session not found")
@@ -2114,9 +2136,16 @@ async def pedagogical_noticing(session_id: str):
     response = (writing.get("content") if writing else "") or ""
     if not response.strip():
         return {"ok": False}
-    result = await _pedagogical_noticing(doc.get("assignment", ""), response, session_id)
+    prior_response = (student_turns[-2].get("content") if len(student_turns) >= 2 else "") or ""
+    prior_observations = doc.get("last_noticing_observations") or []
+    result = await _pedagogical_noticing(doc.get("assignment", ""), response, session_id,
+                                         prior_response=prior_response, prior_observations=prior_observations)
     if not result:
         return {"ok": False}
+    # persist the current observations so the NEXT turn can build cumulatively
+    await db.sessions.update_one(
+        {"id": session_id}, {"$set": {"last_noticing_observations": result.get("observations", [])}}
+    )
     return {"ok": True, **result}
 
 
@@ -3453,6 +3482,17 @@ async def _run_engine(session: Session, req: InteractRequest, preview_output: Op
     raise last_err or RuntimeError("engine failed")
 
 
+# Focus of Work — student-facing one-line description per canonical primary (canonical path only).
+_FOCUS_DESCRIPTIONS = {
+    "Opening": "Orient the reader toward the thesis and the task of the paragraph.",
+    "Thesis": "Clarify the integrated understanding your paragraph communicates.",
+    "Elaboration": "Help your reader understand the meaning packed inside your thesis.",
+    "Evidence / Example": "Support or illuminate a specific point developed from your thesis.",
+    "Conclusion": "Complete and integrate the understanding your paragraph has developed.",
+}
+
+
+
 async def _finalize_structure_v5(session_id: str, ai_turn_id: str, req: InteractRequest) -> None:
     """REVISION PACKAGE 5 tail — run the structure-centered engine and write the
     single coaching turn onto the placeholder. The engine writes the authoritative
@@ -3486,6 +3526,10 @@ async def _finalize_structure_v5(session_id: str, ai_turn_id: str, req: Interact
             t.kind = "invitation"
             t.status = "complete"
             t.reasoning_path = "structure_v5"
+            _focus = (result.get("decision", {}) or {}).get("selected_instructional_object") or ""
+            if doc.get("reasoning_mode") == "canonical_v2" and _focus in _FOCUS_DESCRIPTIONS:
+                t.focus_of_work = _focus
+                t.focus_description = _FOCUS_DESCRIPTIONS[_focus]
             break
     session2.updated_at = now_iso()
     await db.sessions.update_one(
