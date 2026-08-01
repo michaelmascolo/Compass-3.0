@@ -1810,7 +1810,7 @@ class PreviewStart(BaseModel):
     assignment: Optional[str] = ""     # the educator's authentic assignment — the authoritative task
     essay_about: Optional[str] = ""    # legacy (unused by Chapter 4 flow); retained for back-compat
     passage_type: Optional[str] = ""   # legacy (unused by Chapter 4 flow); retained for back-compat
-    canonical: Optional[bool] = False  # TEST-ONLY: route this preview session through canonical selection
+    canonical: Optional[bool] = None  # preview reasoning mode: default canonical_v2; pass false for legacy rollback
 
 
 @api_router.post("/sessions/preview", response_model=Session)
@@ -1832,7 +1832,10 @@ async def create_preview_session(payload: Optional[PreviewStart] = None):
     # TEST-ONLY isolation: a canonical-test preview routes to the structure engine
     # (canonical_v2 is in RP5_MODES) AND activates canonical selection for THIS session
     # only. Default previews keep the normal reasoning mode + legacy selection.
-    reasoning_mode = "canonical_v2" if payload.canonical else DEFAULT_REASONING_MODE
+    # Canonical v2 is now the DEFAULT instructional architecture for ALL preview routes.
+    # Legacy (consolidated_v2) is retained as a rollback: request it explicitly with canonical=false.
+    _want_canonical = True if payload.canonical is None else bool(payload.canonical)
+    reasoning_mode = "canonical_v2" if _want_canonical else DEFAULT_REASONING_MODE
     session = Session(
         assignment=assignment,
         pedagogical_purpose=PREVIEW_BOOTSTRAP.pedagogical_purpose,

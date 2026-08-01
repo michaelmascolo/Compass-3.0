@@ -24,10 +24,10 @@ import EarlyExitModal from "@/components/feedback/EarlyExitModal";
 // Experience Compass public flow: Welcome (Ch3) -> Assignment (Ch4) -> Writing
 // (Ch4 minimal interim) -> coaching -> reflection. The educator temporarily
 // becomes the learner: they create an authentic assignment, then respond to it.
-// TEST-ONLY: when the URL carries ?canon=1 (e.g. ?preview=writing&canon=1) the
-// preview session is created with canonical selection active (reasoning_mode
-// canonical_v2). No visual change; purely which session config is requested.
-const CANON_TEST = new URLSearchParams(window.location.search).has("canon");
+// Canonical v2 is the DEFAULT instructional architecture for all preview routes.
+// Legacy (consolidated_v2) is retained only as a rollback: append ?legacy=1 to the
+// URL to request it. WANT_CANONICAL drives both session creation and resume matching.
+const WANT_CANONICAL = !new URLSearchParams(window.location.search).has("legacy");
 
 export default function PublicPreview({ mode = "ot" }) {
   const [session, setSession] = useState(null);
@@ -146,7 +146,7 @@ export default function PublicPreview({ mode = "ot" }) {
     if (starting || !assignmentText.trim()) return;
     setStarting(true);
     try {
-      const s = await startPreview({ assignment: assignmentText.trim(), canonical: CANON_TEST });
+      const s = await startPreview({ assignment: assignmentText.trim(), canonical: WANT_CANONICAL });
       setSession(s);
       setAssignment(assignmentText.trim());
       if (mode === "ot") {
@@ -188,7 +188,7 @@ export default function PublicPreview({ mode = "ot" }) {
     try {
       let s = session;
       if (!s) {
-        s = await startPreview({ assignment: assignment.trim(), canonical: CANON_TEST });
+        s = await startPreview({ assignment: assignment.trim(), canonical: WANT_CANONICAL });
         setSession(s);
       }
       const updated = await interact(s.id, { kind: "writing", content: response });
@@ -252,7 +252,7 @@ export default function PublicPreview({ mode = "ot" }) {
         // path (no Focus of Work, legacy Explanation teaching). Drop it and let the
         // learner start a fresh session with the correct reasoning mode.
         const isCanon = s.reasoning_mode === "canonical_v2";
-        if (CANON_TEST !== isCanon) {
+        if (WANT_CANONICAL !== isCanon) {
           try { localStorage.removeItem("compass_student_session"); } catch (e) { /* ignore */ }
           return;
         }
@@ -387,6 +387,15 @@ export default function PublicPreview({ mode = "ot" }) {
           <div className="flex items-center gap-2 font-serif-display text-lg text-stone-800">
             <Compass className="h-5 w-5 text-[#8C3A2A]" />
             Compass
+            <span
+              data-testid="preview-reasoning-mode-badge"
+              title="Active instructional reasoning mode (developer indicator)"
+              className="ml-1 text-[9px] font-mono-panel uppercase tracking-[0.14em] text-stone-400 border border-stone-200 rounded-sm px-1.5 py-0.5"
+            >
+              {(session?.reasoning_mode === "canonical_v2" || (!session && WANT_CANONICAL))
+                ? "Canonical v2"
+                : "Legacy v2"}
+            </span>
           </div>
           {isStudent && experienceActive && !inReflection && (
             <button

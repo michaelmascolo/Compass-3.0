@@ -1012,3 +1012,11 @@ Owner architectural clarification. Sprint 3 accepted & frozen; this does NOT reo
 - FIX: resume effect now compares `CANON_TEST` against the fetched session's `reasoning_mode === "canonical_v2"`; on mismatch it drops the stale session and starts fresh with the correct mode. `reasoning_mode` is present in the GET /sessions/{id} response.
 - VERIFIED LIVE (fresh `?canon=1` session, post-fix screenshot): FOCUS OF WORK → Elaboration renders; coaching explicitly names the learner's thesis and marks it complete; "develop an elaboration of that thesis" (no "Explanation"); COACHING_HAS_EXPLANATION=False. Frontend recompiled; backend HTTP 200.
 
+
+## Canonical v2 PROMOTED TO DEFAULT for all preview routes (2026-06, DONE; legacy retained as rollback)
+- DECISION (user, option a): canonical_v2 is now the authoritative instructional model; the legacy Claim→Evidence→Explanation (consolidated_v2) model is no longer an active design alternative and must not appear in ordinary testing. Legacy code retained behind a rollback flag.
+- BACKEND (server.py): `PreviewStart.canonical` default None; `create_preview_session` now computes `_want_canonical = True if payload.canonical is None else bool(payload.canonical)` → `reasoning_mode = canonical_v2` by default, `consolidated_v2` only when `canonical=false` explicitly. Verified: default→canonical_v2, canonical:true→canonical_v2, canonical:false→consolidated_v2.
+- FRONTEND (PublicPreview.jsx): replaced `CANON_TEST = has("canon")` with `WANT_CANONICAL = !has("legacy")` — canonical is default for every preview route (writing, teacher, ot); append `?legacy=1` to roll back to legacy. Used in both `startPreview` calls and the resume guard. Added an unobtrusive DEV BADGE next to the Compass logo showing the active reasoning mode ("Canonical v2" / "Legacy v2", `data-testid=preview-reasoning-mode-badge`).
+- VERIFIED LIVE: `?preview=teacher` (previously legacy) now runs canonical — badge "CANONICAL V2", FOCUS OF WORK: Elaboration, coaching names the thesis explicitly ("That's your thesis…"), 0 Explanation, cumulative Thinking present. Backend HTTP 200; frontend compiled.
+- ROLLBACK: `?legacy=1` (or API `canonical:false`) → consolidated_v2 legacy path, untouched.
+
