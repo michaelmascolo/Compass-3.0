@@ -1096,6 +1096,26 @@ async def generate_dialogue(session_id: str, assignment: str, unit: str, student
                     "them. Do NOT return to refining Thesis unless a genuine contradiction or loss of "
                     "integration appears.\n"
                 )
+        elif _dispn == "Thesis" and status != "missing":
+            _elab_block += (
+                "THESIS PRESENCE vs THESIS-ASSIGNMENT FIT (critical framing for THIS Thesis turn — the "
+                "learner already expresses an integrated understanding, so a thesis IS present): these are "
+                "DIFFERENT judgments and must NEVER be conflated. THESIS PRESENCE = does the learner "
+                "already express a single integrated understanding that organizes the paragraph? Here the "
+                "answer is YES — the learner HAS a thesis. THESIS-ASSIGNMENT FIT = does that thesis fully "
+                "satisfy the particular intellectual demand of THIS assignment? A thesis can be entirely "
+                "real and still need refinement to answer the assignment more precisely. RULE: because a "
+                "thesis is present, you must NEVER describe it as absent and NEVER say 'your next task is "
+                "to develop a thesis', 'you need a thesis', or 'this points toward a thesis'. Instead: "
+                "(1) AFFIRM the thesis is present and name it in the learner's own words ('you have "
+                "already developed a meaningful thesis…' / 'this expresses a genuine thesis…'); (2) then "
+                "frame the work as REFINING / SHARPENING it so it more fully answers the SPECIFIC question "
+                "this assignment is asking (e.g. so it expresses not only a general lesson but what THIS "
+                "particular experience helped the learner understand about themselves). Never erase a "
+                "genuine achievement in order to name remaining work — the learner must hear 'Yes, you've "
+                "built the central idea; now let's strengthen it', never 'You still don't have one'. This "
+                "OVERRIDES any earlier 'develop a [structure]' phrasing for this turn.\n"
+            )
     prompt = (
         f"ASSIGNMENT: {assignment or '(not specified)'}\n"
         f"UNIT: {unit or 'one paragraph'}\n"
