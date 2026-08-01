@@ -29,6 +29,82 @@ import EarlyExitModal from "@/components/feedback/EarlyExitModal";
 // URL to request it. WANT_CANONICAL drives both session creation and resume matching.
 const WANT_CANONICAL = !new URLSearchParams(window.location.search).has("legacy");
 
+// Canonical instructional orientation: CURRENT INSTRUCTIONAL FOCUS + vertical Writing Structure.
+// All state is derived ONLY from authoritative backend fields (focus_of_work / established_structures).
+const CANONICAL_STRUCTURES = ["Opening", "Thesis", "Elaboration", "Evidence / Example", "Conclusion"];
+
+const OrientationMarker = ({ state }) => {
+  if (state === "established")
+    return <span aria-label="Established" className="text-emerald-700 font-bold w-3 inline-block text-center">✓</span>;
+  if (state === "current")
+    return <span aria-label="Current focus" className="text-[#8C3A2A] font-bold w-3 inline-block text-center">●</span>;
+  return <span aria-label="Not currently in focus" className="text-stone-300 w-3 inline-block text-center">○</span>;
+};
+
+const CanonicalOrientation = ({ focus, description, established }) => {
+  const est = new Set(established || []);
+  const stateOf = (name) => (name === focus ? "current" : est.has(name) ? "established" : "idle");
+  const Row = ({ name, indented }) => {
+    const s = stateOf(name);
+    const slug = name.replace(/[^a-z]+/gi, "-").toLowerCase();
+    return (
+      <div
+        data-testid={`writing-structure-row-${slug}`}
+        aria-current={s === "current" ? "step" : undefined}
+        className={`flex items-center gap-2 py-0.5 ${indented ? "ml-4" : ""} ${
+          s === "current" ? "font-bold text-stone-900" : s === "established" ? "text-stone-600" : "text-stone-400"
+        }`}
+      >
+        {indented && <span aria-hidden="true" className="text-stone-300 select-none">└──</span>}
+        <OrientationMarker state={s} />
+        <span className="text-[13px]">{name}</span>
+        {s === "current" && (
+          <span className="text-[9px] uppercase tracking-wider text-[#8C3A2A] border border-[#e0c4bd] rounded-sm px-1 py-px">
+            focus
+          </span>
+        )}
+      </div>
+    );
+  };
+  return (
+    <div data-testid="canonical-orientation" className="mb-4 space-y-3">
+      <div
+        data-testid="preview-focus-of-work"
+        className="border border-stone-300 bg-stone-50 rounded-sm px-3 py-2"
+      >
+        <div className="text-[10px] uppercase tracking-[0.18em] text-stone-500 font-mono-panel">
+          Current Instructional Focus
+        </div>
+        <div
+          data-testid="preview-focus-of-work-structure"
+          className="text-[15px] font-serif-display text-[#8C3A2A] font-bold mt-0.5 uppercase tracking-wide"
+        >
+          {focus}
+        </div>
+        {description && (
+          <div className="text-[12px] text-stone-600 mt-0.5 leading-snug">{description}</div>
+        )}
+      </div>
+      <div data-testid="writing-structure-map" className="border border-stone-200 rounded-sm px-3 py-2">
+        <div className="text-[10px] uppercase tracking-[0.18em] text-stone-400 font-mono-panel mb-1">
+          Writing Structure
+        </div>
+        <Row name="Opening" />
+        <Row name="Thesis" />
+        <div aria-hidden="true" className="ml-[3px] text-stone-400 text-[14px] leading-none" title="Thesis and Elaboration develop each other">⇅</div>
+        <Row name="Elaboration" />
+        <Row name="Evidence / Example" indented />
+        <Row name="Conclusion" />
+        <div className="mt-2 pt-1.5 border-t border-stone-100 text-[10px] text-stone-400 flex flex-wrap gap-x-3 gap-y-0.5">
+          <span><span className="text-emerald-700 font-bold">✓</span> Established</span>
+          <span><span className="text-[#8C3A2A] font-bold">●</span> Current</span>
+          <span><span className="text-stone-300">○</span> Not in focus</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function PublicPreview({ mode = "ot" }) {
   const [session, setSession] = useState(null);
   const [assignment, setAssignment] = useState("");   // Ch4 — the educator's authentic assignment (authoritative task)
@@ -543,25 +619,11 @@ export default function PublicPreview({ mode = "ot" }) {
                     </button>
                   </div>
                   {activeCoaching.focus_of_work && (
-                    <div
-                      data-testid="preview-focus-of-work"
-                      className="mb-3 border border-stone-200 bg-stone-50 rounded-sm px-3 py-2"
-                    >
-                      <div className="text-[10px] uppercase tracking-[0.18em] text-stone-500 font-mono-panel">
-                        Focus of Work
-                      </div>
-                      <div
-                        data-testid="preview-focus-of-work-structure"
-                        className="text-[15px] font-serif-display text-[#8C3A2A] mt-0.5"
-                      >
-                        {activeCoaching.focus_of_work}
-                      </div>
-                      {activeCoaching.focus_description && (
-                        <div className="text-[12px] text-stone-600 mt-0.5 leading-snug">
-                          {activeCoaching.focus_description}
-                        </div>
-                      )}
-                    </div>
+                    <CanonicalOrientation
+                      focus={activeCoaching.focus_of_work}
+                      description={activeCoaching.focus_description}
+                      established={activeCoaching.established_structures || []}
+                    />
                   )}
                   <p
                     data-testid="preview-coaching-invitation"

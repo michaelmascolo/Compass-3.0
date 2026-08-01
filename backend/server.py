@@ -546,6 +546,7 @@ class Turn(BaseModel):
     reasoning_path: str = ""  # which reasoning path produced this AI turn (exhaustive_full | triage_focused | foundational_fallback_full)
     focus_of_work: str = ""  # canonical student-facing instructional object for this turn (Focus of Work display)
     focus_description: str = ""  # optional one-line description of the current focus
+    established_structures: List[str] = Field(default_factory=list)  # canonical primaries already developmentally sufficient
     created_at: str = Field(default_factory=now_iso)
 
 
@@ -3485,7 +3486,23 @@ async def _run_engine(session: Session, req: InteractRequest, preview_output: Op
     raise last_err or RuntimeError("engine failed")
 
 
-# Focus of Work — student-facing one-line description per canonical primary (canonical path only).
+_CANONICAL_ORDER = ["Opening", "Thesis", "Elaboration", "Evidence / Example", "Conclusion"]
+
+
+def _canonical_established(raw, focus):
+    """Normalize the selector's (possibly descriptive) established entries to canonical primary
+    names, and include every primary strictly BEFORE the current focus (reaching a later focus
+    means the earlier structures are developmentally sufficient). Backend stays authoritative."""
+    out = []
+    for name in _CANONICAL_ORDER:
+        nl = name.lower()
+        hit = any(nl in str(e).lower() or str(e).lower() in nl for e in (raw or []))
+        before_focus = focus in _CANONICAL_ORDER and _CANONICAL_ORDER.index(name) < _CANONICAL_ORDER.index(focus)
+        if (hit or before_focus) and name != focus:
+            out.append(name)
+    return out
+
+
 _FOCUS_DESCRIPTIONS = {
     "Opening": "Orient the reader toward the thesis and the task of the paragraph.",
     "Thesis": "Clarify the integrated understanding your paragraph communicates.",
@@ -3533,6 +3550,8 @@ async def _finalize_structure_v5(session_id: str, ai_turn_id: str, req: Interact
             if doc.get("reasoning_mode") == "canonical_v2" and _focus in _FOCUS_DESCRIPTIONS:
                 t.focus_of_work = _focus
                 t.focus_description = _FOCUS_DESCRIPTIONS[_focus]
+                t.established_structures = _canonical_established(
+                    (result.get("decision", {}) or {}).get("established_structures") or [], _focus)
             break
     session2.updated_at = now_iso()
     await db.sessions.update_one(

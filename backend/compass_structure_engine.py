@@ -1597,6 +1597,7 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
             "selected_instructional_object": target,
             "structure_status": status,
             "engine_recommendation": engine_recommendation,
+            "established_structures": established,
         },
         "_meta": efficiency,
     }
