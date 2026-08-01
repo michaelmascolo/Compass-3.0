@@ -427,6 +427,19 @@ _CANON_SEL_SYS = (
     "evidence→claim connection is NOT canonical Elaboration; if the limiting structure is one of these "
     "out-of-scope objects, choose the nearest IN-SCOPE primary that is actually limiting (usually "
     "Thesis or Elaboration) rather than an out-of-scope object.\n"
+    "EXPLANATION IS NOT AN INSTRUCTIONAL OBJECT OR A STAGE. Reject the legacy composition sequence "
+    "Thesis → Evidence → Explanation, which wrongly treats the thesis as already complete and "
+    "transparent once stated, so that the remaining work is only to prove it with evidence and explain "
+    "how the evidence supports the claim. In the canonical curriculum a thesis is a COMPRESSED, "
+    "integrated understanding that is NOT automatically transparent simply because it has been stated; "
+    "the essay exists to UNFOLD that understanding for a reader. The next instructional question is "
+    "therefore NEVER 'how does this evidence support the claim?' — it is always 'what does the naive "
+    "reader need to understand NEXT in order to understand this thesis?'. The seeds of the whole essay "
+    "already live inside the thesis; Elaboration develops those seeds; Evidence / Example supports "
+    "particular parts of that unfolding WHEN NEEDED but never replaces the unfolding. 'Explanation' is "
+    "only a subordinate reasoning operation that may occur WHILE elaborating, developing evidence, or "
+    "concluding — it is NEVER the next_objective and NEVER a target. next_objective must be one of the "
+    "five canonical primaries (Opening, Thesis, Elaboration, Evidence / Example, Conclusion) or null.\n"
     "\n"
     "RESTRAINT — WHEN NOT TO TEACH (apply strictly): do NOT select a structure merely because it is "
     "imperfect or could be made more explicit or more thorough. Select a structure ONLY when "
@@ -1068,7 +1081,14 @@ async def generate_dialogue(session_id: str, assignment: str, unit: str, student
             f"isolated skill. This turn's relational operation is: {_relational} Keep the thesis VISIBLE "
             "as the organizing center even after it is developmentally sufficient — advancing from Thesis "
             "does NOT mean ceasing to mention it; but do NOT hold the learner on Thesis when it is "
-            "already sufficient (orientation is not re-teaching Thesis).\n"
+            "already sufficient (orientation is not re-teaching Thesis). RECURSIVE PROCEDURE: the guiding "
+            "question every turn is 'what does the naive reader need to understand NEXT in order to "
+            "understand this thesis?' (what part of the thesis is still compressed, which distinction is "
+            "not yet unfolded, what would a naive reader still not understand) — NEVER 'how does this "
+            "evidence support the claim?'. 'Explanation' is NOT an instructional object or a next stage: "
+            "never name it as a structure, a task, or the next step; explanation-of-evidence is only a "
+            "subordinate reasoning move that may occur while elaborating, developing evidence, or "
+            "concluding. Advance only among the five canonical primaries.\n"
         )
         if _dispn == "Elaboration":
             _elab_block += (
@@ -1236,7 +1256,13 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
     selection_contrast = sel.get("selection_contrast") or ""
     instructional_action = (sel.get("instructional_action") or "").lower()
     sufficiency_reasoning = sel.get("sufficiency_reasoning") or ""
-    next_objective = resolve_structure(sel.get("next_objective")) or ""
+    # next_objective: in the canonical path it MUST be one of the five canonical primaries (or empty).
+    # A legacy object (Explanation, Transition, Definition, ...) is NEVER a valid canonical next stage —
+    # Explanation is a subordinate reasoning operation, not an instructional object/stage.
+    if _canonical:
+        next_objective = _canonical_or_none(sel.get("next_objective")) or ""
+    else:
+        next_objective = resolve_structure(sel.get("next_objective")) or ""
     next_objective_reasoning = sel.get("next_objective_reasoning") or ""
     status = (sel.get("status") or "missing").lower()
     if status not in ("missing", "partial", "misleading", "present"):
@@ -1290,14 +1316,16 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
     else:
         developmental_sufficiency = "continue"
         sufficiency_reasoning = sufficiency_reasoning or f"{target} is {status}; the objective is not yet met."
-    # next developmental objective (deterministic fallback: next applicable unmet structure)
+    # next developmental objective (deterministic fallback: next applicable unmet structure).
+    # Canonical path advances ONLY within the five canonical primaries (never Explanation/Transition/etc.).
     if not next_objective and target:
         _skip = set(established) | set(not_applicable) | {target}
+        _order = list(CC.PRIMARY_STRUCTURES) if _canonical else PRIORITY_ORDER
         try:
-            _start = PRIORITY_ORDER.index(target) + 1
+            _start = _order.index(target) + 1
         except ValueError:
-            _start = len(PRIORITY_ORDER)
-        for _s in PRIORITY_ORDER[_start:]:
+            _start = len(_order)
+        for _s in _order[_start:]:
             if _s not in _skip:
                 next_objective = _s
                 next_objective_reasoning = next_objective_reasoning or "next dependent structure once the current one is solid"
