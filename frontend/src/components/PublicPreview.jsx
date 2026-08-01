@@ -246,6 +246,16 @@ export default function PublicPreview({ mode = "ot" }) {
           try { localStorage.removeItem("compass_student_session"); } catch (e) { /* ignore */ }
           return;
         }
+        // Honor the ?canon flag: never resume a session whose canonical state does
+        // not match the current request. Otherwise a stale consolidated_v2 (legacy)
+        // session would be restored under ?canon=1, silently bypassing the canonical
+        // path (no Focus of Work, legacy Explanation teaching). Drop it and let the
+        // learner start a fresh session with the correct reasoning mode.
+        const isCanon = s.reasoning_mode === "canonical_v2";
+        if (CANON_TEST !== isCanon) {
+          try { localStorage.removeItem("compass_student_session"); } catch (e) { /* ignore */ }
+          return;
+        }
         const students = (s.turns || []).filter((t) => t.role === "student");
         setSession(s);
         feedbackEvent(s.id, "resume", {});
