@@ -35,7 +35,7 @@ export function findThesisRanges(draft, thesis) {
 
   // 2) Sentence-level token overlap against the thesis' content words.
   const thesisTokens = new Set(norm(thesis).split(" ").filter((w) => w.length >= 4));
-  if (thesisTokens.size === 0) return [];
+  if (thesisTokens.size < 2) return [];
 
   const ranges = [];
   const sentenceRe = /[^.!?]+[.!?]*/g;
