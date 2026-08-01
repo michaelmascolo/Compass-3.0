@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { startPreview, getSession, interact, getNoticing, otStart, feedbackEvent } from "@/lib/api";
 import { metacognitionSequence } from "@/lib/writerMetacognition";
+import { findThesisRanges } from "@/lib/thesisMatch";
 import ExperienceReflection from "@/components/ExperienceReflection";
 import TeacherReflection from "@/components/TeacherReflection";
 import OrganizingThought from "@/components/OrganizingThought";
@@ -121,6 +122,30 @@ const CanonicalOrientation = ({ focus, description, thesis, established }) => {
   );
 };
 
+// Render the draft with the recognized thesis sentence(s) wrapped in a subtle
+// highlight. Used as a transparent-text overlay behind the editable textarea so the
+// tint sits under the learner's own words without altering them.
+function renderThesisSegments(text, ranges) {
+  if (!ranges || ranges.length === 0) return text;
+  const out = [];
+  let cursor = 0;
+  ranges.forEach(([s, e], i) => {
+    if (s > cursor) out.push(text.slice(cursor, s));
+    out.push(
+      <mark
+        key={`thesis-${i}`}
+        data-testid="thesis-highlight"
+        className="bg-[#f3e2c0] text-transparent rounded-[2px] box-decoration-clone"
+      >
+        {text.slice(s, e)}
+      </mark>
+    );
+    cursor = e;
+  });
+  if (cursor < text.length) out.push(text.slice(cursor));
+  return out;
+}
+
 export default function PublicPreview({ mode = "ot" }) {
   const [session, setSession] = useState(null);
   const [assignment, setAssignment] = useState("");   // Ch4 — the educator's authentic assignment (authoritative task)
@@ -158,6 +183,12 @@ export default function PublicPreview({ mode = "ot" }) {
   const studentTurns = allTurns.filter((t) => t.role === "student");
   const completedAi = allTurns.filter((t) => t.role === "ai" && t.status === "complete" && t.content);
   const activeCoaching = completedAi.length ? completedAi[completedAi.length - 1] : null;
+  // Highlight, in place, the sentence(s) Compass currently recognizes as the thesis —
+  // always the same text shown in the YOUR THESIS panel (activeCoaching.current_thesis).
+  const docRef = useRef(null);
+  const highlightRef = useRef(null);
+  const activeThesis = activeCoaching?.current_thesis || "";
+  const thesisRanges = useMemo(() => findThesisRanges(draft, activeThesis), [draft, activeThesis]);
   const started = !!session;
   const reviseCount = studentTurns.filter((t) => t.kind === "revise").length;
   // Chapter 6 — the "first encounter" is the learner's first draft and Compass's
@@ -564,14 +595,29 @@ export default function PublicPreview({ mode = "ot" }) {
               </p>
             )}
 
-            {/* The passage — document canvas, editable in place. */}
+            {/* The passage — document canvas, editable in place. A transparent-text
+                overlay sits behind the textarea to tint the recognized thesis. */}
             <div className="relative bg-white border border-stone-300 rounded-sm">
+              <div
+                ref={highlightRef}
+                aria-hidden="true"
+                data-testid="preview-document-highlight"
+                className="absolute inset-0 overflow-hidden pointer-events-none px-7 sm:px-10 py-8 text-[17px] leading-9 font-serif-display whitespace-pre-wrap break-words text-transparent"
+              >
+                {renderThesisSegments(draft, thesisRanges)}
+                {"\n"}
+              </div>
               <textarea
                 data-testid="preview-document"
+                ref={docRef}
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
+                onScroll={() => {
+                  if (highlightRef.current && docRef.current)
+                    highlightRef.current.scrollTop = docRef.current.scrollTop;
+                }}
                 placeholder="Your response…"
-                className="block w-full min-h-[34vh] bg-transparent px-7 sm:px-10 py-8 text-[17px] leading-9 text-stone-900 placeholder:text-stone-400 outline-none resize-none custom-scroll font-serif-display"
+                className="relative block w-full min-h-[34vh] bg-transparent px-7 sm:px-10 py-8 text-[17px] leading-9 text-stone-900 placeholder:text-stone-400 outline-none resize-none custom-scroll font-serif-display whitespace-pre-wrap break-words"
               />
               <AnimatePresence>
                 {activeCoaching && !busy && cardOpen && openCoachingId !== activeCoaching.id && (
