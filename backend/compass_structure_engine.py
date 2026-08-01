@@ -474,7 +474,18 @@ _CANON_SEL_SYS = (
     "THESIS — generative sufficiency (do NOT over-hold Thesis): a Thesis is generatively sufficient "
     "the moment it provides (1) a recognizable main point, (2) an INTEGRATED relation among its "
     "central ideas (not a list of coordinate reasons), and (3) enough organization for the learner to "
-    "begin elaborating what the reader must understand. When those are present, the ONLY operative "
+    "begin elaborating what the reader must understand. DEVELOPMENTAL SUFFICIENCY vs RHETORICAL "
+    "OPTIMIZATION (decisive) — these are DIFFERENT and must never be conflated. DEVELOPMENTAL "
+    "SUFFICIENCY = the learner has successfully CONSTRUCTED the instructional object: the thesis "
+    "expresses a single integrated understanding, is responsive to the assignment's demand, and can "
+    "organize the writing. RHETORICAL OPTIMIZATION = the same thesis could still become more elegant, "
+    "sharper, more sophisticated, or more polished. Instructional-object COMPLETION is determined by "
+    "DEVELOPMENTAL SUFFICIENCY, NOT by maximal rhetorical quality. Once the thesis is developmentally "
+    "sufficient, the Thesis object is COMPLETE — you MUST advance to Elaboration and MUST NOT keep "
+    "selecting Thesis merely because the thesis could be made better, more elegant, or more "
+    "sophisticated. (A genuine hold for assignment-fit is warranted ONLY when the thesis is not yet "
+    "responsive to the assignment's actual demand — never merely because a stronger wording is "
+    "imaginable.) When those are present, the ONLY operative "
     "question is 'can this thesis now organize meaningful elaboration?' — if yes, ADVANCE to "
     "Elaboration; do not keep regulating Thesis. CRITICAL ANTI-OVER-HOLD RULE — do NOT hold Thesis on "
     "the grounds that it 'lacks conceptual differentiation', 'lacks internal structure', 'does not yet "
@@ -675,6 +686,42 @@ async def _select_structure_canonical(session_id: str, assignment: str, unit: st
                           "status": c.get("status", ""), "note": c.get("note", "")}
                          for c in cand if isinstance(c, dict)]
     alt = data.get("plausible_alternative") or {}
+    # DEVELOPMENTAL-SUFFICIENCY GUARD (canonical only): once Thesis is developmentally sufficient — an
+    # INTEGRATED thesis marked 'present' — the Thesis instructional object is COMPLETE. Re-selecting
+    # Thesis here conflates developmental sufficiency with rhetorical optimization (holding to
+    # "sharpen" an already-integrated thesis). Deterministically advance to the next unestablished
+    # canonical primary. Excludes diffuse / topic-substituted / competing readings, which are NOT yet
+    # integrated and legitimately remain on Thesis.
+    _suff_advance = False
+    _sel_status = (data.get("status") or "missing").lower()
+    _var_lc = (data.get("developmental_variation") or "").lower()
+    _thesis_complete = (
+        sel == "Thesis" and _sel_status == "present" and "integrated" in _var_lc
+        and not any(b in _var_lc for b in ("diffuse", "topic substituted", "competing", "contradict",
+                                           "not integrated", "no integrated", "fragment", "absent"))
+    )
+    if _thesis_complete:
+        _established_lc = {str(e).lower() for e in (data.get("established") or [])}
+        _na_lc = {str(n).lower() for n in (data.get("not_applicable") or [])}
+        for _cand in ("Elaboration", "Evidence / Example", "Conclusion"):
+            _cl = _cand.lower()
+            if _cl in _na_lc or any(_cl in e or e in _cl for e in _established_lc):
+                continue
+            sel = _cand
+            data["status"] = "partial" if _cand == "Elaboration" else "missing"
+            _existing = data.get("established") or []
+            if not any("thesis" in str(e).lower() for e in _existing):
+                _existing = _existing + ["Thesis: developmentally sufficient — an integrated "
+                                         "understanding that can organize the writing (completed)"]
+            data["established"] = _existing
+            data["selection_rationale"] = (
+                "Developmental-sufficiency guard: the thesis is an integrated understanding marked "
+                "present (developmentally sufficient — it can organize the writing), so the Thesis "
+                f"object is COMPLETE. Advancing to {_cand} rather than holding Thesis for rhetorical "
+                "optimization. " + (data.get("selection_rationale") or "")
+            )
+            _suff_advance = True
+            break
     # Deterministic continuity label (more reliable than the model's self-report): compare the
     # selected target to the previous turn's principal constraint along the developmental chain.
     _prior_reached = (data.get("prior_constraint_reached_sufficiency") or "").lower()
@@ -723,6 +770,7 @@ async def _select_structure_canonical(session_id: str, assignment: str, unit: st
             "progress_since_last_turn": data.get("progress_since_last_turn") or "",
             "dependent_work_possible": (data.get("dependent_work_possible") or "").lower(),
             "parse_fallback": _parse_fallback,
+            "sufficiency_guard_advanced": _suff_advance,
         },
     }
     return result
