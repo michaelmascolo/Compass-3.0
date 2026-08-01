@@ -1032,6 +1032,70 @@ async def generate_dialogue(session_id: str, assignment: str, unit: str, student
         f"CANONICAL DISCOVERY GUIDANCE (private; apply, do not quote verbatim): {src['discovery']}\n"
     )
     _forms = ", ".join(src["variations"]) if isinstance(src["variations"], list) else str(src["variations"])
+    # THESIS ORIENTATION + RELATIONAL OPERATION context — canonical composition path only.
+    _elab_block = ""
+    if src.get("canonical"):
+        _dispn = src["display_name"]
+        _relational = {
+            "Thesis": "the Thesis IS this turn's operation — locate and develop the single integrated "
+                      "understanding the learner wants the reader to take away.",
+            "Elaboration": "ELABORATION OF THE THESIS (or of a specific point derived from it): develop, "
+                           "differentiate, clarify, and unfold what the reader needs in order to "
+                           "understand the thesis.",
+            "Evidence / Example": "EVIDENCE FOR / EXAMPLE OF a specific elaborative point derived from the "
+                                  "thesis — name that point first; evidence/example must never float free "
+                                  "of the idea it supports or clarifies.",
+            "Conclusion": "the CONCLUSION OF this line of reasoning — completion and integration of the "
+                          "understanding developed from the thesis; show what the body has now made "
+                          "possible for the reader to understand.",
+            "Opening": "the OPENING that ORIENTS the reader toward the thesis and the communicative task, "
+                       "when such orientation is needed.",
+        }.get(_dispn, f"{_dispn}, performed in relation to the thesis.")
+        _elab_block = (
+            "\nTHESIS ORIENTATION (canonical composition — apply THIS turn): the thesis is the ORGANIZING "
+            "CENTER of the paragraph. Ordinarily orient the learner to their thesis BEFORE introducing "
+            "the writing operation, so the learner always knows WHAT IDEA they are developing before "
+            "being asked WHAT OPERATION to perform. (1) Locate the learner's current THESIS STATE — "
+            "A: topic-only / no thesis yet (names what the writing is about but states no single "
+            "integrated understanding); B: emerging thesis (a recognizable integrated understanding is "
+            "present but still needs clarifying / integrating / stabilizing); C: established thesis "
+            "(organized enough to support work on dependent structures). (2) If a thesis or emerging "
+            "thesis exists, STATE it in a conservative paraphrase grounded in the learner's OWN words, "
+            "identify it explicitly as their thesis (\"that is your thesis\"), and say briefly what it "
+            "says ABOUT the topic — a thesis says something ABOUT the topic, whereas a topic (e.g. 'how I "
+            "was transformed', 'the causes of WWII') only names what the writing is about. (3) THEN "
+            "introduce this turn's operation AS WORK PERFORMED IN RELATION TO THAT THESIS, never as an "
+            f"isolated skill. This turn's relational operation is: {_relational} Keep the thesis VISIBLE "
+            "as the organizing center even after it is developmentally sufficient — advancing from Thesis "
+            "does NOT mean ceasing to mention it; but do NOT hold the learner on Thesis when it is "
+            "already sufficient (orientation is not re-teaching Thesis).\n"
+        )
+        if _dispn == "Elaboration":
+            _elab_block += (
+                "CANONICAL ELABORATION — CRITICAL CONSTRAINTS: name this structure ONLY 'elaboration'; "
+                "the word 'Explanation' is FORBIDDEN as the name of this structure or the task (do NOT "
+                "say 'develop an Explanation'). Canonical Elaboration is NOT the legacy 'explain how your "
+                "evidence supports your claim' move: do NOT frame this turn as claim -> evidence -> "
+                "explanation-of-evidence, do NOT ask the learner to prove their events/details are "
+                "evidence for a claim, and do NOT teach reasoning-that-connects-evidence-to-a-claim as "
+                "the task. Elaboration DEVELOPS THE SUBSTANCE OF THE THESIS (differentiating, unpacking, "
+                "tracing implications, clarifying internal relationships, examining tensions or "
+                "qualifications, showing what the integrated understanding means in this case); evidence "
+                "and examples are an OPTIONAL subordinate support that MAY come later, not the point.\n"
+            )
+            if not is_cont:
+                _elab_block += (
+                    "THESIS-TO-ELABORATION HANDOFF (weave naturally BEFORE the elaboration invitation): "
+                    "(1) positively evaluate the authentic achievement; (2) STATE the learner's thesis in "
+                    "a conservative paraphrase from their OWN words (do NOT replace it with a more "
+                    "sophisticated thesis); (3) identify it as THE LEARNER'S THESIS; (4) explain briefly "
+                    "WHY it functions as a thesis (single integrated understanding for the reader, not "
+                    "merely what happened); (5) state it is now sufficiently clear to ORGANIZE / guide the "
+                    "paragraph; (6) introduce the next operation as ELABORATION OF that thesis; (7) give "
+                    "ONE manageable invitation to unpack/develop it without writing the elaboration for "
+                    "them. Do NOT return to refining Thesis unless a genuine contradiction or loss of "
+                    "integration appears.\n"
+                )
     prompt = (
         f"ASSIGNMENT: {assignment or '(not specified)'}\n"
         f"UNIT: {unit or 'one paragraph'}\n"
@@ -1039,6 +1103,7 @@ async def generate_dialogue(session_id: str, assignment: str, unit: str, student
         f"\"\"\"\n{student_text}\n\"\"\"\n\n"
         f"{_mode_block}\n"
         f"{_support_block}\n"
+        f"{_elab_block}"
         f"THE INSTRUCTIONAL DECISION IS ALREADY MADE. Help the writer build exactly this — do not "
         f"reconsider or broaden it. Use ONLY this canonical structure name with the learner; never use "
         f"any other or older name for it:\n"
