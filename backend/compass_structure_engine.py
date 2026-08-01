@@ -677,6 +677,7 @@ async def _select_structure_canonical(session_id: str, assignment: str, unit: st
         '  "progress_since_last_turn": "what the writer advanced since the previous turn (empty on first turn)",\n'
         '  "next_objective": "<the primary to address after this one, or null>",\n'
         '  "next_objective_reasoning": "one phrase on why that comes next",\n'
+        '  "current_thesis": "the single integrated understanding the learner is CURRENTLY expressing, as a short conservative quotation or close paraphrase in the LEARNER\'S OWN words (empty string if no thesis is present yet — do NOT invent or upgrade it)",\n'
         '  "composition_integration_signal": "ok|weak|repeatedly_failing"\n'
         "}"
     )
@@ -777,6 +778,7 @@ async def _select_structure_canonical(session_id: str, assignment: str, unit: st
         "sufficiency_reasoning": data.get("sufficiency_reasoning") or "",
         "next_objective": data.get("next_objective") or "",
         "next_objective_reasoning": data.get("next_objective_reasoning") or "",
+        "current_thesis": (data.get("current_thesis") or "").strip(),
         "confidence": (data.get("confidence") or "medium").lower(),
         "_prompt_bytes": len(prompt) + len(_CANON_SEL_SYS),
         "_completion_bytes": len(raw or ""),
@@ -863,6 +865,19 @@ _DLG_SYS = (
     "change, add, broaden, narrow, or substitute a different target; you teach only the one canonical "
     "structure you are given, and you name it only by its canonical name (never invent or substitute "
     "a non-canonical category). You are an expert teacher who has ALREADY decided what to teach.\n"
+    "\n"
+    "GLOBAL STYLE (applies to EVERY turn, overrides any tendency to lecture): keep it SHORT — this is "
+    "the next line of a coaching conversation, not a rewritten lecture. Aim for roughly 80-140 words "
+    "and at most ~160; never write six or seven explanatory paragraphs. In practice: briefly acknowledge "
+    "what was accomplished, name the developmental purpose of the current focus in a sentence or two, "
+    "identify ONE structural issue, and ask for ONE revision — then STOP. Do NOT re-explain ideas you "
+    "or earlier turns already covered; assume the learner remembers. Prefer AUTHENTIC developmental "
+    "QUESTIONS over sentence stems; a sentence stem is one tool among many — use it ONLY when a question "
+    "alone will not let the learner perform the move, and introduce it naturally (\"One way to start "
+    "is…\", \"Try completing this idea…\", \"Consider this distinction…\"). NEVER use instructional "
+    "jargon with the learner — do NOT say \"scaffold\", \"sentence frame\", \"instructional target\", or "
+    "\"developmental operation\"; speak like a real teacher. Stay CONTENT-NEUTRAL: help the learner "
+    "develop THEIR meaning; never steer toward an interpretation you prefer.\n"
     "\n"
     "There are two kinds of turn. The user message tells you which one this is.\n"
     "\n"
@@ -1035,11 +1050,11 @@ async def generate_dialogue(session_id: str, assignment: str, unit: str, student
     disp = src["display_name"]
     _action_hint = {
         "teach": "Explain the structure plainly and show what it does, then hand the doing back to the writer.",
-        "scaffold": "Give one concrete scaffold (a question or sentence frame) the writer completes themselves.",
+        "scaffold": "PREFER one authentic developmental question that makes the writer do the thinking. Offer a sentence stem ONLY if a question alone will not let them perform the move; if you do, introduce it naturally (\"One way to start is…\", \"Try completing this idea…\") — never call it a 'scaffold' or a 'frame'.",
         "ask_question": "Ask one focused question that makes the writer do the thinking; do not explain much.",
         "model": "Briefly model the KIND of move on a neutral example, never on their content, then have them do theirs.",
         "encourage_revision": "Point to the one place to revise and invite them to try it in their own words.",
-    }.get(action, "Give one concrete scaffold the writer completes themselves.")
+    }.get(action, "Ask one authentic developmental question that makes the writer do the thinking; add a sentence stem only if a question alone is not enough.")
     is_cont = (mode == "continuation")
     _prev_draft_block = (
         f"THE LEARNER'S PREVIOUS DRAFT (compare the CURRENT writing against this to identify exactly "
@@ -1598,6 +1613,7 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
             "structure_status": status,
             "engine_recommendation": engine_recommendation,
             "established_structures": established,
+            "current_thesis": sel.get("current_thesis") or "",
         },
         "_meta": efficiency,
     }

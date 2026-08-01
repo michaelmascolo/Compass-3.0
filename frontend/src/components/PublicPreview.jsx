@@ -41,7 +41,7 @@ const OrientationMarker = ({ state }) => {
   return <span aria-label="Not currently in focus" className="text-stone-300 w-3 inline-block text-center">○</span>;
 };
 
-const CanonicalOrientation = ({ focus, description, established }) => {
+const CanonicalOrientation = ({ focus, description, thesis, established }) => {
   const est = new Set(established || []);
   const stateOf = (name) => (name === focus ? "current" : est.has(name) ? "established" : "idle");
   const Row = ({ name, indented }) => {
@@ -85,6 +85,22 @@ const CanonicalOrientation = ({ focus, description, established }) => {
           <div className="text-[12px] text-stone-600 mt-0.5 leading-snug">{description}</div>
         )}
       </div>
+      {thesis && (
+        <div
+          data-testid="preview-your-thesis"
+          className="border border-[#e0c4bd] bg-[#fbf5f3] rounded-sm px-3 py-2"
+        >
+          <div className="text-[10px] uppercase tracking-[0.18em] text-[#8C3A2A] font-mono-panel">
+            Your Thesis
+          </div>
+          <div
+            data-testid="preview-your-thesis-text"
+            className="text-[13px] text-stone-800 mt-1 leading-snug italic font-serif-display"
+          >
+            &ldquo;{thesis}&rdquo;
+          </div>
+        </div>
+      )}
       <div data-testid="writing-structure-map" className="border border-stone-200 rounded-sm px-3 py-2">
         <div className="text-[10px] uppercase tracking-[0.18em] text-stone-400 font-mono-panel mb-1">
           Writing Structure
@@ -622,6 +638,7 @@ export default function PublicPreview({ mode = "ot" }) {
                     <CanonicalOrientation
                       focus={activeCoaching.focus_of_work}
                       description={activeCoaching.focus_description}
+                      thesis={activeCoaching.current_thesis}
                       established={activeCoaching.established_structures || []}
                     />
                   )}
