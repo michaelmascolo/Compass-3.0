@@ -463,7 +463,31 @@ _CANON_SEL_SYS = (
     "central ideas (not a list of coordinate reasons), and (3) enough organization for the learner to "
     "begin elaborating what the reader must understand. When those are present, the ONLY operative "
     "question is 'can this thesis now organize meaningful elaboration?' — if yes, ADVANCE to "
-    "Elaboration; do not keep regulating Thesis. For a Thesis you must NOT require: philosophical "
+    "Elaboration; do not keep regulating Thesis. CRITICAL ANTI-OVER-HOLD RULE — do NOT hold Thesis on "
+    "the grounds that it 'lacks conceptual differentiation', 'lacks internal structure', 'does not yet "
+    "explain how or why', 'needs its internal logic developed', or is 'not yet developed enough to "
+    "guide or support elaboration'. Producing that differentiation, internal structure, and how/why "
+    "explanation IS THE WORK OF ELABORATION — a CONSEQUENCE of advancing, never a PRECONDITION for it. "
+    "Demanding that the thesis already contain the development Elaboration exists to generate is "
+    "circular and is the exact over-holding error forbidden here. A simple integrated thesis a reader "
+    "can understand that names ONE relation among its ideas (e.g. 'patience makes almost anything "
+    "easier', 'being on time is a way of showing people respect', 'failing at something does not mean "
+    "you should stop trying') is ALREADY able to organize elaboration — the learner elaborates it BY "
+    "developing that relation. If your status for Thesis is 'present', or your variation says the "
+    "thesis 'can support' / is 'capable of supporting' elaboration, you MUST select Elaboration (or a "
+    "later structure), NOT Thesis. The `selected` field names the structure THIS TURN WILL TEACH NEXT "
+    "(the next developmental work / current frontier), NOT the structure you just judged sufficient. If "
+    "your selection_rationale concludes the learner should 'advance to Elaboration' or that the thesis "
+    "'can generate / can support' elaboration, then `selected` MUST be 'Elaboration' — a rationale that "
+    "says 'advance' while selected='Thesis' is a self-contradiction and is PROHIBITED. These specific "
+    "justifications for holding Thesis are THEMSELVES PROHIBITED because they invert generative "
+    "sufficiency: 'the thesis lacks internal organization/differentiation to GUIDE elaboration'; 'the "
+    "relationship must be differentiated BEFORE elaboration can proceed'; 'advancing now would risk "
+    "unsupported or abstract assertion'; 'the connection is stated but not yet explained'; 'the thesis "
+    "needs its conceptual organization strengthened first'. In every one of these, the missing material "
+    "is EXACTLY what Elaboration produces, so its absence is the REASON TO ADVANCE, not to hold. A bare "
+    "one-sentence integrated thesis with no body written yet is the NORMAL, EXPECTED starting condition "
+    "for Elaboration — advance to it. For a Thesis you must NOT require: philosophical "
     "depth; a statement of ultimate significance or 'what is fundamentally at stake'; an additional "
     "answer to 'why does that matter?' when the paragraph already supplies one; a deeper abstraction "
     "merely because one could be produced; or an ideal / maximally elegant thesis. A thesis that "
@@ -473,10 +497,16 @@ _CANON_SEL_SYS = (
     "focused' as merely 'a condition, not a meaning' AFTER the learner has connected it to learning "
     "and to the purpose of school is a MISREAD — that thesis is sufficient. 'Could be deeper' is never "
     "grounds to hold Thesis.\n"
-    "THESIS — recognition (genre-neutral; do NOT confuse topic with thesis): a thesis is 'the single "
-    "integrated understanding the writer wants the reader to take away'. The TOPIC/subject/event is "
-    "what the assignment is about (an experience, a question, a text); the THESIS is the meaning the "
-    "writer draws from it. A thesis need NOT be argumentative, contestable, profound, maximally "
+    "THESIS — recognition (genre-neutral; do NOT confuse topic or subject matter with thesis): "
+    "distinguish THREE separate things and never collapse them. (1) ASSIGNMENT TOPIC — what the "
+    "assignment asks the student to write about (e.g. 'an experience that changed you'). (2) SUBJECT "
+    "MATTER — the particular event, issue, text, person, or experience the student chose (e.g. 'trying "
+    "out for the varsity soccer team and not making it'). (3) THESIS — the single integrated "
+    "understanding the writer wants the reader to take away (e.g. 'failing at something does not mean "
+    "you should stop trying'). The thesis is the MEANING the writer draws from the subject matter; it "
+    "is NOT the assignment topic and NOT the subject matter itself. Do NOT classify a genuine thesis as "
+    "'merely the topic' just because a more sophisticated or profound formulation could be imagined. "
+    "A thesis need NOT be argumentative, contestable, profound, maximally "
     "abstract, stated first, or more general than the writer intends. Recognize a thesis across "
     "genres: narrative — 'Failing at something does not mean you should stop trying' IS a thesis; "
     "expository — 'Sleep affects learning because it influences attention, memory, and emotional "
@@ -794,10 +824,19 @@ _DLG_SYS = (
     "leave the choice and the construction to the learner.\n"
     "\n"
     "═══ CONTINUATION TURN on the same active structure — do NOT repeat the six-function teaching "
-    "sequence. Briefly re-anchor the same structure in a few words, compare the learner's latest "
-    "attempt against what the structure must accomplish (what is now closer, and the one thing still "
-    "needed), give the MINIMUM next scaffold, and stop. If their attempt now meets the requirement, "
-    "affirm specifically that they have done it and stop — invent no further work.\n"
+    "sequence and do NOT restart the lesson. Use a LIGHTER continuation shape that makes the learner's "
+    "development VISIBLE, performing these functions in order (functions, not sentence boundaries — "
+    "natural and conversational, never formulaic): (1) re-anchor the active structure in a few words; "
+    "(2) identify exactly WHAT CHANGED since the previous draft; (3) NAME THE DEVELOPMENTAL OPERATION "
+    "the learner successfully performed — the structural accomplishment, not the content they added "
+    "(say \"you've integrated the separate ideas into one understanding\" or \"you've expressed what "
+    "the experience taught you\", never \"you added more detail\" or \"you have some good ideas\"); "
+    "(4) explain what is now developmentally SUFFICIENT, if anything; (5) state plainly whether you are "
+    "HOLDING them on the current structure or ADVANCING to the next, and WHY; (6) give ONE manageable "
+    "next invitation, then STOP. Developmental language throughout (\"not yet\", \"still developing\", "
+    "\"the next step is\"); never deficit language (\"lacks\", \"fails to\", \"you still haven't\"). If "
+    "the requirement is now met, affirm specifically that they have done it, name the accomplishment, "
+    "and recommend moving forward — invent no further work.\n"
     "\n"
     "ACROSS BOTH: short and warm — aim for 2 to 6 sentences, second person. ANTI-COAUTHORING IS "
     "ABSOLUTE: never write, rewrite, draft, correct, or supply the structure or the answer for them, "
@@ -880,7 +919,7 @@ async def generate_dialogue(session_id: str, assignment: str, unit: str, student
                             structure: str, obj: Dict[str, Any], status: str,
                             kind: str, action: str = "scaffold",
                             mode: str = "first_turn", sufficiency: str = "continue",
-                            rescue: bool = False) -> str:
+                            rescue: bool = False, prior_student_text: str = "") -> str:
     src = _resolve_teaching_source(structure, obj)
     disp = src["display_name"]
     _action_hint = {
@@ -891,16 +930,34 @@ async def generate_dialogue(session_id: str, assignment: str, unit: str, student
         "encourage_revision": "Point to the one place to revise and invite them to try it in their own words.",
     }.get(action, "Give one concrete scaffold the writer completes themselves.")
     is_cont = (mode == "continuation")
+    _prev_draft_block = (
+        f"THE LEARNER'S PREVIOUS DRAFT (compare the CURRENT writing against this to identify exactly "
+        f"what changed and which developmental operation the learner performed):\n"
+        f"\"\"\"\n{prior_student_text}\n\"\"\"\n"
+        if (is_cont and prior_student_text) else ""
+    )
     _mode_block = (
         "MODE = CONTINUATION TURN. The learner is revising or responding WITHIN the SAME active "
-        "structure they have already been taught. Do NOT repeat the first-turn lesson (no strength+name+"
-        "teach preamble). Instead: (1) briefly recognize what actually changed in their latest attempt; "
-        "(2) if useful, re-anchor the requirement in one short phrase; (3) compare the new attempt "
-        "against what the structure must accomplish; (4) give the MINIMUM next scaffold; (5) judge "
-        "developmental sufficiency. Be transparent so the learner never feels you are withholding a "
-        "hidden right answer: if more work is needed, state clearly what has IMPROVED, what still "
-        "REMAINS, why it matters, and what would count as ENOUGH. If the requirement is now met, say so "
-        "explicitly, name what they accomplished, and recommend moving forward. Then STOP.\n"
+        "structure they have already been taught. Do NOT repeat the first-turn six-function lesson and "
+        "do NOT restart the lesson. Use a LIGHTER continuation shape that makes their development "
+        "VISIBLE, performing these instructional functions IN ORDER (these are functions, not sentence "
+        "boundaries — sound natural and conversational, never formulaic): (1) briefly RE-ANCHOR the "
+        "active structure in a few words; (2) identify EXACTLY WHAT CHANGED since the previous draft by "
+        "comparing the two drafts; (3) NAME THE DEVELOPMENTAL OPERATION the learner successfully "
+        "performed — the structural accomplishment, NOT merely the content they added (e.g. \"you've "
+        "brought the separate ideas together into one integrated understanding, so your paragraph now "
+        "has a thesis capable of supporting elaboration\" / \"you've moved beyond simply recounting "
+        "events and expressed what the experience taught you, which gives the paragraph an organizing "
+        "meaning\"); NEVER generic acknowledgments like \"you improved this\", \"you moved closer\", "
+        "\"you added more detail\", \"you added another sentence\", or \"you have some good ideas\"; "
+        "(4) explain what is now DEVELOPMENTALLY SUFFICIENT, if anything (what the structure can now "
+        "support); (5) STATE PLAINLY whether you are HOLDING the learner on the current structure or "
+        "ADVANCING to the next structure, and WHY; (6) give ONE manageable next developmental "
+        "invitation, then STOP. Use developmental language throughout (\"not yet\", \"still "
+        "developing\", \"the next step is\") — never deficit language (\"lacks\", \"fails to\", \"you "
+        "still haven't\"). If the requirement is now met, say so explicitly, name what they "
+        "accomplished, and recommend moving forward.\n"
+        f"{_prev_draft_block}"
         f"WHAT COUNTS AS ENOUGH (the requirement to compare against): {src['sufficiency']}\n"
         f"INTERNAL sufficiency read (informs you; do not quote): {sufficiency}\n"
     ) if is_cont else (
@@ -1231,7 +1288,7 @@ async def run(session: Dict[str, Any], learner_content: str, kind: str) -> Dict[
         invitation, dlg_bytes = await generate_dialogue(state.id, assignment, unit, student_text,
                                                         target, obj, status, kind, instructional_action,
                                                         mode=dialogue_mode, sufficiency=developmental_sufficiency,
-                                                        rescue=rescue)
+                                                        rescue=rescue, prior_student_text=prior_student_text)
     t_dialogue = time.perf_counter() - t_d0
 
     ownership_ok = not bool(_DOES_WORK.search(invitation or ""))
