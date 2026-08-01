@@ -310,7 +310,11 @@ def _extract_json(raw: str) -> Dict[str, Any]:
     m = re.search(r"\{.*\}", s, re.DOTALL)
     if m:
         s = m.group(0)
-    return json.loads(s)
+    try:
+        return json.loads(s)
+    except json.JSONDecodeError:
+        # tolerate a common LLM slip: trailing commas before } or ]
+        return json.loads(re.sub(r",(\s*[}\]])", r"\1", s))
 
 
 # ===========================================================================
@@ -434,6 +438,26 @@ _CANON_SEL_SYS = (
     "developmental sufficiency, select null (the closure / advance case) rather than manufacturing a "
     "refinement to have something to teach.\n"
     "\n"
+    "GENERATIVE (DEVELOPMENTAL) SUFFICIENCY — this is your OPERATIVE test for whether a structure is "
+    "sufficient, and it governs both which structure you select and the developmental_sufficiency you "
+    "report. A structure is NOT 'sufficient' only when it is fully developed, complete, or polished. "
+    "A structure is developmentally sufficient when it possesses enough INTERNAL ORGANIZATION to "
+    "support PRODUCTIVE WORK ON ITS IMMEDIATE DEPENDENTS. For each candidate ask: 'Can this structure, "
+    "AS IT CURRENTLY STANDS, now generate meaningful work on the structure(s) that depend on it?' If "
+    "YES, it is sufficient — do NOT keep regulating it; the highest-leverage target is its dependent, "
+    "so ADVANCE. If NO, it is not yet sufficient — remain on it. Concretely: if the thesis — even if "
+    "imperfect — can now be elaborated in a meaningful way, ADVANCE to Elaboration rather than "
+    "continuing to polish the thesis; if the current elaboration can now support a meaningful "
+    "Evidence / Example, ADVANCE; if the developed content can now be brought to a close, ADVANCE to "
+    "Conclusion; when every applicable structure can already support (or no longer needs) dependent "
+    "work, select null (closure). If the writing ALREADY CONTAINS work on a dependent structure "
+    "(an example, evidence, or a concluding move), the upstream structure was clearly organized "
+    "enough to generate it — do NOT return upstream to perfect it; move to the current frontier. "
+    "This is a DEVELOPMENTAL judgment about whether dependent work can "
+    "PROCEED, never a QUALITY judgment about whether the structure is complete. Compass regulates "
+    "developmental PROGRESSION, not structural perfection; development is recursive — an earlier "
+    "structure may later become limiting again, and you may return to it then.\n"
+    "\n"
     "PROVISIONAL JUDGMENT (required): you must not pretend certainty about the learner. Separate "
     "OBSERVED evidence (specific words/features actually on the page) from HYPOTHESIZED interpretation "
     "(what you infer) and UNKNOWN (what the evidence is insufficient to determine). Do NOT infer fixed "
@@ -504,8 +528,9 @@ async def _select_structure_canonical(session_id: str, assignment: str, unit: st
         '  "next_response_would_reveal": "what the learner\'s next response could clarify about this judgment",\n'
         '  "invitation_intent": "advance|clarify|both",\n'
         '  "instructional_intent": "one concise sentence naming what this cycle should help the writer build",\n'
-        '  "developmental_sufficiency": "continue|reached",\n'
-        '  "sufficiency_reasoning": "one sentence on why sufficiency has or has not been reached",\n'
+        '  "developmental_sufficiency": "continue|reached — reached ONLY when the selected structure can already support productive work on its dependents (generative sufficiency), not when it is merely imperfect",\n'
+        '  "dependent_work_possible": "can the currently-selected structure already generate meaningful work on its immediate dependents? yes|no",\n'
+        '  "sufficiency_reasoning": "one sentence on whether dependent work can now proceed (developmental, not quality)",\n'
         '  "continuity_decision": "first_turn|held_same_structure|advanced_after_sufficiency|reprioritized_higher_leverage",\n'
         '  "prior_constraint_reached_sufficiency": "yes|no|na",\n'
         '  "progress_since_last_turn": "what the writer advanced since the previous turn (empty on first turn)",\n'
@@ -517,7 +542,28 @@ async def _select_structure_canonical(session_id: str, assignment: str, unit: st
     chat = LlmChat(api_key=_KEY, session_id=f"canon-sel-{session_id}",
                    system_message=_CANON_SEL_SYS).with_model(*SEL_MODEL)
     raw = await chat.send_message(UserMessage(text=prompt))
-    data = _extract_json(raw)
+    try:
+        data = _extract_json(raw)
+    except (json.JSONDecodeError, ValueError):
+        # one strict retry, then a conservative fallback so a learner turn never crashes
+        try:
+            raw = await chat.send_message(UserMessage(
+                text="Your previous reply was not valid JSON. Reply again with STRICTLY valid JSON "
+                     "for the SAME schema — every field present, comma-separated, no comments, no "
+                     "trailing commas."))
+            data = _extract_json(raw)
+        except (json.JSONDecodeError, ValueError):
+            data = {}
+    _parse_fallback = not data
+    if _parse_fallback:
+        # hold the prior diagnosis if one exists, else default to Thesis; flagged in the trace
+        data = {
+            "selected": prior_target or "Thesis",
+            "status": "partial", "developmental_sufficiency": "continue",
+            "confidence": "low",
+            "selection_rationale": "parse_fallback: selector reply was unparseable; holding the "
+                                   "current diagnosis rather than advancing on unreliable output.",
+        }
     sel = _canonical_or_none(data.get("selected"))
     cand = data.get("candidate_considerations") or []
     candidate_objects = [{"object": _canonical_or_none(c.get("structure")) or c.get("structure"),
@@ -570,6 +616,8 @@ async def _select_structure_canonical(session_id: str, assignment: str, unit: st
             "continuity_decision": _continuity,
             "prior_constraint_reached_sufficiency": _prior_reached,
             "progress_since_last_turn": data.get("progress_since_last_turn") or "",
+            "dependent_work_possible": (data.get("dependent_work_possible") or "").lower(),
+            "parse_fallback": _parse_fallback,
         },
     }
     return result
