@@ -2,7 +2,6 @@
 
 # IDE and editors
 .idea/
-.vscode/
 
 # Dependencies
 node_modules/
@@ -80,9 +79,8 @@ memory/test_credentials.md
 
 # Mobile development
 android-sdk/
-.env
-.env.*
 *.env
 credentials.json
 *.key
 .credentials
+config.bat
